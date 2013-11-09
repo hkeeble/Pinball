@@ -13,9 +13,6 @@ namespace GameFramework
 
 	Game::Game(std::string title, int windowWidth, int windowHeight, int windowPosX, int windowPosY, physx::PxReal deltaTime)
 	{
-		Log::SetWorkingDir(GetCurrentDir());
-		Log::Write("Initializing Game Instance...\n", ENGINE_LOG);
-
 		Physics::PxInit(); // initialize physics
 
 		m_scene.Init(); // initialize scene
@@ -144,7 +141,7 @@ namespace GameFramework
 
 	void Game::Exit()
 	{
-
+		Log::Shutdown();
 	}
 
 	/*-------------------------------------------------------------------------\

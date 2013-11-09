@@ -12,7 +12,7 @@ char* Log::m_workingDir = NULL;
 void Log::Write(const char* text, const char* fileName)
 {
 	char* temp = (char*)calloc(strlen(m_workingDir), sizeof(char));
-	
+
 	strcpy(temp, m_workingDir);
 	strcat(temp, fileName);
 
@@ -22,7 +22,7 @@ void Log::Write(const char* text, const char* fileName)
 	file.close();
 
 	Out(fileName);
-	Out(">>");
+	Out("<<");
 	Out(text);
 }
 
@@ -60,6 +60,5 @@ char* GetCurrentDir()
 
 void Log::Shutdown()
 {
-	if(m_workingDir)
-		delete m_workingDir;
+	Log::Write("\n", ENGINE_LOG);
 }

@@ -30,11 +30,14 @@ private:
 	Log& operator=(const Log& param);
 
 	static char* m_workingDir;
+	static char* m_curFileName;
 public:
 	static void Write(const char* text, const char* fileName);
+
 	static void SetWorkingDir(char* newWorkingDir);
+	static char* GetWorkingDir();
+
 	static void Shutdown();
-	char* GetWorkingDir();
 };
 
 #endif // _LOG_H_
