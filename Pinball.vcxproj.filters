@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="src">
+      <UniqueIdentifier>{576d83d7-b915-47fa-9ebc-0edfa53a2b0d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include">
+      <UniqueIdentifier>{df20fe6d-a87d-42fb-8622-1005e60aefc6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\physics">
+      <UniqueIdentifier>{722539bb-c017-4a77-af84-eea2653658b4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\physics">
+      <UniqueIdentifier>{63589c29-df6f-4cee-a99a-a1b44715e95b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\gl">
+      <UniqueIdentifier>{2d2cae09-ce56-4aa5-a9aa-950cfcec0fdb}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\physics\ErrorCallback.h">
+      <Filter>include\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Uncopyable.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\GL\glut.h">
+      <Filter>include\gl</Filter>
+    </ClInclude>
+    <ClInclude Include="include\game.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\physics\Physics.h">
+      <Filter>include\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\pinball.h">
+      <Filter>include</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\physics\ErrorCallback.cpp">
+      <Filter>src\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\main.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\physics\Physics.cpp">
+      <Filter>src\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\game.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\pinball.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

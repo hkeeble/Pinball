@@ -6,8 +6,16 @@
 # Compiled Dynamic libraries
 *.so
 *.dylib
+*.dll
+
 
 # Compiled Static libraries
 *.lai
 *.la
 *.a
+
+# Folders
+build/
+dll/
+lib/
+intermediate/
