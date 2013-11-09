@@ -22,6 +22,8 @@ namespace Physics
 	\-------------------------------------------------------------------------*/
 	void PxInit()
 	{
+		Log::Write("Initializing PhysX...\n", ENGINE_LOG);
+
 		if(!foundation)
 			foundation = PxCreateFoundation(PX_PHYSICS_VERSION, defaultAllocatorCallBack, errorCallback);
 
@@ -35,6 +37,8 @@ namespace Physics
 	// Release Physics from memory
 	void PxRelease()
 	{
+		Log::Write("Releasing PhysX Resources...\n", ENGINE_LOG);
+
 		if (defaultMaterial)
 			defaultMaterial->release();
 		if (physics)
@@ -69,6 +73,8 @@ namespace Physics
 
 	void Scene::Init()
 	{
+		Log::Write("Initializing Game Scene...\n", ENGINE_LOG);
+
 		PxSceneDesc sceneDesc(PxGetPhysics()->getTolerancesScale());
 		
 		if(!sceneDesc.filterShader)

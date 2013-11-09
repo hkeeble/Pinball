@@ -11,6 +11,7 @@
 #include "Physics.h"
 #include "GL/glut.h"
 #include "uncopyable.h"
+#include "..\log.h"
 #include <string>
 
 namespace GameFramework

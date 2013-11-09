@@ -36,6 +36,12 @@
     <ClInclude Include="include\pinball.h">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="include\physics\Actors.h">
+      <Filter>include\physics</Filter>
+    </ClInclude>
+    <ClInclude Include="include\log.h">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\physics\ErrorCallback.cpp">
@@ -51,6 +57,9 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\pinball.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\log.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>

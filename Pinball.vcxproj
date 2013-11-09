@@ -20,7 +20,7 @@
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v110</PlatformToolset>
-    <CharacterSet>Unicode</CharacterSet>
+    <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -56,7 +56,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(PHYSX_SDK)\include;C:\Users\Henri\Documents\Projects\Pinball\Pinball\include\physics;C:\Users\Henri\Documents\Projects\Pinball\Pinball\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(PHYSX_SDK)\include;C:\Users\Henri\Documents\Projects\Pinball\include\physics;C:\Users\Henri\Documents\Projects\Pinball\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -95,6 +95,8 @@
   <ItemGroup>
     <ClInclude Include="include\game.h" />
     <ClInclude Include="include\GL\glut.h" />
+    <ClInclude Include="include\log.h" />
+    <ClInclude Include="include\physics\Actors.h" />
     <ClInclude Include="include\physics\ErrorCallback.h" />
     <ClInclude Include="include\physics\Physics.h" />
     <ClInclude Include="include\pinball.h" />
@@ -102,6 +104,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\game.cpp" />
+    <ClCompile Include="src\log.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\physics\ErrorCallback.cpp" />
     <ClCompile Include="src\physics\Physics.cpp" />

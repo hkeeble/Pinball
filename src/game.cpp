@@ -13,7 +13,12 @@ namespace GameFramework
 
 	Game::Game(std::string title, int windowWidth, int windowHeight, int windowPosX, int windowPosY, physx::PxReal deltaTime)
 	{
+		Log::SetWorkingDir(GetCurrentDir());
+		Log::Write("Initializing Game Instance...\n", ENGINE_LOG);
+
 		Physics::PxInit(); // initialize physics
+
+		m_scene.Init(); // initialize scene
 
 		instance = this; // Assign current instance for callback wrapper functions
 
@@ -33,14 +38,19 @@ namespace GameFramework
 
 	void Game::Run(int argc, char *argv[])
 	{
+		Log::Write("Game Run Function Invoked...\n", ENGINE_LOG);
+
 		InitGL();
 		InitGLUT(argc, argv);
 
+		Log::Write("Entering main game loop...\n", ENGINE_LOG);
 		glutMainLoop();
 	}
 
 	void Game::InitGL() // Virtual Initialization - Override to change lighting params
 	{
+		Log::Write("Intializing OpenGL...\n", ENGINE_LOG);
+
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_COLOR_MATERIAL);
 		glEnable(GL_LIGHTING);
@@ -57,6 +67,8 @@ namespace GameFramework
 
 	void Game::InitGLUT(int argc, char *argv[])
 	{
+		Log::Write("Intializing GLUT...\n", ENGINE_LOG);
+
 		glutInit(&argc, argv);
 		glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
 		glutInitWindowPosition(m_windowPosX, m_winowPosY);
