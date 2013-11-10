@@ -13,15 +13,17 @@ namespace Physics
 	\-------------------------------------------------------------------------*/
 	ShapeActor::ShapeActor(Transform pose, PxReal density, PxMaterial* material, Vec3 color) : Actor(pose, density)
 	{
-		cpyMaterial(m_material, material);
+		m_shape = NULL;
+		m_material = cpyMaterial(material);
 		m_color = color;
 	}
 
 	ShapeActor::ShapeActor(const ShapeActor& param) :
 		Actor(param.m_pose, param.m_density)
 	{
-		cpyShape(m_shape, param.m_shape);
-		cpyMaterial(m_material, param.m_material);
+		m_shape = cpyShape(param.m_shape);
+		m_material = Physics::PxGetPhysics()->createMaterial(param.m_material->getStaticFriction(),
+						param.m_material->getDynamicFriction(), param.m_material->getRestitution());
 	}
 
 	ShapeActor& ShapeActor::operator=(const ShapeActor& param)
@@ -32,11 +34,11 @@ namespace Physics
 		{
 			if(m_shape)
 				m_shape->release();
-			cpyShape(m_shape, param.m_shape);
+			m_shape = cpyShape(param.m_shape);
 
 			if(m_material)
 				m_material->release();
-			cpyMaterial(m_material, param.m_material);
+			m_material = cpyMaterial(param.m_material);
 
 			if(m_shape)
 			{
@@ -95,7 +97,7 @@ namespace Physics
 
 	Box::~Box()
 	{
-		ShapeActor::~ShapeActor();
+
 	}
 	/*-------------------------------------------------------------------------\
 	|							SPHERE DEFINITIONS								|
@@ -134,6 +136,6 @@ namespace Physics
 
 	Sphere::~Sphere()
 	{
-		ShapeActor::~ShapeActor();
+
 	}
 }

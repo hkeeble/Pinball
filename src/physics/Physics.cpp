@@ -15,7 +15,6 @@ namespace Physics
 	// -- PhysX Objects --
 	PxFoundation* foundation = NULL;
 	PxPhysics* physics = NULL;
-	PxMaterial* defaultMaterial = NULL;
 
 	/*-------------------------------------------------------------------------\
 	|						PHYSICS INITIALIZATION								|
@@ -29,9 +28,6 @@ namespace Physics
 
 		if(!physics)
 			physics = PxCreatePhysics(PX_PHYSICS_VERSION, *foundation, PxTolerancesScale());
-
-		if(!defaultMaterial)
-			defaultMaterial = physics->createMaterial(0.0f, 0.0f, 0.0f);
 	}
 
 	// Release Physics from memory
@@ -39,8 +35,6 @@ namespace Physics
 	{
 		Log::Write("Releasing PhysX Resources...\n", ENGINE_LOG);
 
-		if (defaultMaterial)
-			defaultMaterial->release();
 		if (physics)
 			physics->release();
 		if (foundation)
@@ -53,22 +47,23 @@ namespace Physics
 		return physics;
 	}
 
-	PxMaterial* PxGetDefaultMaterial()
-	{
-		return defaultMaterial;
-	}
-
 	/*-------------------------------------------------------------------------\
 	|							UTILITY DEFINITIONS								|
 	\-------------------------------------------------------------------------*/
 
-	void cpyMaterial(PxMaterial* dest, PxMaterial* src)
+	PxMaterial* cpyMaterial(PxMaterial* src)
 	{
-		dest = Physics::PxGetPhysics()->createMaterial(src->getStaticFriction(),
-			src->getDynamicFriction(), src->getRestitution());
+		if(src)
+			return Physics::PxGetPhysics()->createMaterial(src->getStaticFriction(),
+				src->getDynamicFriction(), src->getRestitution());
+		else
+		{
+			Log::Write("Exc: Cannot copy material, source is NULL!\n", ENGINE_LOG);
+			return NULL;
+		}
 	}
 
-	void cpyShape(PxShape* dest, PxShape* src)
+	PxShape* cpyShape(PxShape* src)
 	{
 		PxBoxGeometry bgeo;
 		PxSphereGeometry sgeo;
@@ -79,28 +74,36 @@ namespace Physics
 			{
 			case physx::PxGeometryType::eBOX:
 				src->getBoxGeometry(bgeo);
-				dest = Physics::PxGetPhysics()->createShape(bgeo, *DEFAULT_MATERIAL);
+				return Physics::PxGetPhysics()->createShape(bgeo, *DEFAULT_MATERIAL);
 				break;
 			case physx::PxGeometryType::eSPHERE:
 				src->getSphereGeometry(sgeo);
-				dest = Physics::PxGetPhysics()->createShape(sgeo, *DEFAULT_MATERIAL);
+				return Physics::PxGetPhysics()->createShape(sgeo, *DEFAULT_MATERIAL);
 				break;
+			default:
+				Log::Write("Err: Error copying shape, type not recognized!\n", ENGINE_LOG);
+				return NULL;
 			}
 		}
 		else
-			dest = NULL;
+		{
+			Log::Write("Exc: Cannot copy shape, source is NULL!\n", ENGINE_LOG);
+			return NULL;
+		}
 	}
 	/*-------------------------------------------------------------------------\
 	|							SCENE DEFINITIONS								|
 	\-------------------------------------------------------------------------*/
 	Scene::Scene()
 	{
-
+		m_scene = NULL;
+		m_pause = false;
 	}
 
 	Scene::~Scene()
 	{
-		m_scene->release();
+		if(m_scene)
+			m_scene->release();
 	}
 
 	void Scene::Init()
@@ -143,13 +146,20 @@ namespace Physics
 		m_pause = !m_pause;
 	}
 
-	std::vector<PxRigidActor*> Scene::GetActors() const
+	std::vector<PxRigidActor*> Scene::GetActors(PxActorTypeSelectionFlags flags) const
 	{
-		int numOfActors = m_scene->getNbActors(PxActorTypeSelectionFlag::eRIGID_DYNAMIC | PxActorTypeSelectionFlag::eRIGID_STATIC);
+		int numOfActors = m_scene->getNbActors(flags);
 		std::vector<PxRigidActor*> atrs;
 		if(numOfActors)
-			m_scene->getActors(PxActorTypeSelectionFlag::eRIGID_DYNAMIC | PxActorTypeSelectionFlag::eRIGID_STATIC, (PxActor**)&atrs[0], numOfActors);
+			m_scene->getActors(flags, (PxActor**)&atrs[0], numOfActors);
 		return atrs;
+	}
+
+	void Scene::Add(Actor* actor)
+	{
+		Log::Write("Adding Actor to scene...\n", ENGINE_LOG);
+		actor->Create();
+		m_scene->addActor(*actor->Get());
 	}
 
 	/*-------------------------------------------------------------------------\

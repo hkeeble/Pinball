@@ -15,7 +15,8 @@ namespace GameFramework
 	{
 		Physics::PxInit(); // initialize physics
 
-		m_scene.Init(); // initialize scene
+		m_scene = new Physics::Scene();
+		m_scene->Init(); // initialize scene
 
 		instance = this; // Assign current instance for callback wrapper functions
 
@@ -30,7 +31,8 @@ namespace GameFramework
 
 	Game::~Game()
 	{
-
+		if(m_scene)
+			delete m_scene;
 	}
 
 	void Game::Run(int argc, char *argv[])
@@ -40,8 +42,16 @@ namespace GameFramework
 		InitGL();
 		InitGLUT(argc, argv);
 
+		Log::Write("Initializing Game...\n", ENGINE_LOG);
+		Init();
+
 		Log::Write("Entering main game loop...\n", ENGINE_LOG);
 		glutMainLoop();
+	}
+
+	void Game::Init()
+	{
+
 	}
 
 	void Game::InitGL() // Virtual Initialization - Override to change lighting params
@@ -94,14 +104,14 @@ namespace GameFramework
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 		// Render Scene
-		std::vector<physx::PxRigidActor*> actors = m_scene.GetActors(); // get scene actors
+		std::vector<physx::PxRigidActor*> actors = m_scene->GetActors(physx::PxActorTypeSelectionFlag::eRIGID_DYNAMIC | physx::PxActorTypeSelectionFlag::eRIGID_STATIC); // get scene actors
 
 		glutSwapBuffers();
 	}
 
 	void Game::Idle()
 	{
-		m_scene.Update(m_deltaTime);
+		m_scene->Update(m_deltaTime);
 	}
 
 	void Game::Reshape(int width, int height)

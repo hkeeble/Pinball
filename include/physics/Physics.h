@@ -16,7 +16,7 @@
 
 #define DEFAULT_DENSITY		0.f
 #define DEFAULT_COLOR		Vec3(.9f, 0.f, 0.f)
-#define DEFAULT_MATERIAL	PxGetDefaultMaterial()
+#define DEFAULT_MATERIAL	Physics::PxGetPhysics()->createMaterial(0.0f, 0.0f, 0.0f)
 #define IDENTITY			Transform(PxIdentity)
 
 typedef physx::PxVec3		Vec3;
@@ -40,8 +40,8 @@ namespace Physics
 	PxMaterial* PxGetDefaultMaterial();
 
 	// -- Utility Functions --
-	void cpyMaterial(PxMaterial* dest, PxMaterial* src);
-	void cpyShape(PxShape* dest, PxShape* src);
+	PxMaterial* cpyMaterial(PxMaterial* src);
+	PxShape* cpyShape(PxShape* src);
 
 	class Scene : private Uncopyable
 	{
@@ -59,7 +59,7 @@ namespace Physics
 
 			void Update(PxReal deltaTime);
 
-			std::vector<PxRigidActor*> GetActors() const;
+			std::vector<PxRigidActor*> GetActors(PxActorTypeSelectionFlags flags) const;
 
 			void Add(Actor* actor);
 	};
@@ -76,11 +76,12 @@ namespace Physics
 			Transform m_pose;
 			PxReal m_density;
 
-			virtual void Create() = 0;
 		public:
 			virtual ~Actor();
 
 			PxActor* Get();
+
+			virtual void Create() = 0;
 	};
 
 	/* Represents an actor that contains a PxShape (used for virtual resource management) */
@@ -97,7 +98,7 @@ namespace Physics
 		PxShape* m_shape;
 		PxMaterial* m_material;
 		Vec3 m_color;
-
+	public:
 		virtual void Create() = 0;
 	};
 }
