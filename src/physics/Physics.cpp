@@ -59,6 +59,38 @@ namespace Physics
 	}
 
 	/*-------------------------------------------------------------------------\
+	|							UTILITY DEFINITIONS								|
+	\-------------------------------------------------------------------------*/
+
+	void cpyMaterial(PxMaterial* dest, PxMaterial* src)
+	{
+		dest = Physics::PxGetPhysics()->createMaterial(src->getStaticFriction(),
+			src->getDynamicFriction(), src->getRestitution());
+	}
+
+	void cpyShape(PxShape* dest, PxShape* src)
+	{
+		PxBoxGeometry bgeo;
+		PxSphereGeometry sgeo;
+
+		if(src)
+		{
+			switch(src->getGeometryType())
+			{
+			case physx::PxGeometryType::eBOX:
+				src->getBoxGeometry(bgeo);
+				dest = Physics::PxGetPhysics()->createShape(bgeo, *DEFAULT_MATERIAL);
+				break;
+			case physx::PxGeometryType::eSPHERE:
+				src->getSphereGeometry(sgeo);
+				dest = Physics::PxGetPhysics()->createShape(sgeo, *DEFAULT_MATERIAL);
+				break;
+			}
+		}
+		else
+			dest = NULL;
+	}
+	/*-------------------------------------------------------------------------\
 	|							SCENE DEFINITIONS								|
 	\-------------------------------------------------------------------------*/
 	Scene::Scene()
@@ -88,7 +120,7 @@ namespace Physics
 
 		m_scene = physics->createScene(sceneDesc);
 
-		m_scene->setGravity(PxVec3(0.0f, -8.81f, 0.0f));
+		m_scene->setGravity(Vec3(0.0f, -8.81f, 0.0f));
 
 		m_pause = false;
 	}
@@ -125,12 +157,50 @@ namespace Physics
 	\-------------------------------------------------------------------------*/
 	Actor::Actor()
 	{
+		m_actor = NULL;
+		m_pose = IDENTITY;
+		m_density = DEFAULT_DENSITY;
+	}
 
+	Actor::Actor(Transform pose, PxReal density)
+	{
+		m_actor = NULL;
+		m_pose = pose;
+		m_density = density;
+	}
+
+	Actor::Actor(const Actor& param)
+	{
+		if(param.m_actor)
+			*m_actor = *param.m_actor;
+		else
+			m_actor = NULL;
+
+		m_pose = param.m_pose;
+		m_density = param.m_density;
+	}
+
+	Actor& Actor::operator=(const Actor& param)
+	{
+		if(this == &param)
+			return *this;
+		else
+		{
+			if(param.m_actor)
+				*m_actor = *param.m_actor;
+			else
+				m_actor = NULL;
+
+			m_pose = param.m_pose;
+			m_density = param.m_density;
+			return *this;
+		}
 	}
 
 	Actor::~Actor()
 	{
-
+		if(m_actor)
+			m_actor->release();
 	}
 
 	PxActor* Actor::Get()

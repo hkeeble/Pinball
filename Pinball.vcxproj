@@ -103,6 +103,7 @@
     <ClInclude Include="include\Uncopyable.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Actors.cpp" />
     <ClCompile Include="src\game.cpp" />
     <ClCompile Include="src\log.cpp" />
     <ClCompile Include="src\main.cpp" />

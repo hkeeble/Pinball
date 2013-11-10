@@ -62,5 +62,8 @@
     <ClCompile Include="src\log.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="Actors.cpp">
+      <Filter>src\physics</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
