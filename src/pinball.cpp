@@ -5,6 +5,11 @@
 \-------------------------------------------------------------------------*/
 #include "pinball.h"
 
+#define cameraEye		camera.EyePos
+#define cameraLookAt	camera.LookAt
+#define cameraUp		camera.Up
+#define FOV				camera.FOV
+
 Pinball::Pinball(std::string title, int windowWidth, int windowHeight, int windowPosX, int windowPosY)
 	: Game(title, windowWidth, windowHeight, windowPosX, windowPosY)
 {
@@ -18,6 +23,21 @@ Pinball::~Pinball()
 
 void Pinball::Init()
 {
+	// Camera
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	camera = Camera(UP_VECTOR, Vec3(0, 0, 1), Vec3(0, 3, -4), DEFAULT_FOV);
+	gluLookAt(	cameraEye.x,	cameraEye.y,	cameraEye.z,
+				cameraLookAt.x, cameraLookAt.y, cameraLookAt.z,
+				cameraUp.x,		cameraUp.y,		cameraUp.z	);
+
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	Fl32 r = glutGet(GLUT_INIT_WINDOW_WIDTH)/glutGet(GLUT_INIT_WINDOW_HEIGHT);
+	gluPerspective(FOV, r, .1, 100);
+	glMatrixMode(GL_MODELVIEW);
+
+	// Actors
 	m_ball = new Sphere(IDENTITY_TRANS, 0.5f, 1.f, Vec3(1.f, .0f, .0f));
 	m_scene->Add(m_ball);
 
