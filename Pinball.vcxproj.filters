@@ -36,10 +36,16 @@
     <ClInclude Include="include\pinball.h">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="include\log.h">
+      <Filter>include</Filter>
+    </ClInclude>
     <ClInclude Include="include\physics\Actors.h">
       <Filter>include\physics</Filter>
     </ClInclude>
-    <ClInclude Include="include\log.h">
+    <ClInclude Include="include\camera.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\globals.h">
       <Filter>include</Filter>
     </ClInclude>
   </ItemGroup>
@@ -62,8 +68,11 @@
     <ClCompile Include="src\log.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="Actors.cpp">
+    <ClCompile Include="src\physics\Actors.cpp">
       <Filter>src\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\camera.cpp">
+      <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

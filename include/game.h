@@ -11,9 +11,13 @@
 #include "Physics.h"
 #include "GL/glut.h"
 #include "uncopyable.h"
-#include "..\log.h"
+#include "log.h"
 #include "Actors.h"
 #include <string>
+#include "camera.h"
+
+#define FPS 60.f
+#define RENDER_DETAIL 15
 
 namespace GameFramework
 {
@@ -39,11 +43,15 @@ namespace GameFramework
 
 		// Physics Simulation Objects
 		Physics::Scene* m_scene;
-		physx::PxReal m_deltaTime;
+		Fl32 m_fps;
+
+		Camera camera;
+
+		void RenderGeometry(physx::PxGeometryHolder h);
 
 	public:
 		// Construction/Destruction
-		Game(std::string title, int windowWidth, int windowHeight, int windowPosX, int windowPosY, physx::PxReal deltaTime = 1.f/60.f);
+		Game(std::string title, int windowWidth, int windowHeight, int windowPosX, int windowPosY);
 		~Game();
 
 		void Run(int argc, char *argv[]); // Enters the main loop

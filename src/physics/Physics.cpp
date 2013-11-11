@@ -128,7 +128,7 @@ namespace Physics
 		m_pause = false;
 	}
 
-	void Scene::Update(PxReal deltaTime)
+	void Scene::Update(Fl32 deltaTime)
 	{
 		if(!m_pause)
 			m_scene->simulate(deltaTime);
@@ -149,7 +149,7 @@ namespace Physics
 	std::vector<PxRigidActor*> Scene::GetActors(PxActorTypeSelectionFlags flags) const
 	{
 		int numOfActors = m_scene->getNbActors(flags);
-		std::vector<PxRigidActor*> atrs;
+		std::vector<PxRigidActor*> atrs(numOfActors);
 		if(numOfActors)
 			m_scene->getActors(flags, (PxActor**)&atrs[0], numOfActors);
 		return atrs;
@@ -168,11 +168,11 @@ namespace Physics
 	Actor::Actor()
 	{
 		m_actor = NULL;
-		m_pose = IDENTITY;
+		m_pose = IDENTITY_TRANS;
 		m_density = DEFAULT_DENSITY;
 	}
 
-	Actor::Actor(Transform pose, PxReal density)
+	Actor::Actor(Transform pose, Fl32 density)
 	{
 		m_actor = NULL;
 		m_pose = pose;

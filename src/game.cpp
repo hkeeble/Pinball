@@ -7,11 +7,19 @@
 #include "game.h"
 #include <iostream>
 
+using namespace physx;
+
 namespace GameFramework
 {
 	Game* Game::instance = NULL;
 
-	Game::Game(std::string title, int windowWidth, int windowHeight, int windowPosX, int windowPosY, physx::PxReal deltaTime)
+	static Fl32 gPlaneData[]={
+			-1.0f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
+			1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, -1.0f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f,
+			1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f
+		};
+
+	Game::Game(std::string title, int windowWidth, int windowHeight, int windowPosX, int windowPosY)
 	{
 		Physics::PxInit(); // initialize physics
 
@@ -26,7 +34,7 @@ namespace GameFramework
 		m_windowPosX = windowPosX;
 		m_winowPosY = windowPosY;
 
-		m_deltaTime = deltaTime;
+		m_fps = 1.f/FPS;
 	}
 
 	Game::~Game()
@@ -61,10 +69,10 @@ namespace GameFramework
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_COLOR_MATERIAL);
 		glEnable(GL_LIGHTING);
-		float ambientColor[]	= { .5f, .5f, .5f, 1.f };
-		float diffuseColor[]	= { 1.f, 1.f, 1.f, 1.f };		
-		float specularColor[]	= { 1.f, 1.f, 1.f, 1.f };		
-		float position[]		= { 100.f, 100.f, 200.f, 1.0f };		
+		Fl32 ambientColor[]	= { .5f, .5f, .5f, 1.f };
+		Fl32 diffuseColor[]	= { 1.f, 1.f, 1.f, 1.f };		
+		Fl32 specularColor[]	= { 1.f, 1.f, 1.f, 1.f };		
+		Fl32 position[]		= { 100.f, 100.f, 200.f, 1.0f };		
 		glLightfv(GL_LIGHT0, GL_AMBIENT, ambientColor);
 		glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseColor);
 		glLightfv(GL_LIGHT0, GL_SPECULAR, specularColor);
@@ -95,28 +103,47 @@ namespace GameFramework
 		atexit(ExitWrapper);
 	}
 
+	void Game::RenderGeometry(PxGeometryHolder h)
+	{
+		switch(h.getType())
+		{
+		case PxGeometryType::eBOX:
+			glScalef(h.box().halfExtents.x, h.box().halfExtents.y, h.box().halfExtents.z);
+			glutSolidCube(2.0f);
+			break;
+		case PxGeometryType::eSPHERE:		
+			glutSolidSphere(h.sphere().radius, RENDER_DETAIL, RENDER_DETAIL);
+			break;
+		case PxGeometryType::ePLANE:
+			glScalef(10240,0,10240);
+			glEnableClientState(GL_VERTEX_ARRAY);
+			glEnableClientState(GL_NORMAL_ARRAY);
+			glVertexPointer(3, GL_FLOAT, 2*3*sizeof(Fl32), gPlaneData);
+			glNormalPointer(GL_FLOAT, 2*3*sizeof(Fl32), gPlaneData+3);
+			glDrawArrays(GL_TRIANGLES, 0, 6);
+			glDisableClientState(GL_VERTEX_ARRAY);
+			glDisableClientState(GL_NORMAL_ARRAY);
+		}
+	}
+
 	/*-------------------------------------------------------------------------\
 	|				VIRTUAL CALLBACK FUNCTION DEFINITIONS						|
 	\-------------------------------------------------------------------------*/
 
 	void Game::Render()
 	{
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-		// Render Scene
-		std::vector<physx::PxRigidActor*> actors = m_scene->GetActors(physx::PxActorTypeSelectionFlag::eRIGID_DYNAMIC | physx::PxActorTypeSelectionFlag::eRIGID_STATIC); // get scene actors
-
-		glutSwapBuffers();
 	}
 
 	void Game::Idle()
 	{
-		m_scene->Update(m_deltaTime);
+		m_scene->Update(m_fps);
+		glutPostRedisplay();
 	}
 
 	void Game::Reshape(int width, int height)
 	{
-		
+		glViewport(0, 0, width, height);
 	}
 
 	void Game::MouseButton(int button, int state, int x, int y)

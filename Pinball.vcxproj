@@ -93,7 +93,9 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="include\camera.h" />
     <ClInclude Include="include\game.h" />
+    <ClInclude Include="include\globals.h" />
     <ClInclude Include="include\GL\glut.h" />
     <ClInclude Include="include\log.h" />
     <ClInclude Include="include\physics\Actors.h" />
@@ -103,10 +105,11 @@
     <ClInclude Include="include\Uncopyable.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Actors.cpp" />
+    <ClCompile Include="src\camera.cpp" />
     <ClCompile Include="src\game.cpp" />
     <ClCompile Include="src\log.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\physics\Actors.cpp" />
     <ClCompile Include="src\physics\ErrorCallback.cpp" />
     <ClCompile Include="src\physics\Physics.cpp" />
     <ClCompile Include="src\pinball.cpp" />

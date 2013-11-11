@@ -17,8 +17,8 @@ namespace Physics
 	private:
 		Vec3 m_dimensions;
 	public:
-		Box(PxTransform pose = IDENTITY, Vec3 dimensions = Vec3(.5f, .5f, .5f),
-			PxReal density = DEFAULT_DENSITY, const Vec3& color = DEFAULT_COLOR,
+		Box(Transform pose = IDENTITY_TRANS, Vec3 dimensions = Vec3(.5f, .5f, .5f),
+			Fl32 density = DEFAULT_DENSITY, const Vec3& color = DEFAULT_COLOR,
 			PxMaterial* material = DEFAULT_MATERIAL);
 		Box(const Box& param);
 		virtual Box& operator=(const Box& param);
@@ -30,10 +30,10 @@ namespace Physics
 	class Sphere : public ShapeActor
 	{
 	private:
-		PxReal m_radius;
+		Fl32 m_radius;
 	public:
-		Sphere(PxTransform pose = IDENTITY, PxReal radius = 1.f,
-			PxReal density = DEFAULT_DENSITY, const Vec3& color = DEFAULT_COLOR,
+		Sphere(Transform pose = IDENTITY_TRANS, Fl32 radius = 1.f,
+			Fl32 density = DEFAULT_DENSITY, const Vec3& color = DEFAULT_COLOR,
 			PxMaterial* material = DEFAULT_MATERIAL);
 		Sphere(const Sphere& param);
 		virtual Sphere& operator=(const Sphere& param);

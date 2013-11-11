@@ -8,20 +8,11 @@
 #ifndef PHYSICS_H
 #define PHYSICS_H
 
-#include "PxPhysicsAPI.h" // Include PhysX
+#include "../globals.h"
 #include "ErrorCallback.h" // Custom Error Callback Class
 #include "uncopyable.h" // uncopyable base class
 #include <vector> // include vector for actor storage
 #include "log.h" // Log for logging program
-
-#define DEFAULT_DENSITY		0.f
-#define DEFAULT_COLOR		Vec3(.9f, 0.f, 0.f)
-#define DEFAULT_MATERIAL	Physics::PxGetPhysics()->createMaterial(0.0f, 0.0f, 0.0f)
-#define IDENTITY			Transform(PxIdentity)
-
-typedef physx::PxVec3		Vec3;
-typedef physx::PxVec2		Vec2;
-typedef physx::PxTransform	Transform;
 
 namespace Physics
 {
@@ -57,7 +48,7 @@ namespace Physics
 			bool IsPaused() const;
 			void TogglePause();
 
-			void Update(PxReal deltaTime);
+			void Update(Fl32 deltaTime);
 
 			std::vector<PxRigidActor*> GetActors(PxActorTypeSelectionFlags flags) const;
 
@@ -68,13 +59,13 @@ namespace Physics
 	{
 		protected:
 			Actor();
-			Actor(Transform pose, PxReal density);
+			Actor(Transform pose, Fl32 density);
 			Actor(const Actor& param);
 			virtual Actor& operator=(const Actor& param);
 
 			PxActor* m_actor;
 			Transform m_pose;
-			PxReal m_density;
+			Fl32 m_density;
 
 		public:
 			virtual ~Actor();
@@ -88,7 +79,7 @@ namespace Physics
 	class ShapeActor : public Actor
 	{
 	protected:
-		ShapeActor(Transform pose = IDENTITY, PxReal density = DEFAULT_DENSITY, PxMaterial* material = DEFAULT_MATERIAL,
+		ShapeActor(Transform pose = IDENTITY_TRANS, Fl32 density = DEFAULT_DENSITY, PxMaterial* material = DEFAULT_MATERIAL,
 			Vec3 color = DEFAULT_COLOR);
 		ShapeActor(const ShapeActor& param);
 		virtual ShapeActor& operator=(const ShapeActor& param);
