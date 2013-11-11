@@ -15,7 +15,11 @@
 // Actors
 #define MAX_NUM_ACTOR_SHAPES 128
 
+// Default Up Vector
 #define UP_VECTOR			Vec3(0, 1, 0)
+
+// Retrieve Physics
+#define PHYSICS				Physics::PxGetPhysics()
 
 typedef physx::PxVec3		Vec3;
 typedef physx::PxVec2		Vec2;

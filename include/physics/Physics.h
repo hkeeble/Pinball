@@ -73,6 +73,10 @@ namespace Physics
 			PxActor* Get();
 
 			virtual void Create() = 0;
+
+			#ifdef _DEBUG
+			void PrintPose() const;
+			#endif
 	};
 
 	/* Represents an actor that contains a PxShape (used for virtual resource management) */

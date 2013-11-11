@@ -141,4 +141,44 @@ namespace Physics
 	{
 
 	}
+	/*-------------------------------------------------------------------------\
+	|							PLANE DEFINITIONS								 |
+	\-------------------------------------------------------------------------*/
+	Plane::Plane(Vec3 normal, Fl32 distance, const Vec3& color, PxMaterial* material)
+		: ShapeActor(IDENTITY_TRANS, 0.f, material, color)
+	{
+		m_normal = normal;
+		m_distance = distance;
+	}
+
+	Plane::Plane(const Plane& param) : ShapeActor(param)
+	{
+		m_normal = param.m_normal;
+		m_distance = param.m_distance;
+	}
+
+	Plane& Plane::operator=(const Plane& param)
+	{
+		if(this == &param)
+			return *this;
+		else
+		{
+			ShapeActor::operator=(param);
+			m_normal = param.m_normal;
+			m_distance = param.m_distance;
+			return *this;
+		}
+	}
+
+	Plane::~Plane()
+	{
+
+	}
+
+	void Plane::Create()
+	{
+		PxRigidStatic* plane = PxCreatePlane(*PHYSICS, PxPlane(m_normal, m_distance), *DEFAULT_MATERIAL);
+		m_actor = plane;
+		m_actor->userData = &m_color; //pass color parameter to renderer
+	}
 }

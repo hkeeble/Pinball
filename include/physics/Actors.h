@@ -41,6 +41,21 @@ namespace Physics
 
 		virtual void Create();
 	};
+
+	class Plane : public ShapeActor
+	{
+	private:
+		Vec3 m_normal;
+		Fl32 m_distance;
+	public:
+		Plane(Vec3 normal = UP_VECTOR, Fl32 distance = 0.f, const Vec3& color = DEFAULT_COLOR,
+			PxMaterial* material = DEFAULT_MATERIAL);
+		Plane(const Plane& param);
+		virtual Plane& operator=(const Plane& param);
+		virtual ~Plane();
+
+		virtual void Create();
+	};
 }
 
 #endif _ACTORS_H_

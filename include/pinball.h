@@ -17,6 +17,7 @@ class Pinball : public Game
 	private:
 		Sphere* m_ball;
 		Box* m_board;
+		Plane* m_ground;
 
 	public:
 		Pinball(std::string title, int windowWidth, int windowHeight, int windowPosX, int windowPosY);

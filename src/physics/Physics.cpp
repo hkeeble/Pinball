@@ -131,7 +131,10 @@ namespace Physics
 	void Scene::Update(Fl32 deltaTime)
 	{
 		if(!m_pause)
+		{
 			m_scene->simulate(deltaTime);
+			m_scene->fetchResults(true);
+		}
 		else
 			return;
 	}
@@ -217,4 +220,14 @@ namespace Physics
 	{
 		return m_actor;
 	}
+
+	#ifdef _DEBUG
+	void Actor::PrintPose() const
+	{
+		Out(std::to_string(m_pose.p.x).c_str());
+		Out(std::to_string(m_pose.p.y).c_str());
+		Out(std::to_string(m_pose.p.z).c_str());
+		Out("\n");
+	}
+	#endif
 }

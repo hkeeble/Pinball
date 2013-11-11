@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
 {
 	InitLog();
 
-	Pinball game("Pinball Game", 800, 600, 100, 100);
+	Pinball game("Henri Keeble - KEE09195812 - CMP3001M - Assessment Item 1 - Pinball", 800, 600, 100, 100);
 
 	game.Run(argc, argv);
 
