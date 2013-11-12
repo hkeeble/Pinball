@@ -12,6 +12,7 @@
 #define DEFAULT_FOV			 60
 #define IDENTITY_TRANS		 Transform(PxIdentity)
 #define DEFAULT_ACTOR_TYPE	 DynamicActor
+#define DEFAULT_GEOMETRY	 PxBoxGeometry(1, 1, 1)->getGeometry()
 
 // Actors
 #define MAX_NUM_ACTOR_SHAPES 128
@@ -21,6 +22,9 @@
 
 // Retrieve Physics
 #define PHYSICS				Physics::PxGetPhysics()
+
+// Macros
+#define StaticCast(data, type) static_cast<type>(data)
 
 typedef physx::PxVec3		Vec3;
 typedef physx::PxVec2		Vec2;

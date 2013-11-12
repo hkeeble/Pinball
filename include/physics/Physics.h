@@ -40,6 +40,12 @@ namespace Physics
 		StaticActor
 	};
 
+	enum GeometryType
+	{
+		BoxGeometry,
+		SphereGeometry
+	};
+
 	class Scene : private Uncopyable
 	{
 	protected:
@@ -98,20 +104,30 @@ namespace Physics
 
 		virtual ~ShapeActor();
 
+		PxGeometryHolder m_geometry;
+		PxMaterial* m_material;
+		Vec3 m_color;
+
+	public:
+		virtual void Create();
+	};
+
+	class CompoundShapeActor : public Actor
+	{
+	protected:
+		CompoundShapeActor(Transform pose = IDENTITY_TRANS, Fl32 density = DEFAULT_DENSITY, PxMaterial* material = DEFAULT_MATERIAL,
+			Vec3 color = DEFAULT_COLOR, ActorType aType = DEFAULT_ACTOR_TYPE);
+		CompoundShapeActor(const CompoundShapeActor& param);
+		virtual ShapeActor& operator=(const CompoundShapeActor& param);
+
+		virtual ~CompoundShapeActor();
+
 		PxShape* m_shape;
 		PxMaterial* m_material;
 		Vec3 m_color;
 	public:
 		virtual void Create() = 0;
 	};
-
-	class CompoundShapeActor : public Actor
-	{
-	protected:
-
-	public:
-
-	}
 }
 
 #endif // PHYSICS_H

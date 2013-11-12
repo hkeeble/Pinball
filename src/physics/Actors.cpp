@@ -13,18 +13,20 @@ namespace Physics
 	\-------------------------------------------------------------------------*/
 	ShapeActor::ShapeActor(Transform pose, Fl32 density, PxMaterial* material, Vec3 color, ActorType aType) : Actor(pose, density, aType)
 	{
-		m_shape = NULL;
 		m_material = cpyMaterial(material);
 		m_color = color;
+		m_geometry = PxGeometryHolder();
 	}
 
 	ShapeActor::ShapeActor(const ShapeActor& param) :
 		Actor(param.m_pose, param.m_density, param.m_aType)
 	{
-		m_shape = cpyShape(param.m_shape);
-		m_material = Physics::PxGetPhysics()->createMaterial(param.m_material->getStaticFriction(),
-						param.m_material->getDynamicFriction(), param.m_material->getRestitution());
+		m_material = cpyMaterial(param.m_material);
 		m_color = param.m_color;
+		m_geometry = param.m_geometry;
+
+		// Create Shape
+		Create();
 	}
 
 	ShapeActor& ShapeActor::operator=(const ShapeActor& param)
@@ -33,23 +35,14 @@ namespace Physics
 			return *this;
 		else
 		{
-			if(m_shape)
-				m_shape->release();
-			m_shape = cpyShape(param.m_shape);
-
 			if(m_material)
 				m_material->release();
 			m_material = cpyMaterial(param.m_material);
-
-			if(m_shape)
-			{
-				if(m_material)
-					m_shape->setMaterials((PxMaterial* const*)m_material, 1);
-				else
-					m_shape->setMaterials((PxMaterial* const*)DEFAULT_MATERIAL, 1);
-			}
-
+			m_geometry = param.m_geometry;
 			m_color = param.m_color;
+
+			// Create Shape
+			Create();
 
 			return *this;
 		}
@@ -57,12 +50,34 @@ namespace Physics
 
 	ShapeActor::~ShapeActor()
 	{
-		if(m_shape)
-			m_shape->release();
 		if(m_material)
 			m_material->release();
 	}
 
+	void ShapeActor::Create()
+	{
+		void* shape = NULL;
+
+		if(m_aType == DynamicActor)
+		{
+			PxRigidDynamic* ptr = StaticCast(shape, PxRigidDynamic*); // Receive Correctly Cast Pointer
+			ptr = Physics::PxGetPhysics()->createRigidDynamic(m_pose);
+			ptr->createShape(m_geometry.any(), *m_material, IDENTITY_TRANS);
+			PxRigidBodyExt::setMassAndUpdateInertia(*ptr, m_density);
+			m_actor = ptr;
+		}
+		else
+		{
+			PxRigidStatic* ptr = StaticCast(shape, PxRigidStatic*); // Receive Correctly Cast Pointer
+			ptr = Physics::PxGetPhysics()->createRigidStatic(m_pose);
+			ptr->createShape(m_geometry.any(), *m_material, IDENTITY_TRANS);
+			m_actor = ptr;
+		}
+		if(m_actor)
+			m_actor->userData = &m_color;
+		else
+			Log::Write("Exc: Error creating Box Actor. m_actor is NULL!", ENGINE_LOG);
+	}
 	/*------------------------------------------------------------------------\
 	|							BOX DEFINITIONS									 |
 	\-------------------------------------------------------------------------*/
@@ -71,6 +86,7 @@ namespace Physics
 		: ShapeActor(pose, density, material, color, aType)
 	{
 		m_dimensions = dimensions;
+		m_geometry.storeAny(PxBoxGeometry(m_dimensions));
 	}
 
 	Box::Box(const Box& param) : ShapeActor(param)
@@ -90,29 +106,6 @@ namespace Physics
 		}
 	}
 
-	void Box::Create()
-	{
-		void* shape;
-
-		if(m_aType == DynamicActor)
-		{
-			shape = Physics::PxGetPhysics()->createRigidDynamic(m_pose);
-			static_cast<PxRigidDynamic*>(shape)->createShape(PxBoxGeometry(m_dimensions), *m_material, IDENTITY_TRANS);
-			PxRigidBodyExt::setMassAndUpdateInertia(*static_cast<PxRigidDynamic*>(shape), m_density);
-			m_actor = static_cast<PxRigidDynamic*>(shape);
-		}
-		else
-		{
-			shape = Physics::PxGetPhysics()->createRigidStatic(m_pose);
-			static_cast<PxRigidStatic*>(shape)->createShape(PxBoxGeometry(m_dimensions), *m_material, IDENTITY_TRANS);
-			m_actor = static_cast<PxRigidStatic*>(shape);
-		}
-		if(m_actor)
-			m_actor->userData = &m_color;
-		else
-			Log::Write("Exc: Error creating Box Actor. m_actor is NULL!", ENGINE_LOG);
-	}
-
 	Box::~Box()
 	{
 
@@ -125,6 +118,7 @@ namespace Physics
 		: ShapeActor(pose, density, material, color, aType)
 	{
 		m_radius = radius;
+		m_geometry.storeAny(PxSphereGeometry(m_radius));
 	}
 
 	Sphere::Sphere(const Sphere& param) : ShapeActor(param)
@@ -142,29 +136,6 @@ namespace Physics
 			m_radius = param.m_radius;
 			return *this;
 		}
-	}
-
-	void Sphere::Create()
-	{
-		void* shape;
-
-		if(m_aType == DynamicActor)
-		{
-			shape = Physics::PxGetPhysics()->createRigidDynamic(m_pose);
-			static_cast<PxRigidDynamic*>(shape)->createShape(PxSphereGeometry(m_radius), *m_material, IDENTITY_TRANS);
-			PxRigidBodyExt::setMassAndUpdateInertia(*static_cast<PxRigidDynamic*>(shape), m_density);
-			m_actor = static_cast<PxRigidDynamic*>(shape);
-		}
-		else
-		{
-			shape = Physics::PxGetPhysics()->createRigidStatic(m_pose);
-			static_cast<PxRigidStatic*>(shape)->createShape(PxSphereGeometry(m_radius), *m_material, IDENTITY_TRANS);
-			m_actor = static_cast<PxRigidStatic*>(shape);
-		}
-		if(m_actor)
-			m_actor->userData = &m_color;
-		else
-			Log::Write("Exc: Error creating Sphere Actor. m_actor is NULL!", ENGINE_LOG);
 	}
 
 	Sphere::~Sphere()
