@@ -10,6 +10,9 @@
 #define cameraUp		camera.Up
 #define FOV				camera.FOV
 
+#define BoardMaterial PHYSICS->createMaterial(0.f, 0.f, .1f)
+#define BallMaterial PHYSICS->createMaterial(0.f, 0.f, 1.f)
+
 Pinball::Pinball(std::string title, int windowWidth, int windowHeight, int windowPosX, int windowPosY)
 	: Game(title, windowWidth, windowHeight, windowPosX, windowPosY)
 {
@@ -43,10 +46,10 @@ void Pinball::Init()
 	Log::Write("Intializing Actors...\n", ENGINE_LOG);
 
 	// Actors
-	m_board = new Box(Transform(0, 0, 1), Vec3(1.5f, 0.1f, 3.2f), 1.f, Vec3(.5f, .5f, .5f));
+	m_board = new Box(Transform(0, 0, 1), Vec3(1.5f, 0.1f, 3.2f), 1.f, Vec3(.5f, .5f, .5f), BoardMaterial, StaticActor);
+	m_ball = new Sphere(Transform(0, 2.f, 0), 0.2f, 1.f, Vec3(1.f, 0.f, 0.f), BallMaterial);
+	
 	m_scene->Add(m_board);
-
-	m_ball = new Sphere(Transform(0, 2.f, 0), 0.2f, 1.f, Vec3(1.f, 0.f, 0.f));
 	m_scene->Add(m_ball);
 }
 

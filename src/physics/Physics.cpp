@@ -173,13 +173,15 @@ namespace Physics
 		m_actor = NULL;
 		m_pose = IDENTITY_TRANS;
 		m_density = DEFAULT_DENSITY;
+		m_aType = DEFAULT_ACTOR_TYPE;
 	}
 
-	Actor::Actor(Transform pose, Fl32 density)
+	Actor::Actor(Transform pose, Fl32 density, ActorType aType)
 	{
 		m_actor = NULL;
 		m_pose = pose;
 		m_density = density;
+		m_aType = aType;
 	}
 
 	Actor::Actor(const Actor& param)
@@ -191,6 +193,7 @@ namespace Physics
 
 		m_pose = param.m_pose;
 		m_density = param.m_density;
+		m_aType = param.m_aType;
 	}
 
 	Actor& Actor::operator=(const Actor& param)
@@ -206,6 +209,7 @@ namespace Physics
 
 			m_pose = param.m_pose;
 			m_density = param.m_density;
+			m_aType = param.m_aType;
 			return *this;
 		}
 	}

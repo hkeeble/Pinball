@@ -9,8 +9,9 @@
 #define DEFAULT_DENSITY		 0.f
 #define DEFAULT_COLOR		 Vec3(0.f, 0.f, 0.f)
 #define DEFAULT_MATERIAL	 Physics::PxGetPhysics()->createMaterial(0.0f, 0.0f, 0.0f)
-#define IDENTITY_TRANS		 Transform(PxIdentity)
 #define DEFAULT_FOV			 60
+#define IDENTITY_TRANS		 Transform(PxIdentity)
+#define DEFAULT_ACTOR_TYPE	 DynamicActor
 
 // Actors
 #define MAX_NUM_ACTOR_SHAPES 128

@@ -19,7 +19,7 @@ namespace Physics
 	public:
 		Box(Transform pose = IDENTITY_TRANS, Vec3 dimensions = Vec3(.5f, .5f, .5f),
 			Fl32 density = DEFAULT_DENSITY, const Vec3& color = DEFAULT_COLOR,
-			PxMaterial* material = DEFAULT_MATERIAL);
+			PxMaterial* material = DEFAULT_MATERIAL, ActorType aType = DEFAULT_ACTOR_TYPE);
 		Box(const Box& param);
 		virtual Box& operator=(const Box& param);
 		virtual ~Box();
@@ -34,7 +34,7 @@ namespace Physics
 	public:
 		Sphere(Transform pose = IDENTITY_TRANS, Fl32 radius = 1.f,
 			Fl32 density = DEFAULT_DENSITY, const Vec3& color = DEFAULT_COLOR,
-			PxMaterial* material = DEFAULT_MATERIAL);
+			PxMaterial* material = DEFAULT_MATERIAL, ActorType aType = DEFAULT_ACTOR_TYPE);
 		Sphere(const Sphere& param);
 		virtual Sphere& operator=(const Sphere& param);
 		virtual ~Sphere();

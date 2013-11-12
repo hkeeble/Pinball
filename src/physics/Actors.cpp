@@ -11,7 +11,7 @@ namespace Physics
 	/*------------------------------------------------------------------------\
 	|							SHAPEACTOR DEFINITIONS							 |
 	\-------------------------------------------------------------------------*/
-	ShapeActor::ShapeActor(Transform pose, Fl32 density, PxMaterial* material, Vec3 color) : Actor(pose, density)
+	ShapeActor::ShapeActor(Transform pose, Fl32 density, PxMaterial* material, Vec3 color, ActorType aType) : Actor(pose, density, aType)
 	{
 		m_shape = NULL;
 		m_material = cpyMaterial(material);
@@ -19,7 +19,7 @@ namespace Physics
 	}
 
 	ShapeActor::ShapeActor(const ShapeActor& param) :
-		Actor(param.m_pose, param.m_density)
+		Actor(param.m_pose, param.m_density, param.m_aType)
 	{
 		m_shape = cpyShape(param.m_shape);
 		m_material = Physics::PxGetPhysics()->createMaterial(param.m_material->getStaticFriction(),
@@ -66,8 +66,9 @@ namespace Physics
 	/*------------------------------------------------------------------------\
 	|							BOX DEFINITIONS									 |
 	\-------------------------------------------------------------------------*/
-	Box::Box(Transform pose, Vec3 dimensions, Fl32 density, const Vec3& color, PxMaterial* material)
-		: ShapeActor(pose, density, material, color)
+	Box::Box(Transform pose, Vec3 dimensions, Fl32 density, const Vec3& color, PxMaterial* material,
+		ActorType aType)
+		: ShapeActor(pose, density, material, color, aType)
 	{
 		m_dimensions = dimensions;
 	}
@@ -91,11 +92,25 @@ namespace Physics
 
 	void Box::Create()
 	{
-		PxRigidDynamic* box = Physics::PxGetPhysics()->createRigidDynamic(m_pose);
-		box->createShape(PxBoxGeometry(m_dimensions), *m_material, IDENTITY_TRANS);
-		PxRigidBodyExt::setMassAndUpdateInertia(*box, m_density);
-		m_actor = box;
-		m_actor->userData = &m_color;
+		void* shape;
+
+		if(m_aType == DynamicActor)
+		{
+			shape = Physics::PxGetPhysics()->createRigidDynamic(m_pose);
+			static_cast<PxRigidDynamic*>(shape)->createShape(PxBoxGeometry(m_dimensions), *m_material, IDENTITY_TRANS);
+			PxRigidBodyExt::setMassAndUpdateInertia(*static_cast<PxRigidDynamic*>(shape), m_density);
+			m_actor = static_cast<PxRigidDynamic*>(shape);
+		}
+		else
+		{
+			shape = Physics::PxGetPhysics()->createRigidStatic(m_pose);
+			static_cast<PxRigidStatic*>(shape)->createShape(PxBoxGeometry(m_dimensions), *m_material, IDENTITY_TRANS);
+			m_actor = static_cast<PxRigidStatic*>(shape);
+		}
+		if(m_actor)
+			m_actor->userData = &m_color;
+		else
+			Log::Write("Exc: Error creating Box Actor. m_actor is NULL!", ENGINE_LOG);
 	}
 
 	Box::~Box()
@@ -105,8 +120,9 @@ namespace Physics
 	/*-------------------------------------------------------------------------\
 	|							SPHERE DEFINITIONS								|
 	\-------------------------------------------------------------------------*/
-	Sphere::Sphere(Transform pose, Fl32 radius, Fl32 density, const Vec3& color, PxMaterial* material)
-		: ShapeActor(pose, density, material, color)
+	Sphere::Sphere(Transform pose, Fl32 radius, Fl32 density, const Vec3& color, PxMaterial* material,
+		ActorType aType)
+		: ShapeActor(pose, density, material, color, aType)
 	{
 		m_radius = radius;
 	}
@@ -130,11 +146,25 @@ namespace Physics
 
 	void Sphere::Create()
 	{
-		PxRigidDynamic* sphere = Physics::PxGetPhysics()->createRigidDynamic(m_pose);
-		sphere->createShape(PxSphereGeometry(m_radius), *m_material, IDENTITY_TRANS);
-		PxRigidBodyExt::setMassAndUpdateInertia(*sphere, m_density);
-		m_actor = sphere;
-		m_actor->userData = &m_color;
+		void* shape;
+
+		if(m_aType == DynamicActor)
+		{
+			shape = Physics::PxGetPhysics()->createRigidDynamic(m_pose);
+			static_cast<PxRigidDynamic*>(shape)->createShape(PxSphereGeometry(m_radius), *m_material, IDENTITY_TRANS);
+			PxRigidBodyExt::setMassAndUpdateInertia(*static_cast<PxRigidDynamic*>(shape), m_density);
+			m_actor = static_cast<PxRigidDynamic*>(shape);
+		}
+		else
+		{
+			shape = Physics::PxGetPhysics()->createRigidStatic(m_pose);
+			static_cast<PxRigidStatic*>(shape)->createShape(PxSphereGeometry(m_radius), *m_material, IDENTITY_TRANS);
+			m_actor = static_cast<PxRigidStatic*>(shape);
+		}
+		if(m_actor)
+			m_actor->userData = &m_color;
+		else
+			Log::Write("Exc: Error creating Sphere Actor. m_actor is NULL!", ENGINE_LOG);
 	}
 
 	Sphere::~Sphere()
@@ -145,7 +175,7 @@ namespace Physics
 	|							PLANE DEFINITIONS								 |
 	\-------------------------------------------------------------------------*/
 	Plane::Plane(Vec3 normal, Fl32 distance, const Vec3& color, PxMaterial* material)
-		: ShapeActor(IDENTITY_TRANS, 0.f, material, color)
+		: ShapeActor(IDENTITY_TRANS, 0.f, material, color, StaticActor)
 	{
 		m_normal = normal;
 		m_distance = distance;

@@ -34,6 +34,12 @@ namespace Physics
 	PxMaterial* cpyMaterial(PxMaterial* src);
 	PxShape* cpyShape(PxShape* src);
 
+	enum ActorType
+	{
+		DynamicActor,
+		StaticActor
+	};
+
 	class Scene : private Uncopyable
 	{
 	protected:
@@ -59,11 +65,12 @@ namespace Physics
 	{
 		protected:
 			Actor();
-			Actor(Transform pose, Fl32 density);
+			Actor(Transform pose, Fl32 density, ActorType m_aType);
 			Actor(const Actor& param);
 			virtual Actor& operator=(const Actor& param);
 
 			PxActor* m_actor;
+			ActorType m_aType;
 			Transform m_pose;
 			Fl32 m_density;
 
@@ -74,6 +81,7 @@ namespace Physics
 
 			virtual void Create() = 0;
 
+			// Functions Used for Debugging
 			#ifdef _DEBUG
 			void PrintPose() const;
 			#endif
@@ -84,7 +92,7 @@ namespace Physics
 	{
 	protected:
 		ShapeActor(Transform pose = IDENTITY_TRANS, Fl32 density = DEFAULT_DENSITY, PxMaterial* material = DEFAULT_MATERIAL,
-			Vec3 color = DEFAULT_COLOR);
+			Vec3 color = DEFAULT_COLOR, ActorType aType = DEFAULT_ACTOR_TYPE);
 		ShapeActor(const ShapeActor& param);
 		virtual ShapeActor& operator=(const ShapeActor& param);
 
@@ -96,6 +104,14 @@ namespace Physics
 	public:
 		virtual void Create() = 0;
 	};
+
+	class CompoundShapeActor : public Actor
+	{
+	protected:
+
+	public:
+
+	}
 }
 
 #endif // PHYSICS_H
