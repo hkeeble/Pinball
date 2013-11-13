@@ -48,6 +48,9 @@
     <ClInclude Include="include\globals.h">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="include\boardObjects.h">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\physics\ErrorCallback.cpp">
@@ -72,6 +75,9 @@
       <Filter>src\physics</Filter>
     </ClCompile>
     <ClCompile Include="src\camera.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\boardObjects.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>

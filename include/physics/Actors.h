@@ -12,6 +12,79 @@
 
 namespace Physics
 {
+	/* Abstract Actor Class */
+	class Actor
+	{
+		protected:
+			Actor();
+			Actor(Transform pose, Fl32 density, ActorType m_aType);
+			Actor(const Actor& param);
+			virtual Actor& operator=(const Actor& param);
+
+			PxRigidActor* m_actor;
+			ActorType m_aType;
+			Fl32 m_density;
+			Transform m_pose;
+
+		public:
+			virtual ~Actor();
+
+			PxRigidActor* Get();
+
+			virtual void Create() = 0;
+
+			// Functions Used for Debugging
+			#ifdef _DEBUG
+			void PrintPose() const;
+			#endif
+	};
+
+	/* Represents an actor that contains a PxShape (used for virtual resource management) */
+	class ShapeActor : public Actor
+	{
+	protected:
+		ShapeActor(Transform pose = IDENTITY_TRANS, Fl32 density = DEFAULT_DENSITY, PxMaterial* material = DEFAULT_MATERIAL,
+			Vec3 color = DEFAULT_COLOR, ActorType aType = DEFAULT_ACTOR_TYPE);
+		ShapeActor(const ShapeActor& param);
+		virtual ShapeActor& operator=(const ShapeActor& param);
+
+		virtual ~ShapeActor();
+
+		PxGeometryHolder m_geometry;
+		PxShape* m_shape;
+		PxMaterial* m_material;
+		Vec3 m_color;
+
+	public:
+		virtual void Create();
+
+		PxShape* GetShape();
+	};
+
+	/* Use as a base to derive complex actors consisting of more than one shape */
+	class CompoundShapeActor : public Actor
+	{
+	protected:
+		CompoundShapeActor(int numberOfShapes = 1, Transform pose = IDENTITY_TRANS, Fl32 density = DEFAULT_DENSITY, PxMaterial* material = DEFAULT_MATERIAL,
+			Vec3 color = DEFAULT_COLOR, ActorType aType = DEFAULT_ACTOR_TYPE);
+		CompoundShapeActor(const CompoundShapeActor& param);
+		virtual CompoundShapeActor& operator=(const CompoundShapeActor& param);
+
+		virtual ~CompoundShapeActor();
+
+		PxGeometryHolder* m_geometrys;
+		PxShape* m_shapes;
+		PxMaterial* m_material;
+		Vec3 m_color;
+
+		int nShapes;
+
+		PxShape* GetShapes();
+		void AddShape(PxShape* newShape);
+	public:
+		virtual void Create() = 0;
+	};
+
 	class Box : public ShapeActor
 	{
 	private:

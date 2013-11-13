@@ -5,6 +5,7 @@
 | Author: Henri Keeble														|
 \-------------------------------------------------------------------------*/
 #include "Physics.h"
+#include "Actors.h"
 
 namespace Physics
 {
@@ -164,74 +165,4 @@ namespace Physics
 		actor->Create();
 		m_scene->addActor(*actor->Get());
 	}
-
-	/*-------------------------------------------------------------------------\
-	|							ACTOR DEFINITIONS								|
-	\-------------------------------------------------------------------------*/
-	Actor::Actor()
-	{
-		m_actor = NULL;
-		m_pose = IDENTITY_TRANS;
-		m_density = DEFAULT_DENSITY;
-		m_aType = DEFAULT_ACTOR_TYPE;
-	}
-
-	Actor::Actor(Transform pose, Fl32 density, ActorType aType)
-	{
-		m_actor = NULL;
-		m_pose = pose;
-		m_density = density;
-		m_aType = aType;
-	}
-
-	Actor::Actor(const Actor& param)
-	{
-		if(param.m_actor)
-			*m_actor = *param.m_actor;
-		else
-			m_actor = NULL;
-
-		m_pose = param.m_pose;
-		m_density = param.m_density;
-		m_aType = param.m_aType;
-	}
-
-	Actor& Actor::operator=(const Actor& param)
-	{
-		if(this == &param)
-			return *this;
-		else
-		{
-			if(param.m_actor)
-				*m_actor = *param.m_actor;
-			else
-				m_actor = NULL;
-
-			m_pose = param.m_pose;
-			m_density = param.m_density;
-			m_aType = param.m_aType;
-			return *this;
-		}
-	}
-
-	Actor::~Actor()
-	{
-		if(m_actor)
-			m_actor->release();
-	}
-
-	PxActor* Actor::Get()
-	{
-		return m_actor;
-	}
-
-	#ifdef _DEBUG
-	void Actor::PrintPose() const
-	{
-		Out(std::to_string(m_pose.p.x).c_str());
-		Out(std::to_string(m_pose.p.y).c_str());
-		Out(std::to_string(m_pose.p.z).c_str());
-		Out("\n");
-	}
-	#endif
 }

@@ -66,68 +66,6 @@ namespace Physics
 
 			void Add(Actor* actor);
 	};
-
-	class Actor
-	{
-		protected:
-			Actor();
-			Actor(Transform pose, Fl32 density, ActorType m_aType);
-			Actor(const Actor& param);
-			virtual Actor& operator=(const Actor& param);
-
-			PxActor* m_actor;
-			ActorType m_aType;
-			Transform m_pose;
-			Fl32 m_density;
-
-		public:
-			virtual ~Actor();
-
-			PxActor* Get();
-
-			virtual void Create() = 0;
-
-			// Functions Used for Debugging
-			#ifdef _DEBUG
-			void PrintPose() const;
-			#endif
-	};
-
-	/* Represents an actor that contains a PxShape (used for virtual resource management) */
-	class ShapeActor : public Actor
-	{
-	protected:
-		ShapeActor(Transform pose = IDENTITY_TRANS, Fl32 density = DEFAULT_DENSITY, PxMaterial* material = DEFAULT_MATERIAL,
-			Vec3 color = DEFAULT_COLOR, ActorType aType = DEFAULT_ACTOR_TYPE);
-		ShapeActor(const ShapeActor& param);
-		virtual ShapeActor& operator=(const ShapeActor& param);
-
-		virtual ~ShapeActor();
-
-		PxGeometryHolder m_geometry;
-		PxMaterial* m_material;
-		Vec3 m_color;
-
-	public:
-		virtual void Create();
-	};
-
-	class CompoundShapeActor : public Actor
-	{
-	protected:
-		CompoundShapeActor(Transform pose = IDENTITY_TRANS, Fl32 density = DEFAULT_DENSITY, PxMaterial* material = DEFAULT_MATERIAL,
-			Vec3 color = DEFAULT_COLOR, ActorType aType = DEFAULT_ACTOR_TYPE);
-		CompoundShapeActor(const CompoundShapeActor& param);
-		virtual ShapeActor& operator=(const CompoundShapeActor& param);
-
-		virtual ~CompoundShapeActor();
-
-		PxShape* m_shape;
-		PxMaterial* m_material;
-		Vec3 m_color;
-	public:
-		virtual void Create() = 0;
-	};
 }
 
 #endif // PHYSICS_H
