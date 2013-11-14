@@ -7,6 +7,7 @@
 #define PINBALL_H
 
 #include "game.h"
+#include "boardObjects.h"
 #include <string>
 
 using namespace GameFramework;
@@ -18,6 +19,7 @@ class Pinball : public Game
 		Sphere* m_ball;
 		Box* m_board;
 		Plane* m_ground;
+		Border* m_border; 
 
 	public:
 		Pinball(std::string title, int windowWidth, int windowHeight, int windowPosX, int windowPosY);
@@ -35,5 +37,4 @@ class Pinball : public Game
 		virtual void SpecKeyboardUp(int key, int x, int y);
 		virtual void Exit();
 };
-
 #endif // PINBALL_H

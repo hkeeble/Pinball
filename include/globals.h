@@ -26,6 +26,16 @@
 // Macros
 #define StaticCast(data, type) static_cast<type>(data)
 
+// Board Height and Width
+#define BRD_WIDTH  1.5f
+#define BRD_HEIGHT 0.1f
+#define BRD_LENGTH 3.2f
+
+// Controls
+#define CAMERA_RT_LFT GLUT_KEY_LEFT
+#define CAMERA_RT_RGT GLUT_KEY_RIGHT
+#define EXIT		  0
+
 typedef physx::PxVec3		Vec3;
 typedef physx::PxVec2		Vec2;
 typedef physx::PxTransform	Transform;

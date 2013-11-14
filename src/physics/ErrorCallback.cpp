@@ -1,4 +1,5 @@
 #include "ErrorCallback.h"
+#include "log.h"
 
 namespace Physics
 {

@@ -48,9 +48,11 @@ void Pinball::Init()
 	// Actors
 	m_board = new Box(Transform(0, 0, 1), Vec3(1.5f, 0.1f, 3.2f), 1.f, Vec3(.5f, .5f, .5f), BoardMaterial, StaticActor);
 	m_ball = new Sphere(Transform(0, 2.f, 0), 0.2f, 1.f, Vec3(1.f, 0.f, 0.f), BallMaterial);
-	
+	m_border = new Border(4, IDENTITY_TRANS, 1.f, BoardMaterial, Vec3(0.f, 0.f, 0.5f), StaticActor);
+
 	m_scene->Add(m_board);
 	m_scene->Add(m_ball);
+	m_scene->Add(m_border);
 }
 
 void Pinball::Render()
@@ -145,7 +147,14 @@ void Pinball::KeyboardUp(unsigned char key, int x, int y)
 
 void Pinball::SpecKeyboardDown(int key, int x, int y)
 {
+	if(key == CAMERA_RT_LFT)
+	{
 
+	}
+	if(key == CAMERA_RT_RGT)
+	{
+
+	}
 }
 
 void Pinball::SpecKeyboardUp(int key, int x, int y)

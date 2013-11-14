@@ -165,10 +165,23 @@ namespace Physics
 			: Actor(pose, density, aType)
 		{
 			nShapes = numberOfShapes;
+			m_material = cpyMaterial(material);
+			m_color = color;
 		}
 		
 		CompoundShapeActor::CompoundShapeActor(const CompoundShapeActor& param)
 		{
+			m_material = cpyMaterial(param.m_material);
+			m_color = param.m_color;
+			if(param.m_geometrys)
+			{
+				m_geometrys = new PxGeometryHolder[param.nShapes];
+
+				for(int i = 0; i < param.nShapes; i++)
+					m_geometrys[i] = param.m_geometrys[i];
+			}
+			else
+				m_geometrys = NULL;
 
 		}
 		
@@ -188,9 +201,14 @@ namespace Physics
 				if(m_geometrys)
 					delete[] m_geometrys;
 				if(param.m_geometrys)
+				{
 					m_geometrys = new PxGeometryHolder[param.nShapes];
 
-				*m_geometrys = *param.m_geometrys;
+					for(int i = 0; i < param.nShapes; i++)
+						m_geometrys[i] = param.m_geometrys[i];
+				}
+				else
+					m_geometrys = NULL;
 
 				m_color = param.m_color;
 
@@ -201,14 +219,7 @@ namespace Physics
 		CompoundShapeActor::~CompoundShapeActor()
 		{
 			if(m_shapes)
-			{
-				int i = 0;
-				while((m_shapes+i))
-				{
-					(m_shapes+1)->release();
-					i++;
-				}
-			}
+				m_shapes->release();
 			if(m_geometrys)
 				delete[] m_geometrys;
 		}
@@ -219,11 +230,6 @@ namespace Physics
 			buf = new PxShape*[nShapes];
 			m_actor->getShapes(buf, nShapes);
 			return *buf;
-		}
-
-		void CompoundShapeActor::AddShape(PxShape* newShape)
-		{
-
 		}
 	/*------------------------------------------------------------------------\
 	|							BOX DEFINITIONS									 |

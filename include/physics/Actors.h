@@ -80,7 +80,6 @@ namespace Physics
 		int nShapes;
 
 		PxShape* GetShapes();
-		void AddShape(PxShape* newShape);
 	public:
 		virtual void Create() = 0;
 	};
