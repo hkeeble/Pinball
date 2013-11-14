@@ -31,10 +31,17 @@
 #define BRD_HEIGHT 0.1f
 #define BRD_LENGTH 3.2f
 
+// Camera
+#define CAMERA_RT_SPD 1.f
+
 // Controls
 #define CAMERA_RT_LFT GLUT_KEY_LEFT
 #define CAMERA_RT_RGT GLUT_KEY_RIGHT
 #define EXIT		  0
+
+// Math
+#define PI 3.14159265359
+#define DEG2RAD(data) data * (PI/180)
 
 typedef physx::PxVec3		Vec3;
 typedef physx::PxVec2		Vec2;

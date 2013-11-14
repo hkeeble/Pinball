@@ -4,11 +4,7 @@
 | Author: Henri Keeble														|
 \-------------------------------------------------------------------------*/
 #include "pinball.h"
-
-#define cameraEye		camera.EyePos
-#define cameraLookAt	camera.LookAt
-#define cameraUp		camera.Up
-#define FOV				camera.FOV
+#include "globals.h"
 
 #define BoardMaterial PHYSICS->createMaterial(0.f, 0.f, .1f)
 #define BallMaterial PHYSICS->createMaterial(0.f, 0.f, 1.f)
@@ -33,14 +29,12 @@ void Pinball::Init()
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	camera = Camera(UP_VECTOR, Vec3(0, 0, 1), Vec3(0, 3, -4), DEFAULT_FOV);
-	gluLookAt(	cameraEye.x,	cameraEye.y,	cameraEye.z,
-				cameraLookAt.x, cameraLookAt.y, cameraLookAt.z,
-				cameraUp.x,		cameraUp.y,		cameraUp.z	);
+	camera.Update();
 
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	Fl32 r = glutGet(GLUT_INIT_WINDOW_WIDTH)/glutGet(GLUT_INIT_WINDOW_HEIGHT);
-	gluPerspective(FOV, r, .1, 100);
+	gluPerspective(camera.FOV, r, .1, 100);
 	glMatrixMode(GL_MODELVIEW);
 
 	Log::Write("Intializing Actors...\n", ENGINE_LOG);
@@ -149,11 +143,15 @@ void Pinball::SpecKeyboardDown(int key, int x, int y)
 {
 	if(key == CAMERA_RT_LFT)
 	{
-
+		PxQuat q(0, 1, 0, DEG2RAD(CAMERA_RT_SPD));
+		camera.EyePos = q.rotate(camera.EyePos);
+		camera.Update();
 	}
 	if(key == CAMERA_RT_RGT)
 	{
-
+		PxQuat q(0, 1, 0, -DEG2RAD(CAMERA_RT_SPD));
+		camera.EyePos = q.rotate(camera.EyePos);
+		camera.Update();
 	}
 }
 

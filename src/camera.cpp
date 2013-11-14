@@ -5,6 +5,7 @@
 | Author: Henri Keeble														|
 \-------------------------------------------------------------------------*/
 #include "camera.h"
+#include "GL/glut.h"
 
 Camera::Camera()
 {
@@ -20,6 +21,13 @@ Camera::Camera(Vec3 up, Vec3 lookAt, Vec3 eyePos, Fl32 Fov)
 	LookAt = lookAt;
 	EyePos = eyePos;
 	FOV = Fov;
+}
+
+void Camera::Update()
+{
+	gluLookAt(	EyePos.x,	EyePos.y,	EyePos.z,
+				LookAt.x,	LookAt.y,	LookAt.z,
+				Up.x,		Up.y,		Up.z	);
 }
 
 Camera::~Camera()

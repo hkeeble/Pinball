@@ -15,6 +15,7 @@ public:
 	Camera();
 	Camera(Vec3 up, Vec3 lookAt, Vec3 eyePos, Fl32 FOV);
 	~Camera();
+	void Update();
 	Vec3 Up, LookAt, EyePos;
 	Fl32 FOV;
 };
