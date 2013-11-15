@@ -223,14 +223,6 @@ namespace Physics
 			if(m_geometrys)
 				delete[] m_geometrys;
 		}
-
-		PxShape* CompoundShapeActor::GetShapes()
-		{
-			PxShape** buf;
-			buf = new PxShape*[nShapes];
-			m_actor->getShapes(buf, nShapes);
-			return *buf;
-		}
 	/*------------------------------------------------------------------------\
 	|							BOX DEFINITIONS									 |
 	\-------------------------------------------------------------------------*/

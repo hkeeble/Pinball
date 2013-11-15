@@ -68,22 +68,13 @@ namespace Physics
 	};
 
 	/*-------------------------------------------------------------------------\
-	|								CONVEX MESH ACTOR							|
-	\-------------------------------------------------------------------------*/
-	/* Represents an actor with a convex mesh */
-	class ConvexMeshActor : public Actor
-	{
-
-	};
-
-	/*-------------------------------------------------------------------------\
 	|						COMPOUND SHAPE ACTOR								|
 	\-------------------------------------------------------------------------*/
 	/* Use as a base to derive complex actors consisting of more than one shape */
 	class CompoundShapeActor : public Actor, Uncopyable
 	{
 	protected:
-		CompoundShapeActor(int numberOfShapes = 1, Transform pose = IDENTITY_TRANS, Fl32 density = DEFAULT_DENSITY, PxMaterial* material = DEFAULT_MATERIAL,
+		CompoundShapeActor(int numberOfShapes = 0, Transform pose = IDENTITY_TRANS, Fl32 density = DEFAULT_DENSITY, PxMaterial* material = DEFAULT_MATERIAL,
 			Vec3 color = DEFAULT_COLOR, ActorType aType = DEFAULT_ACTOR_TYPE);
 		CompoundShapeActor(const CompoundShapeActor& param);
 		virtual CompoundShapeActor& operator=(const CompoundShapeActor& param);
@@ -96,8 +87,6 @@ namespace Physics
 		Vec3 m_color;
 
 		int nShapes;
-
-		PxShape* GetShapes();
 	public:
 		virtual void Create() = 0;
 	};

@@ -69,10 +69,10 @@ namespace GameFramework
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_COLOR_MATERIAL);
 		glEnable(GL_LIGHTING);
-		Fl32 ambientColor[]	= { .5f, .5f, .5f, 1.f };
-		Fl32 diffuseColor[]	= { 1.f, 1.f, 1.f, 1.f };		
-		Fl32 specularColor[]= { 1.f, 1.f, 1.f, 1.f };		
-		Fl32 position[]		= { 0, -1, 0.7f, 0.0f };		
+		Fl32 ambientColor[]	= { .5f, .5f,  .5f, 1.f };
+		Fl32 diffuseColor[]	= { .4f, .4f,  .4f, 1.f };		
+		Fl32 specularColor[]= { 1.f, 1.f,  1.f, 1.f };		
+		Fl32 position[]		= { 1.f, 0.f, 0.f, 0.0f };		
 		glLightfv(GL_LIGHT0, GL_AMBIENT, ambientColor);
 		glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseColor);
 		glLightfv(GL_LIGHT0, GL_SPECULAR, specularColor);

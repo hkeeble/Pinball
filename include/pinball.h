@@ -17,11 +17,12 @@ class Pinball : public Game
 {
 	private:
 		// Actors
-		Sphere* m_ball;
-		Box* m_board;
-		Box* m_glass;
-		Plane* m_ground;
-		Border* m_border; 
+		Sphere*		m_ball;
+		Box*		m_board;
+		Box*		m_glass;
+		Plane*		m_ground;
+		Border*		m_border;
+		InnerWalls* m_innerWalls;
 
 		// Constants
 		const Fl32 m_ballRadius; // 1/16th of an inch
@@ -31,6 +32,7 @@ class Pinball : public Game
 		const Transform m_boardPose;
 		const Fl32 m_fallHoleWidth;
 		const Fl32 m_plungerLaneWidth;
+		const Fl32 m_wallHeight, m_wallWidth;
 
 	public:
 		Pinball(std::string title, int windowWidth, int windowHeight, int windowPosX, int windowPosY);

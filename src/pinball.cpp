@@ -20,7 +20,9 @@ Pinball::Pinball(std::string title, int windowWidth, int windowHeight, int windo
 	 m_fallHoleWidth	(m_ballRadius*2),
 	 m_plungerLaneWidth	(m_fallHoleWidth),
 	 m_boardDimensions	(Vec3(1.6f, 0.05f, 3.0f)),
-	 m_boardPose		(Vec3(0, 0, 1.f), Quat(DEG2RAD(-25), Vec3(1, 0, 0)))
+	 m_boardPose		(Vec3(0, 0, 1.f), Quat(DEG2RAD(-25), Vec3(1, 0, 0))),
+	 m_wallHeight		(0.1f),
+	 m_wallWidth		(0.05f)
 {
 	m_ball = NULL;
 	m_board = NULL;
@@ -38,7 +40,7 @@ void Pinball::Init()
 	Log::Write("Intializing Camera...\n", ENGINE_LOG);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	camera = Camera(UP_VECTOR, Vec3(0, 0, 1), Vec3(0, 0.7, -4.8), DEFAULT_FOV);
+	camera = Camera(UP_VECTOR, Vec3(0, 0, 1), Vec3(0, 5, -1.5), DEFAULT_FOV);
 	camera.Update();
 
 	glMatrixMode(GL_PROJECTION);
@@ -61,17 +63,20 @@ void Pinball::Init()
 	// Actors
 	m_board = new Box(m_boardPose, m_boardDimensions, 1.f, Vec3(brdC.r, brdC.g, brdC.b), BoardMaterial, StaticActor);
 
-	m_ball = new Sphere(Transform(0, m_boardDimensions.y+m_ballRadius, m_boardPose.p.z), m_ballRadius, 1.f, Vec3(ballC.r, ballC.g, ballC.b), BallMaterial);
+	m_ball = new Sphere(Transform(-m_boardDimensions.x+m_ballRadius+0.05f, m_boardDimensions.y+m_ballRadius, m_boardPose.p.z), m_ballRadius, 1.f, Vec3(ballC.r, ballC.g, ballC.b), BallMaterial);
 
-	m_border = new Border(BorderMaterial, Vec3(bdrC.r, bdrC.g, bdrC.b), *m_board, m_fallHoleWidth, m_plungerLaneWidth);
+	m_border = new Border(BorderMaterial, Vec3(bdrC.r, bdrC.g, bdrC.b), *m_board, m_fallHoleWidth, m_plungerLaneWidth, m_wallHeight, m_wallWidth);
 
 	m_glass = new Box(Transform(Vec3(0, m_boardDimensions.y+(m_ballRadius*2)+(m_boardDimensions.y)+0.01f, m_boardPose.p.z-((m_boardDimensions.y/2)/2)), m_boardPose.q), m_boardDimensions, 1.f, Vec3(.5f, .5f, .5f), BoardMaterial, StaticActor);
+
+	m_innerWalls = new InnerWalls(BorderMaterial, Vec3(bdrC.r, bdrC.g, bdrC.b), *m_board, m_fallHoleWidth, m_plungerLaneWidth, m_wallHeight, m_wallWidth); 
 
 	// Add Actors to scene (Note: Glass must be added second)
 	m_scene->Add(m_board);
 	m_scene->Add(m_glass);
 	m_scene->Add(m_ball);
 	m_scene->Add(m_border);
+	m_scene->Add(m_innerWalls);
 }
 
 void Pinball::Render()
@@ -91,8 +96,8 @@ void Pinball::Render()
 	{
 		for(int i = 0; i < nbActors; i++)
 		{
-			//if(i != GLASS_ATR_IDX) // Don't Render the glass
-			//{
+			if(i != GLASS_ATR_IDX) // Don't Render the glass
+			{
 				PxU32 nbShapes = actors[i]->getNbShapes();
 				if(nbShapes <= MAX_NUM_ACTOR_SHAPES)
 				{
@@ -129,7 +134,7 @@ void Pinball::Render()
 				}
 				else
 					Log::Write("Exc: Too many shapes in actor!\n", ENGINE_LOG);
-			//}
+			}
 		}
 	}
 
