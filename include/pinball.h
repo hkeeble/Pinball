@@ -23,9 +23,24 @@ class Pinball : public Game
 		Plane* m_ground;
 		Border* m_border; 
 
+		// Constants
+		const Fl32 m_ballRadius; // 1/16th of an inch
+
+		// Board Height and Width
+		const Vec3 m_boardDimensions;
+		const Transform m_boardPose;
+		const Fl32 m_fallHoleWidth;
+		const Fl32 m_plungerLaneWidth;
+
 	public:
 		Pinball(std::string title, int windowWidth, int windowHeight, int windowPosX, int windowPosY);
 		~Pinball();
+
+		Vec3 Dimensions() const;
+		Transform Pose() const;
+		Fl32 FallHoleWidth() const;
+		Fl32 PlungerLaneWidth() const;
+		Fl32 BallRadius() const;
 
 		virtual void Init();
 		virtual void Render();

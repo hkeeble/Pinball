@@ -22,14 +22,22 @@ using namespace Physics;
 
 class Border : public CompoundShapeActor
 {
+private:
+	// Constants
+	const Fl32 m_height;
+	const Fl32 m_width;
+	const Box m_board;
+    const Fl32 m_fallHoleWidth, m_plungerLaneWidth;
 public:
-	Border(int numberOfShapes = 1, Transform pose = IDENTITY_TRANS, Fl32 density = DEFAULT_DENSITY, PxMaterial* material = DEFAULT_MATERIAL,
-		Vec3 color = DEFAULT_COLOR, ActorType aType = DEFAULT_ACTOR_TYPE);
+	Border(PxMaterial* material, Vec3 color, const Box& board, Fl32 fallHoleWidth, Fl32 plungerLaneWidth);
 	Border(const Border& param);
 	virtual Border& operator=(const Border& param);
 	virtual ~Border();
 
 	virtual void Create();
+
+	Fl32 Height() const;
+	Fl32 Width() const;
 };
 
 // Inner Wall Defines

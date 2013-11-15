@@ -46,10 +46,10 @@ namespace GameFramework
 	void Game::Run(int argc, char *argv[])
 	{
 		Log::Write("Game Run Function Invoked...\n", ENGINE_LOG);
-
-		InitGL();
+		
 		InitGLUT(argc, argv);
-
+		InitGL();
+		
 		Log::Write("Initializing Game...\n", ENGINE_LOG);
 		Init();
 
@@ -72,7 +72,7 @@ namespace GameFramework
 		Fl32 ambientColor[]	= { .5f, .5f, .5f, 1.f };
 		Fl32 diffuseColor[]	= { 1.f, 1.f, 1.f, 1.f };		
 		Fl32 specularColor[]= { 1.f, 1.f, 1.f, 1.f };		
-		Fl32 position[]		= { 100.f, 100.f, 200.f, 1.0f };		
+		Fl32 position[]		= { 0, -1, 0.7f, 0.0f };		
 		glLightfv(GL_LIGHT0, GL_AMBIENT, ambientColor);
 		glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseColor);
 		glLightfv(GL_LIGHT0, GL_SPECULAR, specularColor);

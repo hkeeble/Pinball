@@ -259,6 +259,11 @@ namespace Physics
 		}
 	}
 
+	Vec3 Box::Dimensions() const
+	{
+		return m_dimensions;
+	}
+
 	Box::~Box()
 	{
 
@@ -289,6 +294,11 @@ namespace Physics
 			m_radius = param.m_radius;
 			return *this;
 		}
+	}
+
+	Fl32 Sphere::Radius() const
+	{
+		return m_radius;
 	}
 
 	Sphere::~Sphere()

@@ -5,27 +5,30 @@
 | Author: Henri Keeble														|
 \-------------------------------------------------------------------------*/
 #include "boardObjects.h"
+#include "pinball.h"
 
 using namespace Physics;
 
 /*-------------------------------------------------------------------------\
 |						BORDER DEFINITIONS									|
 \-------------------------------------------------------------------------*/
-Border::Border(int numberOfShapes, Transform pose, Fl32 density, PxMaterial* material, Vec3 color, ActorType aType)
-		: CompoundShapeActor(numberOfShapes, pose, density, material, color, aType)
+#pragma region Border
+Border::Border(PxMaterial* material, Vec3 color, const Box& board, Fl32 fallHoleWidth, Fl32 plungerLaneWidth)
+		: CompoundShapeActor(BDR_SHAPES, IDENTITY_TRANS, 1, material, color, StaticActor),
+		m_height(0.1f), m_width(0.05f), m_fallHoleWidth(fallHoleWidth), m_plungerLaneWidth(plungerLaneWidth), m_board(board)
 {
 	m_geometrys = new PxGeometryHolder[BDR_SHAPES];
 
 	// Geometries
 	PxBoxGeometry geos[BDR_SHAPES];
-	geos[BDR_ID_TOP] = PxBoxGeometry(BRD_WIDTH, BDR_HEIGHT, BDR_WIDTH);
+	geos[BDR_ID_TOP] = PxBoxGeometry(m_board.Dimensions().x, m_height, m_width);
 
 	// Bottom Left and Right Borders (allowing for plunger and fall hole)
-	geos[BDR_ID_BTM_RGT] = PxBoxGeometry((BRD_WIDTH/2)-FALL_HOLE_WIDTH-PLUNGER_LANE_WIDTH, BDR_HEIGHT, BDR_WIDTH);
-	geos[BDR_ID_BTM_LFT] = PxBoxGeometry((BRD_WIDTH/2)-FALL_HOLE_WIDTH, BDR_HEIGHT, BDR_WIDTH);
+	geos[BDR_ID_BTM_RGT] = PxBoxGeometry((m_board.Dimensions().x/2)-fallHoleWidth-plungerLaneWidth, m_height, m_width);
+	geos[BDR_ID_BTM_LFT] = PxBoxGeometry((m_board.Dimensions().x/2)-fallHoleWidth, m_height, m_width);
 
-	geos[BDR_ID_LFT] = PxBoxGeometry(BDR_WIDTH, BDR_HEIGHT, BRD_LENGTH);
-	geos[BDR_ID_RGT] = PxBoxGeometry(BDR_WIDTH, BDR_HEIGHT, BRD_LENGTH);
+	geos[BDR_ID_LFT] = PxBoxGeometry(m_width, m_height, m_board.Dimensions().z);
+	geos[BDR_ID_RGT] = PxBoxGeometry(m_width, m_height, m_board.Dimensions().z);
 
 	// Assign Geometries
 	m_geometrys[BDR_ID_TOP].box()	  = geos[BDR_ID_TOP];
@@ -38,7 +41,8 @@ Border::Border(int numberOfShapes, Transform pose, Fl32 density, PxMaterial* mat
 	Create();
 }
 	
-Border::Border(const Border& param) : CompoundShapeActor(param)
+Border::Border(const Border& param) : CompoundShapeActor(param),
+	m_height(0.1f), m_width(0.05f), m_fallHoleWidth(param.m_fallHoleWidth), m_plungerLaneWidth(param.m_plungerLaneWidth), m_board(param.m_board)
 {
 	Create();
 }
@@ -65,13 +69,13 @@ void Border::Create()
 	
 	// Determine Poses
 	Transform p_top, p_bottom_lft, p_bottom_rgt, p_left, p_right;
-	p_top = Transform(Vec3(0, BDR_HEIGHT/2, BRD_LENGTH));
+	p_top = Transform(Vec3(0, m_height+(m_board.Dimensions().y), m_board.Dimensions().z));
 
-	p_bottom_lft = PxTransform(PxVec3(BRD_WIDTH/2+FALL_HOLE_WIDTH, BDR_HEIGHT/2, -BRD_LENGTH));
-	p_bottom_rgt = Transform(Vec3((-BRD_WIDTH/2)+PLUNGER_LANE_WIDTH, BDR_HEIGHT/2, -BRD_LENGTH));
+	p_bottom_lft = PxTransform	(PxVec3 (m_board.Dimensions().x/2+m_fallHoleWidth+m_width,  m_height+(m_board.Dimensions().y), -m_board.Dimensions().z));
+	p_bottom_rgt = Transform	(Vec3	((-m_board.Dimensions().x/2)+m_plungerLaneWidth,    m_height+(m_board.Dimensions().y), -m_board.Dimensions().z));
 
-	p_left	 = Transform(Vec3(-BRD_WIDTH, BDR_HEIGHT/2, 0));
-	p_right  = Transform(Vec3(BRD_WIDTH,  BDR_HEIGHT/2, 0));
+	p_left	 = Transform(Vec3(-m_board.Dimensions().x, m_height+(m_board.Dimensions().y), 0));
+	p_right  = Transform(Vec3(m_board.Dimensions().x,  m_height+(m_board.Dimensions().y), 0));
 
 	// Create Shapes
 	PxShape* sT = dyn->createShape(m_geometrys[BDR_ID_TOP].box(), *m_material);
@@ -86,20 +90,30 @@ void Border::Create()
 	sBr->setLocalPose(p_bottom_rgt);
 	sL->setLocalPose(p_left);
 	sR->setLocalPose(p_right);
-
+	
 	// Set Rotation
-	dyn->setGlobalPose(Transform(Vec3(0, 0, BRD_Z_OFFSET), Quat(BRD_ROT, Vec3(1, 0, 0))));
+	dyn->setGlobalPose(const_cast<Box&>(m_board).Get()->getGlobalPose());
 
 	m_actor = dyn;
 
 	m_actor->userData = &m_color;
 }
 
+Fl32 Border::Height() const
+{
+	return m_height;
+}
+
+Fl32 Border::Width() const
+{
+	return m_width;
+}
+#pragma endregion
 /*-------------------------------------------------------------------------\
 |						INNER WALL DEFINITIONS								|
 \-------------------------------------------------------------------------*/
-InnerWalls::InnerWalls(int numberOfShapes = 1, Transform pose = IDENTITY_TRANS, Fl32 density = DEFAULT_DENSITY, PxMaterial* material = DEFAULT_MATERIAL,
-		Vec3 color = DEFAULT_COLOR, ActorType aType = DEFAULT_ACTOR_TYPE)
+#pragma region InnerWalls
+InnerWalls::InnerWalls(int numberOfShapes, Transform pose, Fl32 density, PxMaterial* material, Vec3 color, ActorType aType)
 {
 	m_geometrys = new PxGeometryHolder[IW_SHAPES];
 
@@ -110,8 +124,9 @@ InnerWalls::InnerWalls(int numberOfShapes = 1, Transform pose = IDENTITY_TRANS, 
 	//geos[IW_ID_PLUNGE_LN_WALL_EXT]	= 
 
 	//// Assign Geometrys
-
-
+	//m_geometrys[IW_ID_PLUNGE_LN_WALL].any() = geos[IW_ID_PLUNGE_LN_WALL];
+	//m_geometrys[IW_ID_PLUNGE_LN_WALL_TP].any() = geos[IW_ID_PLUNGE_LN_WALL_TP];
+	//m_geometrys[IW_ID_PLUNGE_LN_WALL_EXT].any() = geos[IW_ID_PLUNGE_LN_WALL_EXT];
 }
 
 InnerWalls::InnerWalls(const Border& param)
@@ -121,7 +136,7 @@ InnerWalls::InnerWalls(const Border& param)
 
 InnerWalls& InnerWalls::operator=(const Border& param)
 {
-
+	return *this;
 }
 
 InnerWalls::~InnerWalls()
@@ -133,3 +148,4 @@ void InnerWalls::Create()
 {
 
 }
+#pragma endregion

@@ -10,8 +10,17 @@
 #define BorderMaterial PHYSICS->createMaterial(0.f, 0.f, 0.2f)
 #define BallMaterial PHYSICS->createMaterial(0.f, 0.f, .2f)
 
+// Assign Constants
+const int MAX_NUM_ACTOR_SHAPES = 128;
+
 Pinball::Pinball(std::string title, int windowWidth, int windowHeight, int windowPosX, int windowPosY)
-	: Game(title, windowWidth, windowHeight, windowPosX, windowPosY)
+	: Game(title, windowWidth, windowHeight, windowPosX, windowPosY),
+	 // Initialize Constants
+	 m_ballRadius		(0.039375f),
+	 m_fallHoleWidth	(m_ballRadius*2),
+	 m_plungerLaneWidth	(m_fallHoleWidth),
+	 m_boardDimensions	(Vec3(1.6f, 0.05f, 3.0f)),
+	 m_boardPose		(Vec3(0, 0, 1.f), Quat(DEG2RAD(-25), Vec3(1, 0, 0)))
 {
 	m_ball = NULL;
 	m_board = NULL;
@@ -29,7 +38,7 @@ void Pinball::Init()
 	Log::Write("Intializing Camera...\n", ENGINE_LOG);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	camera = Camera(UP_VECTOR, Vec3(0, 0, 1), CAMERA_POS, DEFAULT_FOV);
+	camera = Camera(UP_VECTOR, Vec3(0, 0, 1), Vec3(0, 0.7, -4.8), DEFAULT_FOV);
 	camera.Update();
 
 	glMatrixMode(GL_PROJECTION);
@@ -41,24 +50,22 @@ void Pinball::Init()
 	Log::Write("Intializing Actors...\n", ENGINE_LOG);
 
 	// Colors
-	Color cc = CLEAR_COLOR;
-	Color brdC = BOARD_COLOR;
-	Color ballC = BALL_COLOR;
-	Color bdrC = BORDER_COLOR;
+	Color ballC = Color(0.8, 0.8, 0.8);
+	Color brdC  = Color(0.4, 0.4, 0.4);
+	Color bdrC  = Color(0, 0, 0);
+	Color cc	= Color(0.5, 1, 1);
 
-	// Clear Color
+	// Set Clear Color
 	glClearColor(cc.r, cc.g, cc.b, 1.0);
 
 	// Actors
-	m_board = new Box(Transform(Vec3(0, -(BRD_HEIGHT/2), BRD_Z_OFFSET), Quat(BRD_ROT, Vec3(1, 0, 0))), Vec3(BRD_WIDTH, BRD_HEIGHT, BRD_LENGTH),
-		1.f, Vec3(brdC.r, brdC.g, brdC.b), BoardMaterial, StaticActor);
+	m_board = new Box(m_boardPose, m_boardDimensions, 1.f, Vec3(brdC.r, brdC.g, brdC.b), BoardMaterial, StaticActor);
 
-	m_glass = new Box(Transform(Vec3(0, GLASS_HEIGHT, BRD_Z_OFFSET-GLASS_HEIGHT/2), Quat(BRD_ROT, Vec3(1, 0, 0))), Vec3(BRD_WIDTH, BRD_HEIGHT, BRD_LENGTH),
-		1.f, Vec3(.5f, .5f, .5f), BoardMaterial, StaticActor);
+	m_ball = new Sphere(Transform(0, m_boardDimensions.y+m_ballRadius, m_boardPose.p.z), m_ballRadius, 1.f, Vec3(ballC.r, ballC.g, ballC.b), BallMaterial);
 
-	m_ball = new Sphere((PxTransform)Transform(0, -(BRD_HEIGHT/2)+(BALL_RADIUS+0.01f), BRD_Z_OFFSET), BALL_RADIUS, 1.f, Vec3(ballC.r, ballC.g, ballC.b), BallMaterial);
+	m_border = new Border(BorderMaterial, Vec3(bdrC.r, bdrC.g, bdrC.b), *m_board, m_fallHoleWidth, m_plungerLaneWidth);
 
-	m_border = new Border(4, IDENTITY_TRANS, 1.f, BorderMaterial, Vec3(bdrC.r, bdrC.g, bdrC.b), StaticActor);
+	m_glass = new Box(Transform(Vec3(0, m_boardDimensions.y+(m_ballRadius*2)+(m_boardDimensions.y)+0.01f, m_boardPose.p.z-((m_boardDimensions.y/2)/2)), m_boardPose.q), m_boardDimensions, 1.f, Vec3(.5f, .5f, .5f), BoardMaterial, StaticActor);
 
 	// Add Actors to scene (Note: Glass must be added second)
 	m_scene->Add(m_board);
@@ -84,8 +91,8 @@ void Pinball::Render()
 	{
 		for(int i = 0; i < nbActors; i++)
 		{
-			if(i != GLASS_ATR_IDX) // Don't Render the glass
-			{
+			//if(i != GLASS_ATR_IDX) // Don't Render the glass
+			//{
 				PxU32 nbShapes = actors[i]->getNbShapes();
 				if(nbShapes <= MAX_NUM_ACTOR_SHAPES)
 				{
@@ -122,7 +129,7 @@ void Pinball::Render()
 				}
 				else
 					Log::Write("Exc: Too many shapes in actor!\n", ENGINE_LOG);
-			}
+			//}
 		}
 	}
 
@@ -134,7 +141,7 @@ void Pinball::Idle()
 	Game::Idle();
 
 #ifdef _DEBUG
-	m_ball->PrintPose();
+	//m_ball->PrintPose();
 #endif
 }
 

@@ -116,6 +116,8 @@ namespace Physics
 		Box(const Box& param);
 		virtual Box& operator=(const Box& param);
 		virtual ~Box();
+
+		Vec3 Dimensions() const;
 	};
 
 	/*-------------------------------------------------------------------------\
@@ -132,6 +134,8 @@ namespace Physics
 		Sphere(const Sphere& param);
 		virtual Sphere& operator=(const Sphere& param);
 		virtual ~Sphere();
+
+		Fl32 Radius() const;
 	};
 
 	/*-------------------------------------------------------------------------\
