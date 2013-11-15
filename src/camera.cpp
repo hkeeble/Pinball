@@ -25,6 +25,8 @@ Camera::Camera(Vec3 up, Vec3 lookAt, Vec3 eyePos, Fl32 Fov)
 
 void Camera::Update()
 {
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
 	gluLookAt(	EyePos.x,	EyePos.y,	EyePos.z,
 				LookAt.x,	LookAt.y,	LookAt.z,
 				Up.x,		Up.y,		Up.z	);

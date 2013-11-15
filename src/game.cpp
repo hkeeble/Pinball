@@ -71,13 +71,14 @@ namespace GameFramework
 		glEnable(GL_LIGHTING);
 		Fl32 ambientColor[]	= { .5f, .5f, .5f, 1.f };
 		Fl32 diffuseColor[]	= { 1.f, 1.f, 1.f, 1.f };		
-		Fl32 specularColor[]	= { 1.f, 1.f, 1.f, 1.f };		
+		Fl32 specularColor[]= { 1.f, 1.f, 1.f, 1.f };		
 		Fl32 position[]		= { 100.f, 100.f, 200.f, 1.0f };		
 		glLightfv(GL_LIGHT0, GL_AMBIENT, ambientColor);
 		glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseColor);
 		glLightfv(GL_LIGHT0, GL_SPECULAR, specularColor);
 		glLightfv(GL_LIGHT0, GL_POSITION, position);
 		glEnable(GL_LIGHT0);
+
 	}
 
 	void Game::InitGLUT(int argc, char *argv[])
@@ -85,7 +86,7 @@ namespace GameFramework
 		Log::Write("Intializing GLUT...\n", ENGINE_LOG);
 
 		glutInit(&argc, argv);
-		glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
+		glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH | GLUT_ALPHA);
 		glutInitWindowPosition(m_windowPosX, m_winowPosY);
 		glutInitWindowSize(m_windowWidth, m_windowHeight);
 		glutCreateWindow(m_title.c_str());
@@ -99,7 +100,7 @@ namespace GameFramework
 		glutKeyboardFunc(KeyboardDownWrapper);
 		glutKeyboardUpFunc(KeyboardUpWrapper);
 		glutSpecialFunc(SpecKeyboardDownWrapper);
-		glutSpecialFunc(SpecKeyboardUpWrapper);
+		glutSpecialUpFunc(SpecKeyboardUpWrapper);
 		atexit(ExitWrapper);
 	}
 
@@ -144,6 +145,11 @@ namespace GameFramework
 	void Game::Reshape(int width, int height)
 	{
 		glViewport(0, 0, width, height);
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		Fl32 r = glutGet(GLUT_INIT_WINDOW_WIDTH)/glutGet(GLUT_INIT_WINDOW_HEIGHT);
+		gluPerspective(camera.FOV, r, .1, 100);
+		glMatrixMode(GL_MODELVIEW);
 	}
 
 	void Game::MouseButton(int button, int state, int x, int y)

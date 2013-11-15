@@ -16,8 +16,10 @@ using namespace Physics;
 class Pinball : public Game
 {
 	private:
+		// Actors
 		Sphere* m_ball;
 		Box* m_board;
+		Box* m_glass;
 		Plane* m_ground;
 		Border* m_border; 
 

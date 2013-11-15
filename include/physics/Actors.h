@@ -12,6 +12,9 @@
 
 namespace Physics
 {
+	/*-------------------------------------------------------------------------\
+	|								ACTOR										|
+	\-------------------------------------------------------------------------*/
 	/* Abstract Actor Class */
 	class Actor
 	{
@@ -39,6 +42,9 @@ namespace Physics
 			#endif
 	};
 
+	/*-------------------------------------------------------------------------\
+	|								SHAPE ACTOR									|
+	\-------------------------------------------------------------------------*/
 	/* Represents an actor that contains a PxShape (used for virtual resource management) */
 	class ShapeActor : public Actor
 	{
@@ -61,8 +67,20 @@ namespace Physics
 		PxShape* GetShape();
 	};
 
+	/*-------------------------------------------------------------------------\
+	|								CONVEX MESH ACTOR							|
+	\-------------------------------------------------------------------------*/
+	/* Represents an actor with a convex mesh */
+	class ConvexMeshActor : public Actor
+	{
+
+	};
+
+	/*-------------------------------------------------------------------------\
+	|						COMPOUND SHAPE ACTOR								|
+	\-------------------------------------------------------------------------*/
 	/* Use as a base to derive complex actors consisting of more than one shape */
-	class CompoundShapeActor : public Actor
+	class CompoundShapeActor : public Actor, Uncopyable
 	{
 	protected:
 		CompoundShapeActor(int numberOfShapes = 1, Transform pose = IDENTITY_TRANS, Fl32 density = DEFAULT_DENSITY, PxMaterial* material = DEFAULT_MATERIAL,
@@ -84,6 +102,9 @@ namespace Physics
 		virtual void Create() = 0;
 	};
 
+	/*-------------------------------------------------------------------------\
+	|								BOX											|
+	\-------------------------------------------------------------------------*/
 	class Box : public ShapeActor
 	{
 	private:
@@ -97,6 +118,9 @@ namespace Physics
 		virtual ~Box();
 	};
 
+	/*-------------------------------------------------------------------------\
+	|								SPHERE										|
+	\-------------------------------------------------------------------------*/
 	class Sphere : public ShapeActor
 	{
 	private:
@@ -110,6 +134,9 @@ namespace Physics
 		virtual ~Sphere();
 	};
 
+	/*-------------------------------------------------------------------------\
+	|								PLANE										|
+	\-------------------------------------------------------------------------*/
 	class Plane : public ShapeActor
 	{
 	private:

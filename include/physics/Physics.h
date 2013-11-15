@@ -62,7 +62,7 @@ namespace Physics
 
 			void Update(Fl32 deltaTime);
 
-			std::vector<PxRigidActor*> GetActors(PxActorTypeSelectionFlags flags) const;
+			std::vector<PxRigidActor*> GetActors(PxActorTypeSelectionFlags flags, bool rendering = false) const;
 
 			void Add(Actor* actor);
 	};

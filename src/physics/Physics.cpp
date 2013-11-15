@@ -16,6 +16,10 @@ namespace Physics
 	// -- PhysX Objects --
 	PxFoundation* foundation = NULL;
 	PxPhysics* physics = NULL;
+	// Visual Debugger
+#ifdef _DEBUG
+	debugger::comm::PvdConnection* vd_connection = 0;
+#endif
 
 	/*-------------------------------------------------------------------------\
 	|						PHYSICS INITIALIZATION								|
@@ -122,6 +126,13 @@ namespace Physics
 			sceneDesc.cpuDispatcher = mCpuDispatcher;
 		}
 
+		// Initialize visual debugger
+#ifdef _DEBUG
+		if (!vd_connection)
+			vd_connection = PxVisualDebuggerExt::createConnection(physics->getPvdConnectionManager(), 
+			"localhost", 5425, 100, PxVisualDebuggerExt::getAllConnectionFlags());
+#endif
+
 		m_scene = physics->createScene(sceneDesc);
 
 		m_scene->setGravity(Vec3(0.0f, -8.81f, 0.0f));
@@ -150,7 +161,7 @@ namespace Physics
 		m_pause = !m_pause;
 	}
 
-	std::vector<PxRigidActor*> Scene::GetActors(PxActorTypeSelectionFlags flags) const
+	std::vector<PxRigidActor*> Scene::GetActors(PxActorTypeSelectionFlags flags, bool rendering) const
 	{
 		int numOfActors = m_scene->getNbActors(flags);
 		std::vector<PxRigidActor*> atrs(numOfActors);
@@ -162,7 +173,8 @@ namespace Physics
 	void Scene::Add(Actor* actor)
 	{
 		Log::Write("Adding Actor to scene...\n", ENGINE_LOG);
-		actor->Create();
+		if(!actor->Get())
+			actor->Create();
 		m_scene->addActor(*actor->Get());
 	}
 }
