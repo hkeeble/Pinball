@@ -65,11 +65,18 @@ namespace Physics
 		return m_actor;
 	}
 
+	Transform Actor::Pose()
+	{
+		return Get()->getGlobalPose();
+	}
+
 	#ifdef _DEBUG
 	void Actor::PrintPose() const
 	{
 		Out(std::to_string(m_actor->getGlobalPose().p.x).c_str());
+		Out(" ");
 		Out(std::to_string(m_actor->getGlobalPose().p.y).c_str());
+		Out(" ");
 		Out(std::to_string(m_actor->getGlobalPose().p.z).c_str());
 		Out("\n");
 	}
@@ -157,22 +164,50 @@ namespace Physics
 		return *buf;
 	}
 
+
+
 	/*------------------------------------------------------------------------\
 	|					COMPOUNDSHAPEACTOR DEFINITIONS							|
 	\-------------------------------------------------------------------------*/
-
-		CompoundShapeActor::CompoundShapeActor(int numberOfShapes, Transform pose, Fl32 density, PxMaterial* material, Vec3 color, ActorType aType)
-			: Actor(pose, density, aType)
-		{
-			nShapes = numberOfShapes;
-			m_material = cpyMaterial(material);
-			m_color = color;
-		}
+	CompoundShapeActor::CompoundShapeActor(int numberOfShapes, Transform pose, Fl32 density, PxMaterial* material, Vec3 color, ActorType aType)
+		: Actor(pose, density, aType)
+	{
+		nShapes = numberOfShapes;
+		m_material = cpyMaterial(material);
+		m_color = color;
+	}
 		
-		CompoundShapeActor::CompoundShapeActor(const CompoundShapeActor& param)
+	CompoundShapeActor::CompoundShapeActor(const CompoundShapeActor& param)
+	{
+		m_material = cpyMaterial(param.m_material);
+		m_color = param.m_color;
+		if(param.m_geometrys)
 		{
+			m_geometrys = new PxGeometryHolder[param.nShapes];
+
+			for(int i = 0; i < param.nShapes; i++)
+				m_geometrys[i] = param.m_geometrys[i];
+		}
+		else
+			m_geometrys = NULL;
+
+	}
+		
+	CompoundShapeActor& CompoundShapeActor::operator=(const CompoundShapeActor& param)
+	{
+		if(&param == this)
+			return *this;
+		else
+		{
+			Actor::operator=(param);
+
+			if(m_material)
+				m_material->release();
+
 			m_material = cpyMaterial(param.m_material);
-			m_color = param.m_color;
+
+			if(m_geometrys)
+				delete[] m_geometrys;
 			if(param.m_geometrys)
 			{
 				m_geometrys = new PxGeometryHolder[param.nShapes];
@@ -183,46 +218,17 @@ namespace Physics
 			else
 				m_geometrys = NULL;
 
+			m_color = param.m_color;
+
+			return *this;
 		}
-		
-		CompoundShapeActor& CompoundShapeActor::operator=(const CompoundShapeActor& param)
-		{
-			if(&param == this)
-				return *this;
-			else
-			{
-				Actor::operator=(param);
+	}
 
-				if(m_material)
-					m_material->release();
-
-				m_material = cpyMaterial(param.m_material);
-
-				if(m_geometrys)
-					delete[] m_geometrys;
-				if(param.m_geometrys)
-				{
-					m_geometrys = new PxGeometryHolder[param.nShapes];
-
-					for(int i = 0; i < param.nShapes; i++)
-						m_geometrys[i] = param.m_geometrys[i];
-				}
-				else
-					m_geometrys = NULL;
-
-				m_color = param.m_color;
-
-				return *this;
-			}
-		}
-
-		CompoundShapeActor::~CompoundShapeActor()
-		{
-			if(m_shapes)
-				m_shapes->release();
-			if(m_geometrys)
-				delete[] m_geometrys;
-		}
+	CompoundShapeActor::~CompoundShapeActor()
+	{
+		if(m_geometrys)
+			delete[] m_geometrys;
+	}
 	/*------------------------------------------------------------------------\
 	|							BOX DEFINITIONS									 |
 	\-------------------------------------------------------------------------*/

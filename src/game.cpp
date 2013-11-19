@@ -138,8 +138,7 @@ namespace GameFramework
 
 	void Game::Idle()
 	{
-		m_scene->Update(m_fps);
-		glutPostRedisplay();
+
 	}
 
 	void Game::Reshape(int width, int height)

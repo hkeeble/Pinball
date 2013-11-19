@@ -58,4 +58,6 @@ struct Color
 // Glass index
 #define GLASS_ATR_IDX 1
 
+#define BALL_RADIUS 0.039375f // 1/16th of an inch
+
 #endif _GLOBALS_H_

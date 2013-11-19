@@ -18,28 +18,29 @@ namespace Physics
 	/* Abstract Actor Class */
 	class Actor
 	{
-		protected:
-			Actor();
-			Actor(Transform pose, Fl32 density, ActorType m_aType);
-			Actor(const Actor& param);
-			virtual Actor& operator=(const Actor& param);
+	protected:
+		PxRigidActor* m_actor;
+		ActorType m_aType;
+		Fl32 m_density;
+		Transform m_pose;
 
-			PxRigidActor* m_actor;
-			ActorType m_aType;
-			Fl32 m_density;
-			Transform m_pose;
+	public:
+		Actor();
+		Actor(Transform pose, Fl32 density, ActorType m_aType);
+		Actor(const Actor& param);
+		virtual Actor& operator=(const Actor& param);
+		virtual ~Actor();
 
-		public:
-			virtual ~Actor();
+		PxRigidActor* Get();
 
-			PxRigidActor* Get();
+		Transform Pose();
 
-			virtual void Create() = 0;
+		virtual void Create() = 0;
 
-			// Functions Used for Debugging
-			#ifdef _DEBUG
-			void PrintPose() const;
-			#endif
+		// Functions Used for Debugging
+		#ifdef _DEBUG
+		void PrintPose() const;
+		#endif
 	};
 
 	/*-------------------------------------------------------------------------\
@@ -71,9 +72,16 @@ namespace Physics
 	|						COMPOUND SHAPE ACTOR								|
 	\-------------------------------------------------------------------------*/
 	/* Use as a base to derive complex actors consisting of more than one shape */
-	class CompoundShapeActor : public Actor, Uncopyable
+	class CompoundShapeActor : public Actor
 	{
 	protected:
+		PxGeometryHolder* m_geometrys;
+		PxShape* m_shapes;
+		PxMaterial* m_material;
+		Vec3 m_color;
+		int nShapes;
+
+	public:
 		CompoundShapeActor(int numberOfShapes = 0, Transform pose = IDENTITY_TRANS, Fl32 density = DEFAULT_DENSITY, PxMaterial* material = DEFAULT_MATERIAL,
 			Vec3 color = DEFAULT_COLOR, ActorType aType = DEFAULT_ACTOR_TYPE);
 		CompoundShapeActor(const CompoundShapeActor& param);
@@ -81,13 +89,6 @@ namespace Physics
 
 		virtual ~CompoundShapeActor();
 
-		PxGeometryHolder* m_geometrys;
-		PxShape* m_shapes;
-		PxMaterial* m_material;
-		Vec3 m_color;
-
-		int nShapes;
-	public:
 		virtual void Create() = 0;
 	};
 

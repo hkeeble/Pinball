@@ -15,6 +15,7 @@
 #include "Actors.h"
 #include <string>
 #include "camera.h"
+#include "gamestate.h"
 
 #define FPS 60.f
 #define RENDER_DETAIL 15
@@ -47,6 +48,7 @@ namespace GameFramework
 
 		Camera camera;
 
+		// Renders the given geometric object
 		void RenderGeometry(physx::PxGeometryHolder h);
 
 	public:

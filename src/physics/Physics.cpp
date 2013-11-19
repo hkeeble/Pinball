@@ -96,6 +96,17 @@ namespace Physics
 			return NULL;
 		}
 	}
+
+	/* Adds a distance joint between two rigid actors */
+	void AddDistanceJoint(PxRigidActor* actor0, PxTransform& localFrame0, PxRigidActor* actor1, PxTransform& localFrame1, PxDistanceJointFlags flags,
+		PxReal stiffness, PxReal damping)
+	{
+		PxDistanceJoint* joint = PxDistanceJointCreate(*PHYSICS, actor0, localFrame0, actor1, localFrame1);
+		joint->setDistanceJointFlags(flags);
+		joint->setStiffness(stiffness);
+		joint->setDamping(damping);
+	}
+
 	/*-------------------------------------------------------------------------\
 	|							SCENE DEFINITIONS								|
 	\-------------------------------------------------------------------------*/
@@ -176,5 +187,11 @@ namespace Physics
 		if(!actor->Get())
 			actor->Create();
 		m_scene->addActor(*actor->Get());
+
+		#ifdef _DEBUG
+		Out("Actor Added at position: ");
+		if(actor);
+			actor->PrintPose();
+		#endif
 	}
 }

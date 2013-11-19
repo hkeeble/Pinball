@@ -80,5 +80,8 @@
     <ClCompile Include="src\boardObjects.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\plunger.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

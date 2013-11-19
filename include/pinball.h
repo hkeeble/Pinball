@@ -18,31 +18,26 @@ class Pinball : public Game
 	private:
 		// Actors
 		Sphere*		m_ball;
-		Box*		m_board;
 		Box*		m_glass;
 		Plane*		m_ground;
 		Border*		m_border;
 		InnerWalls* m_innerWalls;
+		Plunger*	m_plunger;
 
-		// Constants
-		const Fl32 m_ballRadius; // 1/16th of an inch
+		int m_currentScore;
 
-		// Board Height and Width
-		const Vec3 m_boardDimensions;
-		const Transform m_boardPose;
-		const Fl32 m_fallHoleWidth;
-		const Fl32 m_plungerLaneWidth;
-		const Fl32 m_wallHeight, m_wallWidth;
+		enum GameState
+		{
+			Menu,
+			InGame
+		} gameState;
 
 	public:
 		Pinball(std::string title, int windowWidth, int windowHeight, int windowPosX, int windowPosY);
 		~Pinball();
 
-		Vec3 Dimensions() const;
-		Transform Pose() const;
-		Fl32 FallHoleWidth() const;
-		Fl32 PlungerLaneWidth() const;
-		Fl32 BallRadius() const;
+		// Board Actor
+		static Board* board;
 
 		virtual void Init();
 		virtual void Render();
@@ -56,4 +51,5 @@ class Pinball : public Game
 		virtual void SpecKeyboardUp(int key, int x, int y);
 		virtual void Exit();
 };
+
 #endif // PINBALL_H

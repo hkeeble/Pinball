@@ -115,6 +115,7 @@
     <ClCompile Include="src\physics\ErrorCallback.cpp" />
     <ClCompile Include="src\physics\Physics.cpp" />
     <ClCompile Include="src\pinball.cpp" />
+    <ClCompile Include="src\plunger.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
