@@ -199,6 +199,10 @@ void Pinball::KeyboardDown(unsigned char key, int x, int y)
 		if(key == VK_RETURN)
 			gameState = InGame;
 		break;
+	/* InGame Keys */
+	case InGame:
+		if(key == VK_SPACE)
+			m_plunger->SetKinematicTarget(Transform(Vec3(0, 0, -.02f)));
 	}
 
 	// Keys applicable to all states
@@ -208,7 +212,12 @@ void Pinball::KeyboardDown(unsigned char key, int x, int y)
 
 void Pinball::KeyboardUp(unsigned char key, int x, int y)
 {
-
+	switch(gameState)
+	{
+	case InGame:
+		if(key == VK_SPACE)
+			m_plunger->SetKinematic(false);
+	}
 }
 
 void Pinball::SpecKeyboardDown(int key, int x, int y)

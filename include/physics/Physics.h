@@ -34,7 +34,7 @@ namespace Physics
 	PxMaterial* cpyMaterial(PxMaterial* src);
 	PxShape* cpyShape(PxShape* src);
 	void AddDistanceJoint(PxRigidActor* actor0, PxTransform& localFrame0, PxRigidActor* actor1, PxTransform& localFrame1,
-		PxDistanceJointFlag::Enum flag = PxDistanceJointFlag::Enum::eSPRING_ENABLED, PxReal stiffness=1.f, PxReal damping=1.f);
+		PxDistanceJointFlag::Enum flags = PxDistanceJointFlag::Enum::eSPRING_ENABLED, PxReal stiffness=1.f, PxReal damping=1.f);
 
 	enum ActorType
 	{

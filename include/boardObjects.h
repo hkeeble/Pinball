@@ -91,9 +91,15 @@ public:
 /* Compound shape representing a plunger */
 class Plunger : public CompoundShapeActor
 {
+private:
+	PxRigidDynamic* m_shaft;
 public:
 	Plunger(PxMaterial* material, Vec3 color, Fl32 density);
+	Plunger(const Plunger& param);
+	Plunger& operator=(const Plunger& param);
 	~Plunger();
+	void SetKinematic(bool isKinematic);
+	void SetKinematicTarget(Transform target);
 	virtual void Create();
 };
 

@@ -31,25 +31,60 @@ Plunger::Plunger(PxMaterial* material, Vec3 color, Fl32 density)
 	Create();
 }
 
+Plunger::Plunger(const Plunger& param) : CompoundShapeActor(param)
+{
+	m_shaft = PHYSICS->createRigidDynamic(param.m_shaft->getGlobalPose());
+	m_shaft->setRigidDynamicFlags(param.m_shaft->getRigidBodyFlags());
+}
+
+Plunger& Plunger::operator=(const Plunger& param)
+{
+	if(&param == this)
+		return *this;
+	else
+	{
+		CompoundShapeActor::operator=(param);
+		if(m_shaft)
+			m_shaft->release();
+		m_shaft = PHYSICS->createRigidDynamic(param.m_shaft->getGlobalPose());
+		m_shaft->setRigidDynamicFlags(param.m_shaft->getRigidBodyFlags());
+	}
+}
+
 Plunger::~Plunger()
 {
-
+	if(m_shaft)
+		m_shaft->release();
 }
 
 void Plunger::Create()
 {
-	PxRigidDynamic* rgd = PHYSICS->createRigidDynamic(m_pose);
+	m_shaft = PHYSICS->createRigidDynamic(m_pose);
 
-	rgd->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true); // Make Kinematic
+	m_shaft->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true); // Make Kinematic
 
-	PxShape* shaft = rgd->createShape(m_geometrys[SHAFT].box(), *m_material);
+	PxShape* shaft = m_shaft->createShape(m_geometrys[SHAFT].box(), *m_material);
 
 	// Set Global Pose
-	rgd->setGlobalPose(P::board->Pose() * Transform(P::board->Right().x + (P::board->WallWidth()*2) + (m_geometrys[SHAFT].box().halfExtents.x*2) - 0.04f, // X
+	m_shaft->setGlobalPose(P::board->Pose() * Transform(P::board->Right().x + (P::board->WallWidth()*2) + (m_geometrys[SHAFT].box().halfExtents.x*2) - 0.04f, // X
 												   P::board->Dimensions().y + m_geometrys[SHAFT].box().halfExtents.y,							  // Y
 													P::board->Bottom().z));																				  // Z
 
-	m_actor = rgd;
+	AddDistanceJoint(m_shaft, Transform(Vec3(P::board->PlungerWidth()/2, 0, shaft->getGeometry().box().halfExtents.z)), NULL, IDENTITY_TRANS);
+
+	m_actor = m_shaft;
 
 	m_actor->userData = &m_color;
+}
+
+void Plunger::SetKinematic(bool isKinematic)
+{
+	m_shaft->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, isKinematic);
+}
+
+/* Sets a relative kinematic target */
+void Plunger::SetKinematicTarget(Transform target)
+{
+	Transform t = m_shaft->getGlobalPose();
+	m_shaft->setKinematicTarget(t * target);
 }
