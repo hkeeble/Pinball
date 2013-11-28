@@ -12,8 +12,8 @@ const int MAX_NUM_ACTOR_SHAPES = 128;
 
 Board* Pinball::board;
 
-Pinball::Pinball(std::string title, int windowWidth, int windowHeight, int windowPosX, int windowPosY)
-	: Game(title, windowWidth, windowHeight, windowPosX, windowPosY)
+Pinball::Pinball(std::string title, int windowWidth, int windowHeight)
+	: Game(title, windowWidth, windowHeight)
 {
 	m_ball = NULL;
 	m_ground = NULL;
@@ -93,6 +93,15 @@ void Pinball::Init()
 	m_scene->Add(m_border);
 	m_scene->Add(m_innerWalls);
 	m_scene->Add(m_plunger);
+
+	InitJoints(); // Add Joints
+}
+
+void Pinball::InitJoints()
+{
+	// Plunger Spring
+	AddDistanceJoint(m_plunger->Get(), PxTransform::createIdentity(), NULL, m_plunger->Get()->getGlobalPose(),
+		PxDistanceJointFlag::eSPRING_ENABLED, 100.f, 1.f);
 }
 
 void Pinball::Render()

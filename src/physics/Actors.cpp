@@ -60,14 +60,14 @@ namespace Physics
 			m_actor->release();
 	}
 
-	PxRigidActor* Actor::Get()
+	PxActor* Actor::Get()
 	{
 		return m_actor;
 	}
 
 	Transform Actor::Pose()
 	{
-		return Get()->getGlobalPose();
+		return m_actor->getGlobalPose();
 	}
 
 	#ifdef _DEBUG

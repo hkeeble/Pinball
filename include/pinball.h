@@ -33,11 +33,13 @@ class Pinball : public Game
 		} gameState;
 
 	public:
-		Pinball(std::string title, int windowWidth, int windowHeight, int windowPosX, int windowPosY);
+		Pinball(std::string title, int windowWidth, int windowHeight);
 		~Pinball();
 
 		// Board Actor
 		static Board* board;
+
+		void InitJoints();
 
 		virtual void Init();
 		virtual void Render();

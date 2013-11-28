@@ -31,7 +31,7 @@ namespace Physics
 		virtual Actor& operator=(const Actor& param);
 		virtual ~Actor();
 
-		PxRigidActor* Get();
+		PxActor* Get();
 
 		Transform Pose();
 

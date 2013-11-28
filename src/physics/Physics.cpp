@@ -102,7 +102,8 @@ namespace Physics
 		PxDistanceJointFlag::Enum flags, PxReal stiffness, PxReal damping)
 	{
 		PxDistanceJoint* joint = PxDistanceJointCreate(*PHYSICS, actor0, localFrame0, actor1, localFrame1);
-		joint->setDistanceJointFlags(flags);
+		joint->setConstraintFlag(PxConstraintFlag::eVISUALIZATION,true);
+		joint->setDistanceJointFlag(PxDistanceJointFlag::eSPRING_ENABLED, true);
 		joint->setStiffness(stiffness);
 		joint->setDamping(damping);
 	}
@@ -147,6 +148,8 @@ namespace Physics
 		m_scene = physics->createScene(sceneDesc);
 
 		m_scene->setGravity(Vec3(0.0f, -8.81f, 0.0f));
+
+		m_scene->setVisualizationParameter(PxVisualizationParameter::eJOINT_LIMITS, 1.0f);
 
 		m_pause = false;
 	}

@@ -6,6 +6,9 @@
 #include "pinball.h"
 #include <ctime>
 
+const int WIN_WIDTH = 700;
+const int WIN_HEIGHT = 700;
+
 void InitLog()
 {
 	Log::SetWorkingDir(GetCurrentDir());
@@ -29,7 +32,7 @@ int main(int argc, char *argv[])
 {
 	InitLog();
 
-	Pinball game("Henri Keeble - KEE09195812 - CMP3001M - Assessment Item 1 - Pinball", 700, 700, 100, 100);
+	Pinball game("Henri Keeble - KEE09195812 - CMP3001M - Assessment Item 1 - Pinball", WIN_WIDTH, WIN_HEIGHT);
 
 	game.Run(argc, argv);
 

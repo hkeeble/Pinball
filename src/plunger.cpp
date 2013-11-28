@@ -61,7 +61,7 @@ void Plunger::Create()
 {
 	m_shaft = PHYSICS->createRigidDynamic(m_pose);
 
-	m_shaft->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true); // Make Kinematic
+	//m_shaft->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true); // Make Kinematic
 
 	PxShape* shaft = m_shaft->createShape(m_geometrys[SHAFT].box(), *m_material);
 
@@ -69,8 +69,6 @@ void Plunger::Create()
 	m_shaft->setGlobalPose(P::board->Pose() * Transform(P::board->Right().x + (P::board->WallWidth()*2) + (m_geometrys[SHAFT].box().halfExtents.x*2) - 0.04f, // X
 												   P::board->Dimensions().y + m_geometrys[SHAFT].box().halfExtents.y,							  // Y
 													P::board->Bottom().z));																				  // Z
-
-	AddDistanceJoint(m_shaft, Transform(Vec3(P::board->PlungerWidth()/2, 0, shaft->getGeometry().box().halfExtents.z)), NULL, IDENTITY_TRANS);
 
 	m_actor = m_shaft;
 

@@ -19,7 +19,7 @@ namespace GameFramework
 			1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f
 		};
 
-	Game::Game(std::string title, int windowWidth, int windowHeight, int windowPosX, int windowPosY)
+	Game::Game(std::string title, int windowWidth, int windowHeight)
 	{
 		Physics::PxInit(); // initialize physics
 
@@ -31,8 +31,6 @@ namespace GameFramework
 		m_title = title;
 		m_windowHeight = windowHeight;
 		m_windowWidth = windowWidth;
-		m_windowPosX = windowPosX;
-		m_winowPosY = windowPosY;
 
 		m_fps = 1.f/FPS;
 	}
@@ -87,7 +85,8 @@ namespace GameFramework
 
 		glutInit(&argc, argv);
 		glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH | GLUT_ALPHA);
-		glutInitWindowPosition(m_windowPosX, m_winowPosY);
+		glutInitWindowPosition((glutGet(GLUT_SCREEN_WIDTH)-m_windowWidth)/2,
+							   (glutGet(GLUT_SCREEN_HEIGHT)-m_windowHeight)/2);
 		glutInitWindowSize(m_windowWidth, m_windowHeight);
 		glutCreateWindow(m_title.c_str());
 

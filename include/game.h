@@ -32,8 +32,6 @@ namespace GameFramework
 		std::string m_title;
 		int m_windowHeight;
 		int m_windowWidth;
-		int m_windowPosX;
-		int m_winowPosY;
 
 		// GLUT Initialization
 		void InitGLUT(int argc, char *argv[]);
@@ -53,7 +51,7 @@ namespace GameFramework
 
 	public:
 		// Construction/Destruction
-		Game(std::string title, int windowWidth, int windowHeight, int windowPosX, int windowPosY);
+		Game(std::string title, int windowWidth, int windowHeight);
 		~Game();
 
 		void Run(int argc, char *argv[]); // Enters the main loop
