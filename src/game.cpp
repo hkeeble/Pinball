@@ -13,11 +13,8 @@ namespace GameFramework
 {
 	Game* Game::instance = NULL;
 
-	static Fl32 gPlaneData[]={
-			-1.0f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f,
-			1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, -1.0f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f,
-			1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, -1.0f, 0.0f, 1.0f, 0.0f
-		};
+	static const int MAX_NUM_CONVEXMESH_TRIANGLES = 1024;
+	static unsigned int gConvexMeshTriIndices[3 * MAX_NUM_CONVEXMESH_TRIANGLES];
 
 	Game::Game(std::string title, int windowWidth, int windowHeight)
 	{
@@ -105,24 +102,50 @@ namespace GameFramework
 
 	void Game::RenderGeometry(PxGeometryHolder h)
 	{
-		switch(h.getType())
+		switch (h.getType())
 		{
 		case PxGeometryType::eBOX:
 			glScalef(h.box().halfExtents.x, h.box().halfExtents.y, h.box().halfExtents.z);
 			glutSolidCube(2.0f);
 			break;
-		case PxGeometryType::eSPHERE:		
+		case PxGeometryType::eSPHERE:
 			glutSolidSphere(h.sphere().radius, RENDER_DETAIL, RENDER_DETAIL);
 			break;
-		case PxGeometryType::ePLANE:
-			glScalef(10240,0,10240);
-			glEnableClientState(GL_VERTEX_ARRAY);
-			glEnableClientState(GL_NORMAL_ARRAY);
-			glVertexPointer(3, GL_FLOAT, 2*3*sizeof(Fl32), gPlaneData);
-			glNormalPointer(GL_FLOAT, 2*3*sizeof(Fl32), gPlaneData+3);
-			glDrawArrays(GL_TRIANGLES, 0, 6);
-			glDisableClientState(GL_VERTEX_ARRAY);
-			glDisableClientState(GL_NORMAL_ARRAY);
+		case PxGeometryType::eCONVEXMESH:
+			PxConvexMesh* mesh = h.convexMesh().convexMesh;
+			const PxU32 nbPolys = mesh->getNbPolygons();
+			const PxU8* polygons = mesh->getIndexBuffer();
+			const PxVec3* verts = mesh->getVertices();
+			PxU32 numTotalTriangles = 0;
+			
+			for (PxU32 i = 0; i < nbPolys; i++)
+			{
+				PxHullPolygon data;
+				mesh->getPolygonData(i, data);
+
+				const PxU32 nbTris = data.mNbVerts - 2;
+				const PxU8 vref0 = polygons[data.mIndexBase + 0];
+				for (PxU32 j = 0; j < nbTris; j++)
+				{
+					const PxU32 vref1 = polygons[data.mIndexBase + 0 + j + 1];
+					const PxU32 vref2 = polygons[data.mIndexBase + 0 + j + 2];
+					if (numTotalTriangles < MAX_NUM_CONVEXMESH_TRIANGLES)
+					{
+						gConvexMeshTriIndices[3 * numTotalTriangles + 0] = vref0;
+						gConvexMeshTriIndices[3 * numTotalTriangles + 1] = vref1;
+						gConvexMeshTriIndices[3 * numTotalTriangles + 2] = vref2;
+						numTotalTriangles++;
+					}
+				}
+			}
+
+			if (numTotalTriangles < MAX_NUM_CONVEXMESH_TRIANGLES)
+			{
+				glEnableClientState(GL_VERTEX_ARRAY);
+				glVertexPointer(3, GL_FLOAT, 0, verts);
+				glDrawElements(GL_TRIANGLES, numTotalTriangles * 3, GL_UNSIGNED_INT, gConvexMeshTriIndices);
+				glDisableClientState(GL_VERTEX_ARRAY);
+			}
 		}
 	}
 

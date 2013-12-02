@@ -76,7 +76,7 @@ class Border : public WallEntity
 public:
 	Border(PxMaterial* material, Vec3 color);
 	~Border();
-	virtual void Create();
+	virtual void Create() override;
 };
 
 /* Compound shape actor containing all inner wall shapes */
@@ -85,7 +85,7 @@ class InnerWalls : public WallEntity
 public:
 	InnerWalls(PxMaterial* material, Vec3 color);
 	~InnerWalls();
-	virtual void Create();
+	virtual void Create() override;
 };
 
 /* Compound shape representing a plunger */
@@ -93,6 +93,7 @@ class Plunger : public CompoundShapeActor
 {
 private:
 	PxRigidDynamic* m_shaft;
+	Transform m_initialPose;
 public:
 	Plunger(PxMaterial* material, Vec3 color, Fl32 density);
 	Plunger(const Plunger& param);
@@ -100,19 +101,21 @@ public:
 	~Plunger();
 	void SetKinematic(bool isKinematic);
 	void SetKinematicTarget(Transform target);
-	virtual void Create();
+	void Reset();
+	virtual void Create() override;
 };
 
-/* Convex mesh sactor representing wedges in the corners of the board */
-class CornerWedge : public Actor
+/* Convex Mesh to represent a flipper */
+class Flipper : public ConvexMeshActor
 {
 private:
-	PxConvexMesh* Cook();
+	bool isFlipped;
 public:
-	CornerWedge(Transform pose, Vec3 color);
-	~CornerWedge();
-
-	virtual void Create();
+	Flipper(PxMaterial* material, Vec3 color, Fl32 density);
+	Flipper(const Flipper& param);
+	Flipper& operator=(const Flipper& param);
+	~Flipper();
+	void Flip();
 };
 
 #endif // _BOARD_OBJECTS_H_

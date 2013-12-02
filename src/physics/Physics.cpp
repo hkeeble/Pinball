@@ -14,8 +14,10 @@ namespace Physics
 	ErrorCallback errorCallback;
 
 	// -- PhysX Objects --
-	PxFoundation* foundation = NULL;
-	PxPhysics* physics = NULL;
+	PxFoundation* foundation = nullptr;
+	PxPhysics* physics = nullptr;
+	PxCooking* cooking = nullptr;
+
 	// Visual Debugger
 #ifdef _DEBUG
 	debugger::comm::PvdConnection* vd_connection = 0;
@@ -28,11 +30,14 @@ namespace Physics
 	{
 		Log::Write("Initializing PhysX...\n", ENGINE_LOG);
 
-		if(!foundation)
+		if (!foundation)
 			foundation = PxCreateFoundation(PX_PHYSICS_VERSION, defaultAllocatorCallBack, errorCallback);
 
-		if(!physics)
+		if (!physics)
 			physics = PxCreatePhysics(PX_PHYSICS_VERSION, *foundation, PxTolerancesScale());
+
+		if (!cooking)
+			cooking = PxCreateCooking(PX_PHYSICS_VERSION, *foundation, PxCookingParams(PxTolerancesScale()));
 	}
 
 	// Release Physics from memory
@@ -55,6 +60,11 @@ namespace Physics
 	/*-------------------------------------------------------------------------\
 	|							UTILITY DEFINITIONS								|
 	\-------------------------------------------------------------------------*/
+
+	PxCooking* PxGetCooking()
+	{
+		return cooking;
+	}
 
 	PxMaterial* cpyMaterial(PxMaterial* src)
 	{
@@ -187,13 +197,16 @@ namespace Physics
 	void Scene::Add(Actor* actor)
 	{
 		Log::Write("Adding Actor to scene...\n", ENGINE_LOG);
-		if(!actor->Get())
+		if(actor->Get().staticActor == nullptr && actor->Get().dynamicActor == nullptr)
 			actor->Create();
-		m_scene->addActor(*actor->Get());
+		if (actor->Get().dynamicActor)
+			m_scene->addActor(*actor->Get().dynamicActor);
+		else
+			m_scene->addActor(*actor->Get().staticActor);
 
 		#ifdef _DEBUG
 		Out("Actor Added at position: ");
-		if(actor);
+		if(actor)
 			actor->PrintPose();
 		#endif
 	}

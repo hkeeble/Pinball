@@ -16,7 +16,6 @@ Pinball::Pinball(std::string title, int windowWidth, int windowHeight)
 	: Game(title, windowWidth, windowHeight)
 {
 	m_ball = NULL;
-	m_ground = NULL;
 }
 
 Pinball::~Pinball()
@@ -35,6 +34,9 @@ void Pinball::Init()
 	glLoadIdentity();
 	camera = Camera(UP_VECTOR, Vec3(0, 0, 0), Vec3(0, 1, -5.5), DEFAULT_FOV);
 	camera.Update(); // Used to initialize camera positions (gluLookAt)
+	
+	// C++11 Initializer List
+	// camera = { UP_VECTOR, Vec3(0, 0, 0), Vec3(0, 1, -5.5), DEFAULT_FOV };
 
 	// Set Perspective
 	glMatrixMode(GL_PROJECTION);
@@ -93,6 +95,7 @@ void Pinball::Init()
 	m_scene->Add(m_border);
 	m_scene->Add(m_innerWalls);
 	m_scene->Add(m_plunger);
+	m_scene->Add(m_wedgeTest);
 
 	InitJoints(); // Add Joints
 }
@@ -100,8 +103,9 @@ void Pinball::Init()
 void Pinball::InitJoints()
 {
 	// Plunger Spring
-	AddDistanceJoint(m_plunger->Get(), PxTransform::createIdentity(), NULL, m_plunger->Get()->getGlobalPose(),
-		PxDistanceJointFlag::eSPRING_ENABLED, 100.f, 1.f);
+	AddDistanceJoint(m_plunger->Get().dynamicActor, PxTransform::createIdentity(), NULL, m_plunger->Get().dynamicActor->getGlobalPose(),
+		PxDistanceJointFlag::eSPRING_ENABLED, 1000.f, 1.f);
+	m_plunger->SetKinematic(true);
 }
 
 void Pinball::Render()
@@ -210,8 +214,10 @@ void Pinball::KeyboardDown(unsigned char key, int x, int y)
 		break;
 	/* InGame Keys */
 	case InGame:
-		if(key == VK_SPACE)
+		if (key == VK_SPACE)
 			m_plunger->SetKinematicTarget(Transform(Vec3(0, 0, -.02f)));
+		if (key == VK_RETURN)
+			m_plunger->Reset();
 	}
 
 	// Keys applicable to all states
@@ -247,8 +253,6 @@ void Pinball::Exit()
 		delete m_ball;
 	if(board)
 		delete board;
-	if(m_ground)
-		delete m_ground;
 	if(m_innerWalls)
 		delete m_innerWalls;
 	//if(m_plunger)

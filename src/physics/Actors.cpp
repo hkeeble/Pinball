@@ -8,19 +8,30 @@
 
 namespace Physics
 {
+	static const PxVec3 wedge_verts[] = {
+											PxVec3(-1, 0, -1),
+											PxVec3(-1, 0, 1),
+											PxVec3(1, 0, 1),
+											PxVec3(1, 1, 1),
+											PxVec3(1, 1, -1),
+											PxVec3(1, 0, -1)
+										};
+
 	/*-------------------------------------------------------------------------\
 	|							ACTOR DEFINITIONS								|
 	\-------------------------------------------------------------------------*/
 	Actor::Actor()
 	{
-		m_actor = NULL;
+		m_actor.dynamicActor = nullptr;
+		m_actor.staticActor = nullptr;
 		m_density = DEFAULT_DENSITY;
 		m_aType = DEFAULT_ACTOR_TYPE;
 	}
 
 	Actor::Actor(Transform pose, Fl32 density, ActorType aType)
 	{
-		m_actor = NULL;
+		m_actor.dynamicActor = nullptr;
+		m_actor.staticActor = nullptr;
 		m_pose = pose;
 		m_density = density;
 		m_aType = aType;
@@ -28,10 +39,14 @@ namespace Physics
 
 	Actor::Actor(const Actor& param)
 	{
-		if(param.m_actor)
-			*m_actor = *param.m_actor;
+		if(param.m_actor.dynamicActor)
+			*m_actor.dynamicActor = *param.m_actor.dynamicActor;
 		else
-			m_actor = NULL;
+			m_actor.dynamicActor = nullptr;
+		if (param.m_actor.staticActor)
+			*m_actor.staticActor = *param.m_actor.staticActor;
+		else
+			m_actor.staticActor = nullptr;
 
 		m_density = param.m_density;
 		m_aType = param.m_aType;
@@ -43,10 +58,14 @@ namespace Physics
 			return *this;
 		else
 		{
-			if(param.m_actor)
-				*m_actor = *param.m_actor;
+			if (param.m_actor.dynamicActor)
+				*m_actor.dynamicActor = *param.m_actor.dynamicActor;
 			else
-				m_actor = NULL;
+				m_actor.dynamicActor = nullptr;
+			if (param.m_actor.staticActor)
+				*m_actor.staticActor = *param.m_actor.staticActor;
+			else
+				m_actor.staticActor = nullptr;
 
 			m_density = param.m_density;
 			m_aType = param.m_aType;
@@ -56,29 +75,46 @@ namespace Physics
 
 	Actor::~Actor()
 	{
-		if(m_actor)
-			m_actor->release();
+		if (m_aType == DynamicActor)
+			m_actor.dynamicActor->release();
+		if (m_aType == StaticActor)
+			m_actor.staticActor->release();
 	}
 
-	PxActor* Actor::Get()
+	ActorUnion Actor::Get()
 	{
 		return m_actor;
 	}
 
 	Transform Actor::Pose()
 	{
-		return m_actor->getGlobalPose();
+		if (m_actor.dynamicActor)
+			return m_actor.dynamicActor->getGlobalPose();
+		else if (m_actor.staticActor)
+			return m_actor.staticActor->getGlobalPose();
 	}
 
 	#ifdef _DEBUG
 	void Actor::PrintPose() const
 	{
-		Out(std::to_string(m_actor->getGlobalPose().p.x).c_str());
-		Out(" ");
-		Out(std::to_string(m_actor->getGlobalPose().p.y).c_str());
-		Out(" ");
-		Out(std::to_string(m_actor->getGlobalPose().p.z).c_str());
-		Out("\n");
+		if (m_actor.dynamicActor)
+		{
+			Out(std::to_string(m_actor.dynamicActor->getGlobalPose().p.x).c_str());
+			Out(" ");
+			Out(std::to_string(m_actor.dynamicActor->getGlobalPose().p.y).c_str());
+			Out(" ");
+			Out(std::to_string(m_actor.dynamicActor->getGlobalPose().p.z).c_str());
+			Out("\n");
+		}
+		else if (m_actor.staticActor)
+		{
+			Out(std::to_string(m_actor.staticActor->getGlobalPose().p.x).c_str());
+			Out(" ");
+			Out(std::to_string(m_actor.staticActor->getGlobalPose().p.y).c_str());
+			Out(" ");
+			Out(std::to_string(m_actor.staticActor->getGlobalPose().p.z).c_str());
+			Out("\n");
+		}
 	}
 	#endif
 
@@ -141,17 +177,19 @@ namespace Physics
 			ptr = Physics::PxGetPhysics()->createRigidDynamic(m_pose);
 			m_shape = ptr->createShape(m_geometry.any(), *m_material, IDENTITY_TRANS);
 			PxRigidBodyExt::setMassAndUpdateInertia(*ptr, m_density);
-			m_actor = ptr;
+			m_actor.dynamicActor = ptr;
 		}
 		else
 		{
 			PxRigidStatic* ptr = StaticCast(s, PxRigidStatic*); // Receive Correctly Cast Pointer
 			ptr = Physics::PxGetPhysics()->createRigidStatic(m_pose);
 			m_shape = ptr->createShape(m_geometry.any(), *m_material, IDENTITY_TRANS);
-			m_actor = ptr;
+			m_actor.staticActor = ptr;
 		}
-		if(m_actor)
-			m_actor->userData = &m_color;
+		if (m_actor.dynamicActor)
+			m_actor.dynamicActor->userData = &m_color;
+		else if (m_actor.staticActor)
+			m_actor.staticActor->userData = &m_color;
 		else
 			Log::Write("Exc: Error creating Box Actor. m_actor is NULL!", ENGINE_LOG);
 	}
@@ -160,11 +198,12 @@ namespace Physics
 	{
 		PxShape** buf;
 		buf = new PxShape*[1];
-		m_actor->getShapes(buf, 1);
+		if (m_aType == DynamicActor)
+			m_actor.dynamicActor->getShapes(buf, 1);
+		else
+			m_actor.staticActor->getShapes(buf, 1);
 		return *buf;
 	}
-
-
 
 	/*------------------------------------------------------------------------\
 	|					COMPOUNDSHAPEACTOR DEFINITIONS							|
@@ -229,6 +268,45 @@ namespace Physics
 		if(m_geometrys)
 			delete[] m_geometrys;
 	}
+
+	/*------------------------------------------------------------------------\
+	|					CONVEXMESHACTOR DEFINITIONS								|
+	\-------------------------------------------------------------------------*/
+	ConvexMeshActor::ConvexMeshActor(Transform pose, Fl32 density, const Vec3& color, PxMaterial* material, Vec3 scale, ActorType aType)
+		: ShapeActor(pose, density, material, color, aType)
+	{
+		m_scale = scale;
+	}
+
+	ConvexMeshActor::ConvexMeshActor(const ConvexMeshActor& param) : ShapeActor(param)
+	{
+
+	}
+
+	ConvexMeshActor& ConvexMeshActor::operator= (const ConvexMeshActor& param)
+	{
+		if (this == &param)
+			return *this;
+		else
+		{
+			ShapeActor::operator=(param);
+			return *this;
+		}
+	}
+	
+	ConvexMeshActor::~ConvexMeshActor()
+	{
+
+	}
+
+	PxConvexMesh* ConvexMeshActor::Cook(PxConvexMeshDesc desc)
+	{
+		PxDefaultMemoryOutputStream stream;
+		PxGetCooking()->cookConvexMesh(desc, stream);
+		PxDefaultMemoryInputData input(stream.getData(), stream.getSize());
+		return PHYSICS->createConvexMesh(input);
+	}
+
 	/*------------------------------------------------------------------------\
 	|							BOX DEFINITIONS									 |
 	\-------------------------------------------------------------------------*/
@@ -266,6 +344,7 @@ namespace Physics
 	{
 
 	}
+
 	/*-------------------------------------------------------------------------\
 	|							SPHERE DEFINITIONS								|
 	\-------------------------------------------------------------------------*/
@@ -303,44 +382,73 @@ namespace Physics
 	{
 
 	}
+
 	/*-------------------------------------------------------------------------\
-	|							PLANE DEFINITIONS								 |
+	|							WEDGE DEFINITIONS								|
 	\-------------------------------------------------------------------------*/
-	Plane::Plane(Vec3 normal, Fl32 distance, const Vec3& color, PxMaterial* material)
-		: ShapeActor(IDENTITY_TRANS, 0.f, material, color, StaticActor)
+	Wedge::Wedge(Transform pose, Fl32 density, const Vec3& color, PxMaterial* material, Vec3 scale, ActorType aType)
+		: ConvexMeshActor(pose, density, color, material, scale, aType)
 	{
-		m_normal = normal;
-		m_distance = distance;
+		m_pose = m_pose * Transform(Quat(DEG2RAD(90), Vec3(1, 0, 0))); // Default Pose Rotation
 	}
 
-	Plane::Plane(const Plane& param) : ShapeActor(param)
+	Wedge::Wedge(const Wedge& param) : ConvexMeshActor(param)
 	{
-		m_normal = param.m_normal;
-		m_distance = param.m_distance;
+
 	}
 
-	Plane& Plane::operator=(const Plane& param)
+	Wedge& Wedge::operator=(const Wedge& param)
 	{
-		if(this == &param)
+		if (this == &param)
 			return *this;
 		else
 		{
-			ShapeActor::operator=(param);
-			m_normal = param.m_normal;
-			m_distance = param.m_distance;
+			ConvexMeshActor::operator=(param);
 			return *this;
 		}
 	}
-
-	Plane::~Plane()
+	Wedge::~Wedge()
 	{
 
 	}
 
-	void Plane::Create()
+	void Wedge::Create()
 	{
-		PxRigidStatic* plane = PxCreatePlane(*PHYSICS, PxPlane(m_normal, m_distance), *DEFAULT_MATERIAL);
-		m_actor = plane;
-		m_actor->userData = &m_color; //pass color parameter to renderer
+		Vec3 verts[sizeof(wedge_verts) / sizeof(Vec3)];
+		std::copy(std::begin(wedge_verts), std::end(wedge_verts), std::begin(verts));
+
+		PxConvexMeshDesc desc;
+		desc.points.count = sizeof(wedge_verts) / sizeof(Vec3);
+		desc.points.stride = sizeof(Vec3);
+
+		for (auto& i : verts)
+			i = Vec3(i.x * m_scale.x, i.y * m_scale.y, i.z * m_scale.z);
+
+		desc.points.data = verts;
+		desc.flags = PxConvexFlag::eCOMPUTE_CONVEX;
+		desc.vertexLimit = VERTEX_LIMIT;
+
+		PxConvexMesh* mesh = Cook(desc);
+
+		void* s = nullptr;
+		PxShape* shape = nullptr;
+
+		if (m_aType == DynamicActor)
+		{
+			PxRigidDynamic* ptr = StaticCast(s, PxRigidDynamic*); // Receive Correctly Cast Pointer
+			ptr = PHYSICS->createRigidDynamic(m_pose);
+			shape = ptr->createShape(PxConvexMeshGeometry(mesh), *m_material);
+			PxRigidBodyExt::setMassAndUpdateInertia(*ptr, m_density);
+			m_actor.dynamicActor = ptr;
+			m_actor.dynamicActor->userData = &m_color;
+		}
+		else
+		{
+			PxRigidStatic* ptr = StaticCast(s, PxRigidStatic*); // Receive Correctly Cast Pointer
+			ptr = PHYSICS->createRigidStatic(m_pose);
+			shape = ptr->createShape(PxConvexMeshGeometry(mesh, PxMeshScale(Vec3(1, 1, 1), PxQuat::createIdentity())), *m_material);
+			m_actor.staticActor = ptr;
+			m_actor.staticActor->userData = &m_color;
+		}	
 	}
 }

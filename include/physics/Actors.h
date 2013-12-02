@@ -15,11 +15,18 @@ namespace Physics
 	/*-------------------------------------------------------------------------\
 	|								ACTOR										|
 	\-------------------------------------------------------------------------*/
+	/* Union to represent actor */
+	union ActorUnion
+	{
+		PxRigidStatic* staticActor;
+		PxRigidDynamic* dynamicActor;
+	};
+
 	/* Abstract Actor Class */
 	class Actor
 	{
 	protected:
-		PxRigidActor* m_actor;
+		ActorUnion m_actor;
 		ActorType m_aType;
 		Fl32 m_density;
 		Transform m_pose;
@@ -31,16 +38,16 @@ namespace Physics
 		virtual Actor& operator=(const Actor& param);
 		virtual ~Actor();
 
-		PxActor* Get();
-
 		Transform Pose();
 
 		virtual void Create() = 0;
 
+		virtual ActorUnion Get();
+
 		// Functions Used for Debugging
-		#ifdef _DEBUG
+#ifdef _DEBUG
 		void PrintPose() const;
-		#endif
+#endif
 	};
 
 	/*-------------------------------------------------------------------------\
@@ -93,6 +100,23 @@ namespace Physics
 	};
 
 	/*-------------------------------------------------------------------------\
+	|								CONVEX MESH									|
+	\-------------------------------------------------------------------------*/
+	class ConvexMeshActor : public ShapeActor
+	{
+	protected:
+		Vec3 m_scale;
+
+		PxConvexMesh* Cook(PxConvexMeshDesc desc);
+	public:
+		ConvexMeshActor(Transform pose = IDENTITY_TRANS, Fl32 density = DEFAULT_DENSITY, const Vec3& color = DEFAULT_COLOR,
+			PxMaterial* material = DEFAULT_MATERIAL, Vec3 scale = Vec3(1, 1, 1), ActorType aType = DEFAULT_ACTOR_TYPE);
+		ConvexMeshActor(const ConvexMeshActor& param);
+		virtual ConvexMeshActor& operator=(const ConvexMeshActor& param);
+		virtual ~ConvexMeshActor();
+	};
+
+	/*-------------------------------------------------------------------------\
 	|								BOX											|
 	\-------------------------------------------------------------------------*/
 	class Box : public ShapeActor
@@ -128,23 +152,18 @@ namespace Physics
 		Fl32 Radius() const;
 	};
 
-	/*-------------------------------------------------------------------------\
-	|								PLANE										|
-	\-------------------------------------------------------------------------*/
-	class Plane : public ShapeActor
+	class Wedge : public ConvexMeshActor
 	{
-	private:
-		Vec3 m_normal;
-		Fl32 m_distance;
 	public:
-		Plane(Vec3 normal = UP_VECTOR, Fl32 distance = 0.f, const Vec3& color = DEFAULT_COLOR,
-			PxMaterial* material = DEFAULT_MATERIAL);
-		Plane(const Plane& param);
-		virtual Plane& operator=(const Plane& param);
-		virtual ~Plane();
+		Wedge(Transform pose = IDENTITY_TRANS, Fl32 density = DEFAULT_DENSITY, const Vec3& color = DEFAULT_COLOR,
+			PxMaterial* material = DEFAULT_MATERIAL, Vec3 scale = Vec3(1, 1, 1), ActorType aType = DEFAULT_ACTOR_TYPE);
+		Wedge(const Wedge& param);
+		virtual Wedge& operator=(const Wedge& param);
+		virtual ~Wedge();
 
 		virtual void Create();
 	};
+
 }
 
 #endif _ACTORS_H_

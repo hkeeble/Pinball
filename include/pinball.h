@@ -19,10 +19,10 @@ class Pinball : public Game
 		// Actors
 		Sphere*		m_ball;
 		Box*		m_glass;
-		Plane*		m_ground;
 		Border*		m_border;
 		InnerWalls* m_innerWalls;
 		Plunger*	m_plunger;
+		Wedge*		m_wedgeTest;
 
 		int m_currentScore;
 

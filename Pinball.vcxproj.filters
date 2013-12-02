@@ -83,5 +83,8 @@
     <ClCompile Include="src\plunger.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="flipper.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

@@ -37,27 +37,27 @@ Board::~Board()
 
 Vec3 Board::Top()
 {
-	return Get()->getGlobalPose().p + Vec3(0, 0, (Dimensions().z));
+	return Get().staticActor->getGlobalPose().p + Vec3(0, 0, (Dimensions().z));
 }
 
 Vec3 Board::Bottom()
 {
-	return Get()->getGlobalPose().p - Vec3(0, 0, (Dimensions().z));
+	return Get().staticActor->getGlobalPose().p - Vec3(0, 0, (Dimensions().z));
 }
 
 Vec3 Board::Right()
 {
-	return Get()->getGlobalPose().p - Vec3((Dimensions().x), 0, 0);
+	return Get().staticActor->getGlobalPose().p - Vec3((Dimensions().x), 0, 0);
 }
 
 Vec3 Board::Left()
 {
-	return Get()->getGlobalPose().p + Vec3((Dimensions().x), 0, 0); 
+	return Get().staticActor->getGlobalPose().p + Vec3((Dimensions().x), 0, 0); 
 }
 
 Vec3 Board::Center()
 {
-	return Get()->getGlobalPose().p;
+	return Get().staticActor->getGlobalPose().p;
 }
 
 Fl32 Board::FallHoleWidth() const
@@ -176,12 +176,12 @@ void Border::Create()
 	sR->setLocalPose(p_right);
 	
 	// Set Global Pose
-	Transform t = const_cast<Board*>(P::board)->Get()->getGlobalPose();
+	Transform t = const_cast<Board*>(P::board)->Get().staticActor->getGlobalPose();
 	rgd->setGlobalPose(P::board->Pose() * Transform(0, m_height*2, 0));
 
-	m_actor = rgd;
+	m_actor.staticActor = rgd;
 
-	m_actor->userData = &m_color;
+	m_actor.staticActor->userData = &m_color;
 }
 #pragma endregion
 /*-------------------------------------------------------------------------\
@@ -230,34 +230,8 @@ void InnerWalls::Create()
 	// Set Global Pose
 	rgd->setGlobalPose(P::board->Pose() * Transform(0, m_height*2, 0));
 
-	m_actor = rgd;
+	m_actor.staticActor = rgd;
 
-	m_actor->userData = &m_color;
-}
-#pragma endregion
-/*-------------------------------------------------------------------------\
-|						CORNER WEDGE DEFINITIONS							|
-\-------------------------------------------------------------------------*/
-#pragma region CornerWedge
-CornerWedge::CornerWedge(Transform pose, Vec3 color) : Actor(pose, 1.f, StaticActor)
-{
-
-}
-
-CornerWedge::~CornerWedge()
-{
-
-}
-
-PxConvexMesh* CornerWedge::Cook()
-{
-	PxConvexMeshDesc convexDesc;
-
-	return NULL;
-}
-
-void CornerWedge::Create()
-{
-
+	m_actor.staticActor->userData = &m_color;
 }
 #pragma endregion

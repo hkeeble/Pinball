@@ -60,4 +60,7 @@ struct Color
 
 #define BALL_RADIUS 0.039375f // 1/16th of an inch
 
+// Max Vertices
+#define VERTEX_LIMIT 256
+
 #endif _GLOBALS_H_

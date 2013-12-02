@@ -28,7 +28,7 @@ namespace Physics
 
 	// -- Accessor Functions --
 	PxPhysics* PxGetPhysics();
-	PxMaterial* PxGetDefaultMaterial();
+	PxCooking* PxGetCooking();
 
 	// -- Utility Functions --
 	PxMaterial* cpyMaterial(PxMaterial* src);

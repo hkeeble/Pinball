@@ -22,7 +22,7 @@ Plunger::Plunger(PxMaterial* material, Vec3 color, Fl32 density)
 
 	// Geometries
 	PxBoxGeometry geos[PSHAPES];
-	geos[SHAFT] = PxBoxGeometry(P::board->PlungerWidth()/2, P::board->WallHeight() - 0.01f, P::board->Dimensions().z/5);
+	geos[SHAFT] = PxBoxGeometry(P::board->PlungerLaneWidth() - (P::board->WallWidth()/2) - 0.04f, P::board->WallHeight(), P::board->Dimensions().z / 5);
 
 	// Assign Geometries
 	m_geometrys[SHAFT].box() = geos[SHAFT];
@@ -61,18 +61,17 @@ void Plunger::Create()
 {
 	m_shaft = PHYSICS->createRigidDynamic(m_pose);
 
-	//m_shaft->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true); // Make Kinematic
-
 	PxShape* shaft = m_shaft->createShape(m_geometrys[SHAFT].box(), *m_material);
 
 	// Set Global Pose
-	m_shaft->setGlobalPose(P::board->Pose() * Transform(P::board->Right().x + (P::board->WallWidth()*2) + (m_geometrys[SHAFT].box().halfExtents.x*2) - 0.04f, // X
+	m_shaft->setGlobalPose(P::board->Pose() * Transform(P::board->Right().x + P::board->WallWidth() + (m_geometrys[SHAFT].box().halfExtents.x) + 0.06f, // X
 												   P::board->Dimensions().y + m_geometrys[SHAFT].box().halfExtents.y,							  // Y
-													P::board->Bottom().z));																				  // Z
+													P::board->Bottom().z + 0.5f));																				  // Z
+	m_initialPose = m_shaft->getGlobalPose();
 
-	m_actor = m_shaft;
+	m_actor.dynamicActor = m_shaft;
 
-	m_actor->userData = &m_color;
+	m_actor.dynamicActor->userData = &m_color;
 }
 
 void Plunger::SetKinematic(bool isKinematic)
@@ -85,4 +84,10 @@ void Plunger::SetKinematicTarget(Transform target)
 {
 	Transform t = m_shaft->getGlobalPose();
 	m_shaft->setKinematicTarget(t * target);
+}
+
+void Plunger::Reset()
+{
+	m_actor.dynamicActor->setGlobalPose(m_initialPose);
+	SetKinematic(true);
 }
