@@ -21,9 +21,11 @@ using namespace Physics;
 #define BDR_ID_RGT		4
 
 // Inner Wall Defines
-#define IW_SHAPES				 2
+#define IW_SHAPES				 4
 #define IW_ID_PLUNGE_LN_WALL	 0
 #define IW_ID_PLUNGE_LN_WALL_TP	 1
+#define IW_ID_FLIPPER_WALL_RGT	 2
+#define IW_ID_FLIPPER_WALL_LFT	 3
 
 // Plunger Defines
 #define PSHAPES 1
@@ -106,16 +108,17 @@ public:
 };
 
 /* Convex Mesh to represent a flipper */
-class Flipper : public ConvexMeshActor
+class Flipper : public Wedge
 {
 private:
 	bool isFlipped;
 public:
-	Flipper(PxMaterial* material, Vec3 color, Fl32 density);
+	Flipper(Transform pose, PxMaterial* material, Vec3 color, Fl32 density);
 	Flipper(const Flipper& param);
 	Flipper& operator=(const Flipper& param);
 	~Flipper();
 	void Flip();
+	void SetKinematic(bool isKinematic);
 };
 
 #endif // _BOARD_OBJECTS_H_

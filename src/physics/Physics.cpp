@@ -164,7 +164,7 @@ namespace Physics
 		m_pause = false;
 	}
 
-	void Scene::Update(Fl32 deltaTime)
+	void Scene::UpdatePhys(Fl32 deltaTime)
 	{
 		if(!m_pause)
 		{

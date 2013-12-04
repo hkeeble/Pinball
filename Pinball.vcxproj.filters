@@ -51,6 +51,12 @@
     <ClInclude Include="include\boardObjects.h">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="RevoluteJoint.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\physics\RevoluteJoint.h">
+      <Filter>include\physics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\physics\ErrorCallback.cpp">
@@ -83,8 +89,14 @@
     <ClCompile Include="src\plunger.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="flipper.cpp">
+    <ClCompile Include="RevoluteJoint.cpp">
       <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\flipper.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\physics\RevoluteJoint.cpp">
+      <Filter>src\physics</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

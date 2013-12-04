@@ -25,21 +25,21 @@ struct Color
 	Fl32 r, g, b;
 };
 
-// Defaults
-#define DEFAULT_DENSITY		 0.f
-#define DEFAULT_COLOR		 Vec3(0.f, 0.f, 0.f)
-#define DEFAULT_MATERIAL	 Physics::PxGetPhysics()->createMaterial(0.0f, 0.0f, 0.0f)
-#define DEFAULT_FOV			 60
-#define IDENTITY_TRANS		 Transform(PxIdentity)
-#define DEFAULT_ACTOR_TYPE	 DynamicActor
-#define DEFAULT_GEOMETRY	 PxBoxGeometry(1, 1, 1)->getGeometry()
-#define DEFAULT_ORIENTATION  Quat(0, 0, 0)
-
 // Default Up Vector
 #define UP_VECTOR Vec3(0, 1, 0)
 
 // Retrieve Physics
 #define PHYSICS	Physics::PxGetPhysics()
+
+// Defaults
+#define DEFAULT_DENSITY		0.f
+#define DEFAULT_COLOR		Vec3(0.f, 0.f, 0.f)
+#define DEFAULT_MATERIAL	Physics::PxGetPhysics()->createMaterial(0.0f, 0.0f, 0.0f)
+#define DEFAULT_FOV			60
+#define IDENTITY_TRANS		Transform(PxIdentity)
+#define DEFAULT_ACTOR_TYPE	DynamicActor
+#define DEFAULT_GEOMETRY	PxBoxGeometry(1, 1, 1)
+#define DEFAULT_ORIENTATION Quat(0.f, 0.f, 0.f, 0.f)
 
 // Macros
 #define StaticCast(data, type) static_cast<type>(data)

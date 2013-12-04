@@ -22,7 +22,8 @@ class Pinball : public Game
 		Border*		m_border;
 		InnerWalls* m_innerWalls;
 		Plunger*	m_plunger;
-		Wedge*		m_wedgeTest;
+		Flipper*	m_rgtFlipper;
+		Flipper*	m_lftFlipper;
 
 		int m_currentScore;
 

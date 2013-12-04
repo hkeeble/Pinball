@@ -626,7 +626,7 @@ GLUTAPI void GLUTAPIENTRY glutRemoveOverlay(void);
 GLUTAPI void GLUTAPIENTRY glutUseLayer(GLenum layer);
 GLUTAPI void GLUTAPIENTRY glutPostOverlayRedisplay(void);
 #if (GLUT_API_VERSION >= 4 || GLUT_XLIB_IMPLEMENTATION >= 11)
-GLUTAPI void GLUTAPIENTRY glutPostWindowOverlayRedisplay(int win);
+GLUTAPI void GLUTAPIENTRY glutPostWindowOverlay(int win);
 #endif
 GLUTAPI void GLUTAPIENTRY glutShowOverlay(void);
 GLUTAPI void GLUTAPIENTRY glutHideOverlay(void);

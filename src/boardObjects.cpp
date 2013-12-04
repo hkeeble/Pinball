@@ -198,9 +198,17 @@ InnerWalls::InnerWalls(PxMaterial* material, Vec3 color)
 	geos[IW_ID_PLUNGE_LN_WALL] = PxBoxGeometry(Vec3(m_width, m_height, (P::board->Dimensions().z-(m_width*4) - P::board->PlungerLaneWidth())));
 	geos[IW_ID_PLUNGE_LN_WALL_TP] = PxBoxGeometry(Vec3(P::board->Dimensions().x - (P::board->PlungerLaneWidth()*2) - (P::board->WallWidth()*2), m_height, m_width));
 
+	// Flipper Walls
+	geos[IW_ID_FLIPPER_WALL_LFT] = PxBoxGeometry(Vec3(P::board->Dimensions().x - P::board->PlungerWidth() * 5 - P::board->WallWidth() - P::board->FallHoleWidth() - 0.1f,
+												P::board->WallHeight(),P::board->WallWidth()));
+	geos[IW_ID_FLIPPER_WALL_RGT] = PxBoxGeometry(Vec3(P::board->Dimensions().x - P::board->PlungerWidth() * 5 - P::board->WallWidth() - P::board->FallHoleWidth() - 0.1f,
+		P::board->WallHeight(), P::board->WallWidth()));
+
 	// Assign Geometrys
 	m_geometrys[IW_ID_PLUNGE_LN_WALL].box() = geos[IW_ID_PLUNGE_LN_WALL];
 	m_geometrys[IW_ID_PLUNGE_LN_WALL_TP].box() = geos[IW_ID_PLUNGE_LN_WALL_TP];
+	m_geometrys[IW_ID_FLIPPER_WALL_LFT].box() = geos[IW_ID_FLIPPER_WALL_LFT];
+	m_geometrys[IW_ID_FLIPPER_WALL_RGT].box() = geos[IW_ID_FLIPPER_WALL_RGT];
 }
 
 InnerWalls::~InnerWalls()
@@ -215,17 +223,23 @@ void InnerWalls::Create()
 	Board* b = const_cast<Board*>(P::board);
 
 	// Determine Poses
-	Transform p_pLaneWall, p_pLaneWallTp, p_pLaneWallExt;
+	Transform p_pLaneWall, p_pLaneWallTp, p_pLaneWallExt, p_fWallLft, p_fWallRgt;
 	p_pLaneWall		= Transform(b->Right()	+ Vec3(b->PlungerLaneWidth() + (m_width*4), 0, b->Bottom().z+m_geometrys[IW_ID_PLUNGE_LN_WALL].box().halfExtents.z));
 	p_pLaneWallTp	= Transform(b->Top()	- Vec3(m_width*2, 0, (b->PlungerLaneWidth()*3) + (m_width*6)));
+	p_fWallLft		= Transform(b->Bottom() + Vec3(b->FallHoleWidth()+m_geometrys[IW_ID_FLIPPER_WALL_RGT].box().halfExtents.x+.1f, 0, .6f), PxQuat(DEG2RAD(-35), Vec3(0, 1, 0)));
+	p_fWallRgt		= Transform(b->Bottom() + Vec3(-(b->FallHoleWidth()+m_geometrys[IW_ID_FLIPPER_WALL_RGT].box().halfExtents.x-.02f), 0, .6f), PxQuat(DEG2RAD(35), Vec3(0, 1, 0)));
 
 	// Create Shapes
-	PxShape* pL   =	rgd->createShape(m_geometrys[IW_ID_PLUNGE_LN_WALL].box(), *m_material); // Plunger Lane Wall
-	PxShape* PlT  = rgd->createShape(m_geometrys[IW_ID_PLUNGE_LN_WALL_TP].box(), *m_material); // Plunger Lane Wall Top
+	PxShape* pL		   =	rgd->createShape(m_geometrys[IW_ID_PLUNGE_LN_WALL].box(), *m_material); // Plunger Lane Wall
+	PxShape* PlT	   = rgd->createShape(m_geometrys[IW_ID_PLUNGE_LN_WALL_TP].box(), *m_material); // Plunger Lane Wall Top
+	PxShape* pfWallLft = rgd->createShape(m_geometrys[IW_ID_FLIPPER_WALL_LFT].box(), *m_material); // Flipper Wall Left
+	PxShape* pfWallRgt = rgd->createShape(m_geometrys[IW_ID_FLIPPER_WALL_RGT].box(), *m_material); // Flipper Wall Right
 
 	// Set Local Poses
 	pL->setLocalPose(p_pLaneWall);
 	PlT->setLocalPose(p_pLaneWallTp);
+	pfWallLft->setLocalPose(p_fWallLft);
+	pfWallRgt->setLocalPose(p_fWallRgt);
 
 	// Set Global Pose
 	rgd->setGlobalPose(P::board->Pose() * Transform(0, m_height*2, 0));

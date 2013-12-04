@@ -62,7 +62,7 @@ namespace Physics
 			bool IsPaused() const;
 			void TogglePause();
 
-			void Update(Fl32 deltaTime);
+			void UpdatePhys(Fl32 deltaTime);
 
 			std::vector<PxRigidActor*> GetActors(PxActorTypeSelectionFlags flags, bool rendering = false) const;
 

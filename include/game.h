@@ -49,6 +49,7 @@ namespace GameFramework
 		// Renders the given geometric object
 		void RenderGeometry(physx::PxGeometryHolder h);
 
+		void TimerFunc(int id);
 	public:
 		// Construction/Destruction
 		Game(std::string title, int windowWidth, int windowHeight);
@@ -80,6 +81,7 @@ namespace GameFramework
 		static void KeyboardUpWrapper(unsigned char key, int x, int y);
 		static void SpecKeyboardDownWrapper(int key, int x, int y);
 		static void SpecKeyboardUpWrapper(int key, int x, int y);
+		static void TimerFuncWrapper(int id);
 		static void ExitWrapper();
 	};
 }

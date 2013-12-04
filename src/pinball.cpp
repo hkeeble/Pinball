@@ -25,6 +25,9 @@ Pinball::~Pinball()
 
 void Pinball::Init()
 {
+	// Set FPS
+	m_fps = 1.f / FPS;
+
 	// Set State
 	gameState = Menu;
 
@@ -32,12 +35,9 @@ void Pinball::Init()
 	Log::Write("Intializing Camera...\n", ENGINE_LOG);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	camera = Camera(UP_VECTOR, Vec3(0, 0, 0), Vec3(0, 1, -5.5), DEFAULT_FOV);
+	camera = { UP_VECTOR, Vec3(0, 0, 0), Vec3(0, 1, -5.5), DEFAULT_FOV };
 	camera.Update(); // Used to initialize camera positions (gluLookAt)
 	
-	// C++11 Initializer List
-	// camera = { UP_VECTOR, Vec3(0, 0, 0), Vec3(0, 1, -5.5), DEFAULT_FOV };
-
 	// Set Perspective
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
@@ -54,6 +54,7 @@ void Pinball::Init()
 	Vec3 ClearColor		= Vec3(.5f, 1.f, 1.f);
 	Vec3 PlungerColor	= Vec3(.1f, .1f, 1.f);
 	Vec3 GlassColor		= Vec3(.3f, .3f, .3f);
+	Vec3 FlipperColor   = Vec3(.5f, 0.f, 0.f);
 
 	Log::Write("Intializing Materials...\n", ENGINE_LOG);
 
@@ -61,9 +62,13 @@ void Pinball::Init()
 	PxMaterial* BoardMaterial   = PHYSICS->createMaterial(0.f, 0.f, .1f);
 	PxMaterial* BorderMaterial	= PHYSICS->createMaterial(0.f, 0.f, .2f);
 	PxMaterial* BallMaterial	= PHYSICS->createMaterial(0.f, 0.f, .2f);
-	Fl32		BallDensity		= 1.f;
 	PxMaterial* PlungerMaterial = PHYSICS->createMaterial(0.f, 0.f, .1f);
-	Fl32		PlungerDensity	= 2.f;
+	PxMaterial* FlipperMaterial = PHYSICS->createMaterial(0.f, 0.f, 0.1f);
+
+	// Densities
+	Fl32 BallDensity = 1.f;
+	Fl32 PlungerDensity = 2.f;
+	Fl32 FlipperDensity = 2.f;
 
 	// Set Clear Color
 	glClearColor(ClearColor.x, ClearColor.y, ClearColor.z, 1.0);
@@ -77,6 +82,8 @@ void Pinball::Init()
 
 	// Dynamic Actors
 	m_plunger	 = new Plunger	 (PlungerMaterial, PlungerColor, PlungerDensity);
+	m_lftFlipper = new Flipper	 (Transform(board->Bottom() - Vec3(-0.1f, 0, 1.13f), Quat(DEG2RAD(-35), Vec3(0, 1, 0))), FlipperMaterial, FlipperColor, FlipperDensity);
+	m_rgtFlipper = new Flipper	 (Transform(board->Bottom() - Vec3(0.1f, 0, 1.13f), Quat(DEG2RAD(-35), Vec3(0, 1, 0))), FlipperMaterial, FlipperColor, FlipperDensity);
 
 	// Other Actors (Using primitive actor types)
 	// Poses
@@ -95,7 +102,9 @@ void Pinball::Init()
 	m_scene->Add(m_border);
 	m_scene->Add(m_innerWalls);
 	m_scene->Add(m_plunger);
-	m_scene->Add(m_wedgeTest);
+	m_scene->Add(m_lftFlipper);
+	m_scene->Add(m_rgtFlipper);
+	// m_scene->Add(m_wedgeTest);
 
 	InitJoints(); // Add Joints
 }
@@ -172,20 +181,22 @@ void Pinball::Render()
 			}
 		}
 
+		switch (gameState)
+		{
+		case InGame:
+			m_scene->UpdatePhys(m_fps);
+			break;
+		}
+
 		glutSwapBuffers();
+		Game::Render();
 		break;
 	}
 }
 
 void Pinball::Idle()
 {
-	switch(gameState)
-	{
-	case InGame:
-		m_scene->Update(m_fps);
-		glutPostRedisplay();
-		break;
-	}
+
 }
 
 void Pinball::Reshape(int width, int height)
@@ -205,12 +216,15 @@ void Pinball::MouseMove(int x, int y)
 
 void Pinball::KeyboardDown(unsigned char key, int x, int y)
 {
-	switch(gameState)
+	switch (gameState)
 	{
 	/* Menu Keys */
 	case Menu:
-		if(key == VK_RETURN)
+		if (key == VK_RETURN)
+		{
 			gameState = InGame;
+			glutPostRedisplay();
+		}
 		break;
 	/* InGame Keys */
 	case InGame:

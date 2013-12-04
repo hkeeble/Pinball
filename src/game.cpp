@@ -28,8 +28,6 @@ namespace GameFramework
 		m_title = title;
 		m_windowHeight = windowHeight;
 		m_windowWidth = windowWidth;
-
-		m_fps = 1.f/FPS;
 	}
 
 	Game::~Game()
@@ -50,6 +48,11 @@ namespace GameFramework
 
 		Log::Write("Entering main game loop...\n", ENGINE_LOG);
 		glutMainLoop();
+	}
+
+	void Game::TimerFunc(int id)
+	{
+		glutPostRedisplay();
 	}
 
 	void Game::Init()
@@ -155,7 +158,7 @@ namespace GameFramework
 
 	void Game::Render()
 	{
-
+		glutTimerFunc(16.6, TimerFuncWrapper, 0);
 	}
 
 	void Game::Idle()
@@ -228,4 +231,7 @@ namespace GameFramework
 
 	// Exit Wrapper
 	void Game::ExitWrapper() { instance->Exit(); }
+
+	// Timer Wrapper
+	void Game::TimerFuncWrapper(int id) { instance->TimerFunc(id); }
 }
