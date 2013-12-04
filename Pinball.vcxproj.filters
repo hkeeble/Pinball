@@ -51,9 +51,6 @@
     <ClInclude Include="include\boardObjects.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="RevoluteJoint.h">
-      <Filter>include</Filter>
-    </ClInclude>
     <ClInclude Include="include\physics\RevoluteJoint.h">
       <Filter>include\physics</Filter>
     </ClInclude>

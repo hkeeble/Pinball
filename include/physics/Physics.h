@@ -8,7 +8,7 @@
 #ifndef PHYSICS_H
 #define PHYSICS_H
 
-#include "../globals.h"
+#include "globals.h"
 #include "ErrorCallback.h" // Custom Error Callback Class
 #include "uncopyable.h" // uncopyable base class
 #include <vector> // include vector for actor storage

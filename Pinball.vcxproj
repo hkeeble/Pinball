@@ -58,7 +58,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(PHYSX_SDK)\include;$(SolutionDir)\include\physics;$(SolutionDir)\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(PHYSX_SDK)\include;$(SolutionDir)\include\physics;$(SolutionDir)\include\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -108,7 +108,6 @@
     <ClInclude Include="include\physics\RevoluteJoint.h" />
     <ClInclude Include="include\pinball.h" />
     <ClInclude Include="include\Uncopyable.h" />
-    <ClInclude Include="RevoluteJoint.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\boardObjects.cpp" />
