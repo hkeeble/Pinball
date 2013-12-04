@@ -89,9 +89,6 @@
     <ClCompile Include="src\plunger.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="RevoluteJoint.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="src\flipper.cpp">
       <Filter>src</Filter>
     </ClCompile>
