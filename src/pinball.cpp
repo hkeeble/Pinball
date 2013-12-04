@@ -15,7 +15,13 @@ Board* Pinball::board;
 Pinball::Pinball(std::string title, int windowWidth, int windowHeight)
 	: Game(title, windowWidth, windowHeight)
 {
-	m_ball = NULL;
+	m_ball = nullptr;
+	m_glass = nullptr;
+	m_border = nullptr;
+	m_innerWalls = nullptr;
+	m_plunger = nullptr;
+	m_flippers = nullptr;
+	m_actors = std::vector<Actor*>();
 }
 
 Pinball::~Pinball()
@@ -45,68 +51,18 @@ void Pinball::Init()
 	gluPerspective(camera.FOV, r, .1, 100);
 	glMatrixMode(GL_MODELVIEW);
 
-	Log::Write("Intializing Colors...\n", ENGINE_LOG);
-
-	// Colors
-	Vec3 BallColor		= Vec3(.8f, .8f, .8f);
-	Vec3 BoardColor		= Vec3(.4f, .4f, .4f);
-	Vec3 BorderColor	= Vec3(0.f, 0.f, 0.f);
-	Vec3 ClearColor		= Vec3(.5f, 1.f, 1.f);
-	Vec3 PlungerColor	= Vec3(.1f, .1f, 1.f);
-	Vec3 GlassColor		= Vec3(.3f, .3f, .3f);
-	Vec3 FlipperColor   = Vec3(.5f, 0.f, 0.f);
-
-	Log::Write("Intializing Materials...\n", ENGINE_LOG);
-
-	// Materials
-	PxMaterial* BoardMaterial   = PHYSICS->createMaterial(0.f, 0.f, .1f);
-	PxMaterial* BorderMaterial	= PHYSICS->createMaterial(0.f, 0.f, .2f);
-	PxMaterial* BallMaterial	= PHYSICS->createMaterial(0.f, 0.f, .2f);
-	PxMaterial* PlungerMaterial = PHYSICS->createMaterial(0.f, 0.f, .1f);
-	PxMaterial* FlipperMaterial = PHYSICS->createMaterial(0.f, 0.f, 0.1f);
-
-	// Densities
-	Fl32 BallDensity = 1.f;
-	Fl32 PlungerDensity = 2.f;
-	Fl32 FlipperDensity = 2.f;
-
-	// Set Clear Color
+	const Vec3 ClearColor = Vec3(.5f, 1.f, 1.f);
 	glClearColor(ClearColor.x, ClearColor.y, ClearColor.z, 1.0);
 
-	Log::Write("Intializing Actors...\n", ENGINE_LOG);
+	InitBoard();
+	InitInnerWalls();
+	InitFlippers();
+	InitBall();
+	InitPlunger();
 
-	// Static Actors
-	board		 = new Board	 (BoardMaterial,   BoardColor);
-	m_border	 = new Border	 (BorderMaterial,  BorderColor);
-	m_innerWalls = new InnerWalls(BorderMaterial,  BorderColor); 
+	AddActors();
 
-	// Dynamic Actors
-	m_plunger	 = new Plunger	 (PlungerMaterial, PlungerColor, PlungerDensity);
-	m_lftFlipper = new Flipper	 (Transform(board->Bottom() - Vec3(-0.1f, 0, 1.13f), Quat(DEG2RAD(-35), Vec3(0, 1, 0))), FlipperMaterial, FlipperColor, FlipperDensity);
-	m_rgtFlipper = new Flipper	 (Transform(board->Bottom() - Vec3(0.1f, 0, 1.13f), Quat(DEG2RAD(-35), Vec3(0, 1, 0))), FlipperMaterial, FlipperColor, FlipperDensity);
-
-	// Other Actors (Using primitive actor types)
-	// Poses
-	Transform BallPose = board->Pose() * Transform(board->Right().x + (board->WallWidth()*2) + BALL_RADIUS*2, board->Dimensions().y*2 + BALL_RADIUS*2, 0); 
-	Transform GlassPose = board->Pose() * Transform(Vec3(0, board->WallHeight()*2 + (board->Dimensions().y*2), 0));
-
-	m_ball	= new Sphere(BallPose, BALL_RADIUS, BallDensity, BallColor, BallMaterial);
-	m_glass = new Box(GlassPose, board->Dimensions(), 0, GlassColor, BoardMaterial, StaticActor);
-
-	Log::Write("Adding Actors to Scene...\n", ENGINE_LOG);
-
-	// Add Actors to scene (Note: Glass must be added second to prevent rendering)
-	m_scene->Add(board);
-	m_scene->Add(m_glass);
-	m_scene->Add(m_ball);
-	m_scene->Add(m_border);
-	m_scene->Add(m_innerWalls);
-	m_scene->Add(m_plunger);
-	m_scene->Add(m_lftFlipper);
-	m_scene->Add(m_rgtFlipper);
-	// m_scene->Add(m_wedgeTest);
-
-	InitJoints(); // Add Joints
+	InitJoints();
 }
 
 void Pinball::InitJoints()
@@ -115,6 +71,94 @@ void Pinball::InitJoints()
 	AddDistanceJoint(m_plunger->Get().dynamicActor, PxTransform::createIdentity(), NULL, m_plunger->Get().dynamicActor->getGlobalPose(),
 		PxDistanceJointFlag::eSPRING_ENABLED, 1000.f, 1.f);
 	m_plunger->SetKinematic(true);
+}
+
+void Pinball::InitBall()
+{
+	const Vec3 BallColor = Vec3(.8f, .8f, .8f);
+	PxMaterial* BallMaterial = PHYSICS->createMaterial(0.f, 0.f, .2f);
+	const Fl32 BallDensity = 1.f;
+	Transform BallPose = board->Pose() * Transform(board->Right().x + (board->WallWidth() * 2) + BALL_RADIUS * 2, board->Dimensions().y * 2 + BALL_RADIUS * 2, 0);
+	m_ball = new Sphere(BallPose, BALL_RADIUS, BallDensity, BallColor, BallMaterial);
+	m_actors.push_back(m_ball);
+}
+
+void Pinball::InitBoard()
+{
+	const Vec3 BoardColor = Vec3(.4f, .4f, .4f);
+	const Vec3 BorderColor = Vec3(0.f, 0.f, 0.f);
+
+	PxMaterial* BoardMaterial = PHYSICS->createMaterial(0.f, 0.f, .1f);
+	PxMaterial* BorderMaterial = PHYSICS->createMaterial(0.f, 0.f, .2f);
+
+	// board and border
+	board = new Board(BoardMaterial, BoardColor);
+	m_border = new Border(BorderMaterial, BorderColor);
+
+	// Glass
+	Transform GlassPose = board->Pose() * Transform(Vec3(0, board->WallHeight() * 2 + (board->Dimensions().y * 2), 0));
+	m_glass = new Box(GlassPose, board->Dimensions(), 0, Vec3(0, 0, 0), BoardMaterial, StaticActor);
+	
+	m_actors.push_back(board);
+	m_actors.push_back(m_glass);
+	m_actors.push_back(m_border);
+}
+
+void Pinball::InitInnerWalls()
+{
+	const Vec3 WallColor = Vec3(0.f, 0.f, 0.f);
+	PxMaterial* WallMaterial = PHYSICS->createMaterial(0.f, 0.f, .2f);
+
+	m_innerWalls = new InnerWalls(WallMaterial, WallColor);
+
+	m_actors.push_back(m_innerWalls);
+}
+
+void Pinball::InitFlippers()
+{
+	// Flippers Data
+	const Vec3 FlipperColor = Vec3(.5f, 0.f, 0.f);
+	const Fl32 FlipperDensity = 2.f;
+	PxMaterial* FlipperMaterial = PHYSICS->createMaterial(0.f, 0.f, 0.1f);
+
+	// Flipper Positions
+	const Transform lftFPos = Transform(board->Bottom() + Vec3(0.f, 0.f, 0.f), Quat(DEG2RAD(-35), Vec3(0, 1, 0)));
+	const Transform rgtFPos = Transform(board->Bottom() - Vec3(0.1f, 0, 1.13f), Quat(DEG2RAD(-35), Vec3(0, 1, 0)));
+
+	// Flipper Joint Poses (relative)
+	const Transform lftFJPos = Transform(0.f, 1.f, 0.f);
+	const Transform rgtFJPos = Transform(0.01f, 0.f, 0.f);
+
+	// Create Flippers
+	Flipper* m_lftFlipper = new Flipper(lftFPos, FlipperMaterial, FlipperColor, FlipperDensity, lftFJPos);
+	Flipper* m_rgtFlipper = new Flipper(rgtFPos, FlipperMaterial, FlipperColor, FlipperDensity, rgtFJPos);
+
+	// Create Flippers Object
+	m_flippers = new Flippers(m_rgtFlipper, m_lftFlipper);
+
+	// Add Flippers to Actors Vector
+	m_actors.push_back(m_flippers->GetLeft());
+	m_actors.push_back(m_flippers->GetRight());
+}
+
+void Pinball::InitPlunger()
+{
+	PxMaterial* PlungerMaterial = PHYSICS->createMaterial(0.f, 0.f, .1f);
+	const Vec3 PlungerColor = Vec3(.1f, .1f, 1.f);
+	const Fl32 PlungerDensity = 2.f;
+
+	m_plunger = new Plunger(PlungerMaterial, PlungerColor, PlungerDensity);
+
+	m_actors.push_back(m_plunger);
+}
+
+void Pinball::AddActors()
+{
+	for (std::vector<Actor*>::iterator iter = m_actors.begin(); iter != m_actors.end(); iter++)
+	{
+		Actor* act = *iter;
+		m_scene->Add(act);
+	}
 }
 
 void Pinball::Render()
@@ -251,7 +295,17 @@ void Pinball::KeyboardUp(unsigned char key, int x, int y)
 
 void Pinball::SpecKeyboardDown(int key, int x, int y)
 {
-
+	switch (gameState)
+	{
+	case Menu:
+		break;
+	case InGame:
+		if (key == GLUT_KEY_LEFT)
+			m_flippers->FlipLeft();
+		if (key == GLUT_KEY_RIGHT)
+			m_flippers->FlipRight();
+		break;
+	}
 }
 
 void Pinball::SpecKeyboardUp(int key, int x, int y)

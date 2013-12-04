@@ -7,18 +7,20 @@
 #include "boardObjects.h"
 #include "pinball.h"
 
-Flipper::Flipper(Transform pose, PxMaterial* material, Vec3 color, Fl32 density)
+Flipper::Flipper(const Transform& pose, PxMaterial* material, const Vec3& color, const Fl32& density, const Transform& relativeJointPose)
 : Wedge			 ( pose,
 				   density,
 				   color,
 				   material,
-				   Vec3(.075f, .07f, .03f),
+				   Vec3(.075f, .07f, .04f),
 				   DynamicActor )
 {
-	isFlipped = false;
+	m_isFlipped = false;
 	Create();
-	SetKinematic(true);
-	Get().dynamicActor->setGlobalPose(Get().dynamicActor->getGlobalPose() * Transform(Pinball::board->Get().staticActor->getGlobalPose().q));
+	//SetKinematic(true);
+	
+	// Create Joint
+	//m_joint = RevoluteJoint(Get().dynamicActor, Pose() * Transform(Quat(DEG2RAD(90), PxVec3(0.f, 1.f, 0.f))), nullptr, Pose() * relativeJointPose);
 }
 
 Flipper::Flipper(const Flipper& param) : Wedge(param)
@@ -44,7 +46,8 @@ Flipper::~Flipper()
 
 void Flipper::Flip()
 { 
-	isFlipped = true;
+	m_isFlipped = true;
+	m_joint.DriveVelocity(1000.f);
 }
 
 void Flipper::SetKinematic(bool isKinematic)

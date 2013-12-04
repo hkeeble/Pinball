@@ -9,6 +9,7 @@
 
 #include "Actors.h"
 #include "globals.h"
+#include "RevoluteJoint.h"
 
 using namespace Physics;
 
@@ -85,7 +86,7 @@ public:
 class InnerWalls : public WallEntity
 {
 public:
-	InnerWalls(PxMaterial* material, Vec3 color);
+	InnerWalls(PxMaterial* material, const Vec3& color);
 	~InnerWalls();
 	virtual void Create() override;
 };
@@ -97,7 +98,7 @@ private:
 	PxRigidDynamic* m_shaft;
 	Transform m_initialPose;
 public:
-	Plunger(PxMaterial* material, Vec3 color, Fl32 density);
+	Plunger(PxMaterial* material, const Vec3& color, const Fl32& density);
 	Plunger(const Plunger& param);
 	Plunger& operator=(const Plunger& param);
 	~Plunger();
@@ -107,13 +108,14 @@ public:
 	virtual void Create() override;
 };
 
-/* Convex Mesh to represent a flipper */
+/* Wedge to represent a flipper */
 class Flipper : public Wedge
 {
 private:
-	bool isFlipped;
+	bool m_isFlipped;
+	RevoluteJoint m_joint;
 public:
-	Flipper(Transform pose, PxMaterial* material, Vec3 color, Fl32 density);
+	Flipper(const Transform& pose, PxMaterial* material, const Vec3& color, const Fl32& density, const Transform& relativeJointPose);
 	Flipper(const Flipper& param);
 	Flipper& operator=(const Flipper& param);
 	~Flipper();

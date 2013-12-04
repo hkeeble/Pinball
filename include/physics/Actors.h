@@ -117,6 +117,20 @@ namespace Physics
 	};
 
 	/*-------------------------------------------------------------------------\
+	|							COMPOUND CONVEX MESH							|
+	\-------------------------------------------------------------------------*/
+	class CompoundConvexMeshActor : public Actor
+	{
+	private:
+
+	public:
+		CompoundConvexMeshActor();
+		CompoundConvexMeshActor(const CompoundConvexMeshActor& param);
+		virtual CompoundConvexMeshActor& operator=(const CompoundConvexMeshActor& param);
+		virtual ~CompoundConvexMeshActor();
+	};
+
+	/*-------------------------------------------------------------------------\
 	|								BOX											|
 	\-------------------------------------------------------------------------*/
 	class Box : public ShapeActor
@@ -152,6 +166,9 @@ namespace Physics
 		Fl32 Radius() const;
 	};
 
+	/*-------------------------------------------------------------------------\
+	|								WEDGE										|
+	\-------------------------------------------------------------------------*/
 	class Wedge : public ConvexMeshActor
 	{
 	public:

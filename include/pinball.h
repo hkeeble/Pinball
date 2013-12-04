@@ -8,6 +8,8 @@
 
 #include "game.h"
 #include "boardObjects.h"
+#include "flippers.h"
+#include <vector>
 #include <string>
 
 using namespace GameFramework;
@@ -17,13 +19,13 @@ class Pinball : public Game
 {
 	private:
 		// Actors
+		std::vector<Actor*> m_actors;
 		Sphere*		m_ball;
 		Box*		m_glass;
 		Border*		m_border;
 		InnerWalls* m_innerWalls;
 		Plunger*	m_plunger;
-		Flipper*	m_rgtFlipper;
-		Flipper*	m_lftFlipper;
+		Flippers*	m_flippers;
 
 		int m_currentScore;
 
@@ -33,6 +35,15 @@ class Pinball : public Game
 			InGame
 		} gameState;
 
+		// Initialization Functions
+		void InitBoard();
+		void InitInnerWalls();
+		void InitFlippers();
+		void InitPlunger();
+		void InitBall();
+		void InitJoints();
+
+		void AddActors();
 	public:
 		Pinball(std::string title, int windowWidth, int windowHeight);
 		~Pinball();
@@ -40,7 +51,7 @@ class Pinball : public Game
 		// Board Actor
 		static Board* board;
 
-		void InitJoints();
+
 
 		virtual void Init();
 		virtual void Render();

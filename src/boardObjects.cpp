@@ -188,7 +188,7 @@ void Border::Create()
 |						INNER WALL DEFINITIONS								|
 \-------------------------------------------------------------------------*/
 #pragma region InnerWalls
-InnerWalls::InnerWalls(PxMaterial* material, Vec3 color)
+InnerWalls::InnerWalls(PxMaterial* material, const Vec3& color)
 	: WallEntity(IW_SHAPES, IDENTITY_TRANS, 1.f, material, color, StaticActor)
 {
 	m_geometrys = new PxGeometryHolder[IW_SHAPES];
@@ -205,10 +205,10 @@ InnerWalls::InnerWalls(PxMaterial* material, Vec3 color)
 		P::board->WallHeight(), P::board->WallWidth()));
 
 	// Assign Geometrys
-	m_geometrys[IW_ID_PLUNGE_LN_WALL].box() = geos[IW_ID_PLUNGE_LN_WALL];
-	m_geometrys[IW_ID_PLUNGE_LN_WALL_TP].box() = geos[IW_ID_PLUNGE_LN_WALL_TP];
-	m_geometrys[IW_ID_FLIPPER_WALL_LFT].box() = geos[IW_ID_FLIPPER_WALL_LFT];
-	m_geometrys[IW_ID_FLIPPER_WALL_RGT].box() = geos[IW_ID_FLIPPER_WALL_RGT];
+	m_geometrys[IW_ID_PLUNGE_LN_WALL].box()		= geos[IW_ID_PLUNGE_LN_WALL];
+	m_geometrys[IW_ID_PLUNGE_LN_WALL_TP].box()	= geos[IW_ID_PLUNGE_LN_WALL_TP];
+	m_geometrys[IW_ID_FLIPPER_WALL_LFT].box()	= geos[IW_ID_FLIPPER_WALL_LFT];
+	m_geometrys[IW_ID_FLIPPER_WALL_RGT].box()	= geos[IW_ID_FLIPPER_WALL_RGT];
 }
 
 InnerWalls::~InnerWalls()
@@ -230,7 +230,7 @@ void InnerWalls::Create()
 	p_fWallRgt		= Transform(b->Bottom() + Vec3(-(b->FallHoleWidth()+m_geometrys[IW_ID_FLIPPER_WALL_RGT].box().halfExtents.x-.02f), 0, .6f), PxQuat(DEG2RAD(35), Vec3(0, 1, 0)));
 
 	// Create Shapes
-	PxShape* pL		   =	rgd->createShape(m_geometrys[IW_ID_PLUNGE_LN_WALL].box(), *m_material); // Plunger Lane Wall
+	PxShape* pL		   = rgd->createShape(m_geometrys[IW_ID_PLUNGE_LN_WALL].box(), *m_material); // Plunger Lane Wall
 	PxShape* PlT	   = rgd->createShape(m_geometrys[IW_ID_PLUNGE_LN_WALL_TP].box(), *m_material); // Plunger Lane Wall Top
 	PxShape* pfWallLft = rgd->createShape(m_geometrys[IW_ID_FLIPPER_WALL_LFT].box(), *m_material); // Flipper Wall Left
 	PxShape* pfWallRgt = rgd->createShape(m_geometrys[IW_ID_FLIPPER_WALL_RGT].box(), *m_material); // Flipper Wall Right

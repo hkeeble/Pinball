@@ -9,7 +9,7 @@
 
 typedef Pinball P;
 
-Plunger::Plunger(PxMaterial* material, Vec3 color, Fl32 density)
+Plunger::Plunger(PxMaterial* material, const Vec3& color, const Fl32& density)
 	: CompoundShapeActor
 		(PSHAPES,
 		IDENTITY_TRANS,

@@ -98,6 +98,7 @@
   <ItemGroup>
     <ClInclude Include="include\boardObjects.h" />
     <ClInclude Include="include\camera.h" />
+    <ClInclude Include="include\flippers.h" />
     <ClInclude Include="include\game.h" />
     <ClInclude Include="include\globals.h" />
     <ClInclude Include="include\GL\glut.h" />
@@ -113,6 +114,7 @@
     <ClCompile Include="src\boardObjects.cpp" />
     <ClCompile Include="src\camera.cpp" />
     <ClCompile Include="src\flipper.cpp" />
+    <ClCompile Include="src\flippers.cpp" />
     <ClCompile Include="src\game.cpp" />
     <ClCompile Include="src\log.cpp" />
     <ClCompile Include="src\main.cpp" />

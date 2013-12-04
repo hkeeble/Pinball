@@ -421,6 +421,7 @@ namespace Physics
 		desc.points.count = sizeof(wedge_verts) / sizeof(Vec3);
 		desc.points.stride = sizeof(Vec3);
 
+		// Scale Vertices
 		for (auto& i : verts)
 			i = Vec3(i.x * m_scale.x, i.y * m_scale.y, i.z * m_scale.z);
 
@@ -449,6 +450,6 @@ namespace Physics
 			shape = ptr->createShape(PxConvexMeshGeometry(mesh, PxMeshScale(Vec3(1, 1, 1), PxQuat::createIdentity())), *m_material);
 			m_actor.staticActor = ptr;
 			m_actor.staticActor->userData = &m_color;
-		}	
+		}
 	}
 }

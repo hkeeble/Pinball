@@ -54,6 +54,9 @@
     <ClInclude Include="include\physics\RevoluteJoint.h">
       <Filter>include\physics</Filter>
     </ClInclude>
+    <ClInclude Include="include\flippers.h">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\physics\ErrorCallback.cpp">
@@ -91,6 +94,9 @@
     </ClCompile>
     <ClCompile Include="src\physics\RevoluteJoint.cpp">
       <Filter>src\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\flippers.cpp">
+      <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
