@@ -24,8 +24,8 @@ void InitLog()
 		std::to_string(now->tm_hour) + ":" + std::to_string(now->tm_min) + ":" + std::to_string(now->tm_sec) + " ----- \n";
 
 	Log::Write(s.c_str(), ENGINE_LOG);
-	delete t;
-	delete now;
+	RELEASE(t);
+	RELEASE(now);
 }
 
 int main(int argc, char *argv[])

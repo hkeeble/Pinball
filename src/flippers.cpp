@@ -1,40 +1,49 @@
 #include "flippers.h"
 
-Flippers::Flippers()
+Flippers::Flippers(Flipper* left, Flipper* right)
 {
-	lft = nullptr;
-	rgt = nullptr;
+	lft = left;
+	rgt = right;
 }
 
-Flippers::Flippers(const Flipper* const right, const Flipper* const left)
+Flippers::Flippers(const Flippers& param)
 {
-	lft = (Flipper*)right;
-	rgt = (Flipper*)left;
+	lft = param.lft;
+	rgt = param.rgt;
 }
+
+Flippers& Flippers::operator=(const Flippers& param)
+{
+	if (&param == this)
+		return *this;
+	else
+	{
+		lft = param.lft;
+		rgt = param.rgt;
+	}
+}
+
 Flippers::~Flippers()
 {
-	if (lft != nullptr)
-		delete lft;
-	if (rgt != nullptr)
-		delete rgt;
+
 }
 
 void Flippers::FlipLeft()
 {
-	// Flip Left
+	lft->Flip();
 }
 
 void Flippers::FlipRight()
 {
-	// Flip Right
+	rgt->Flip();
 }
 
-Flipper* Flippers::GetLeft() const
+Flipper* const Flippers::GetLeft() const
 {
 	return lft;
 }
 
-Flipper* Flippers::GetRight() const
+Flipper* const Flippers::GetRight() const
 {
 	return rgt;
 }

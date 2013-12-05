@@ -6,16 +6,18 @@
 class Flippers
 {
 private:
-	Flipper* lft;
-	Flipper* rgt;
+	Flipper *lft, *rgt;
 public:
-	Flippers();
-	Flippers(const Flipper* const right, const Flipper* const left);
+	Flippers(Flipper* left, Flipper* right);
+	Flippers(const Flippers& param);
+	Flippers& operator=(const Flippers& param);
 	~Flippers();
+
 	void FlipLeft();
 	void FlipRight();
-	Flipper* GetLeft() const;
-	Flipper* GetRight() const;
+
+	Flipper* const GetLeft() const;
+	Flipper* const GetRight() const;
 };
 
 #endif // _FLIPPERS_H_

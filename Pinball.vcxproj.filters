@@ -89,11 +89,11 @@
     <ClCompile Include="src\plunger.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="src\flipper.cpp">
-      <Filter>src</Filter>
-    </ClCompile>
     <ClCompile Include="src\physics\RevoluteJoint.cpp">
       <Filter>src\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\flipper.cpp">
+      <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\flippers.cpp">
       <Filter>src</Filter>

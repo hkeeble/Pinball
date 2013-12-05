@@ -32,8 +32,7 @@ namespace GameFramework
 
 	Game::~Game()
 	{
-		if(m_scene)
-			delete m_scene;
+		RELEASE(m_scene);
 	}
 
 	void Game::Run(int argc, char *argv[])

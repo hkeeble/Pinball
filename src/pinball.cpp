@@ -118,23 +118,19 @@ void Pinball::InitFlippers()
 {
 	// Flippers Data
 	const Vec3 FlipperColor = Vec3(.5f, 0.f, 0.f);
-	const Fl32 FlipperDensity = 2.f;
+	const Fl32 FlipperDensity = .5f;
 	PxMaterial* FlipperMaterial = PHYSICS->createMaterial(0.f, 0.f, 0.1f);
 
 	// Flipper Positions
-	const Transform lftFPos = Transform(board->Bottom() + Vec3(0.f, 0.f, 0.f), Quat(DEG2RAD(-35), Vec3(0, 1, 0)));
-	const Transform rgtFPos = Transform(board->Bottom() - Vec3(0.1f, 0, 1.13f), Quat(DEG2RAD(-35), Vec3(0, 1, 0)));
-
-	// Flipper Joint Poses (relative)
-	const Transform lftFJPos = Transform(0.f, 1.f, 0.f);
-	const Transform rgtFJPos = Transform(0.01f, 0.f, 0.f);
+	const Transform lftFPos = Transform(board->Bottom() + Vec3(.2f, 0.f, .2f));
+	const Transform rgtFPos = Transform(board->Bottom() + Vec3(-.2f, 0, .2f));
 
 	// Create Flippers
-	Flipper* m_lftFlipper = new Flipper(lftFPos, FlipperMaterial, FlipperColor, FlipperDensity, lftFJPos);
-	Flipper* m_rgtFlipper = new Flipper(rgtFPos, FlipperMaterial, FlipperColor, FlipperDensity, rgtFJPos);
+	Flipper* m_lftFlipper = new Flipper(lftFPos, FlipperType::Left, FlipperMaterial, FlipperColor, FlipperDensity);
+	Flipper* m_rgtFlipper = new Flipper(rgtFPos, FlipperType::Right, FlipperMaterial, FlipperColor, FlipperDensity);
 
 	// Create Flippers Object
-	m_flippers = new Flippers(m_rgtFlipper, m_lftFlipper);
+	m_flippers = new Flippers(m_lftFlipper, m_rgtFlipper);
 
 	// Add Flippers to Actors Vector
 	m_actors.push_back(m_flippers->GetLeft());
@@ -317,12 +313,9 @@ void Pinball::Exit()
 {
 	Game::Exit();
 
-	if(m_ball)
-		delete m_ball;
-	if(board)
-		delete board;
-	if(m_innerWalls)
-		delete m_innerWalls;
+	RELEASE(m_ball);
+	RELEASE(board);
+	RELEASE(m_innerWalls);
 	//if(m_plunger)
-		//delete m_plunger;
+		//m_plunger;
 }

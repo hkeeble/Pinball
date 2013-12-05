@@ -8,15 +8,6 @@
 
 namespace Physics
 {
-	static const PxVec3 wedge_verts[] = {
-											PxVec3(-1, 0, -1),
-											PxVec3(-1, 0, 1),
-											PxVec3(1, 0, 1),
-											PxVec3(1, 1, 1),
-											PxVec3(1, 1, -1),
-											PxVec3(1, 0, -1)
-										};
-
 	/*-------------------------------------------------------------------------\
 	|							ACTOR DEFINITIONS								|
 	\-------------------------------------------------------------------------*/
@@ -76,9 +67,9 @@ namespace Physics
 	Actor::~Actor()
 	{
 		if (m_aType == DynamicActor)
-			m_actor.dynamicActor->release();
+			PX_RELEASE(m_actor.dynamicActor);
 		if (m_aType == StaticActor)
-			m_actor.staticActor->release();
+			PX_RELEASE(m_actor.staticActor);
 	}
 
 	ActorUnion Actor::Get()
@@ -146,8 +137,7 @@ namespace Physics
 			return *this;
 		else
 		{
-			if(m_material)
-				m_material->release();
+			PX_RELEASE(m_material);
 			m_material = cpyMaterial(param.m_material);
 			m_geometry = param.m_geometry;
 			m_color = param.m_color;
@@ -161,10 +151,8 @@ namespace Physics
 
 	ShapeActor::~ShapeActor()
 	{
-		if(m_material)
-			m_material->release();
-		if(m_shape)
-			m_shape->release();
+		PX_RELEASE(m_material);
+		PX_RELEASE(m_shape);
 	}
 
 	void ShapeActor::Create()
@@ -240,13 +228,12 @@ namespace Physics
 		{
 			Actor::operator=(param);
 
-			if(m_material)
-				m_material->release();
+			PX_RELEASE(m_material);
 
 			m_material = cpyMaterial(param.m_material);
 
-			if(m_geometrys)
-				delete[] m_geometrys;
+			RELEASE_MULTI(m_geometrys);
+
 			if(param.m_geometrys)
 			{
 				m_geometrys = new PxGeometryHolder[param.nShapes];
@@ -265,46 +252,7 @@ namespace Physics
 
 	CompoundShapeActor::~CompoundShapeActor()
 	{
-		if(m_geometrys)
-			delete[] m_geometrys;
-	}
-
-	/*------------------------------------------------------------------------\
-	|					CONVEXMESHACTOR DEFINITIONS								|
-	\-------------------------------------------------------------------------*/
-	ConvexMeshActor::ConvexMeshActor(Transform pose, Fl32 density, const Vec3& color, PxMaterial* material, Vec3 scale, ActorType aType)
-		: ShapeActor(pose, density, material, color, aType)
-	{
-		m_scale = scale;
-	}
-
-	ConvexMeshActor::ConvexMeshActor(const ConvexMeshActor& param) : ShapeActor(param)
-	{
-
-	}
-
-	ConvexMeshActor& ConvexMeshActor::operator= (const ConvexMeshActor& param)
-	{
-		if (this == &param)
-			return *this;
-		else
-		{
-			ShapeActor::operator=(param);
-			return *this;
-		}
-	}
-	
-	ConvexMeshActor::~ConvexMeshActor()
-	{
-
-	}
-
-	PxConvexMesh* ConvexMeshActor::Cook(PxConvexMeshDesc desc)
-	{
-		PxDefaultMemoryOutputStream stream;
-		PxGetCooking()->cookConvexMesh(desc, stream);
-		PxDefaultMemoryInputData input(stream.getData(), stream.getSize());
-		return PHYSICS->createConvexMesh(input);
+		RELEASE_MULTI(m_geometrys);
 	}
 
 	/*------------------------------------------------------------------------\
@@ -387,14 +335,23 @@ namespace Physics
 	|							WEDGE DEFINITIONS								|
 	\-------------------------------------------------------------------------*/
 	Wedge::Wedge(Transform pose, Fl32 density, const Vec3& color, PxMaterial* material, Vec3 scale, ActorType aType)
-		: ConvexMeshActor(pose, density, color, material, scale, aType)
+		: ShapeActor(pose, density, material, color, aType)
 	{
+		m_scale = scale;
 		m_pose = m_pose * Transform(Quat(DEG2RAD(90), Vec3(1, 0, 0))); // Default Pose Rotation
+		
+		Vec3 verts[sizeof(wedge_verts) / sizeof(Vec3)];
+		std::copy(std::begin(wedge_verts), std::end(wedge_verts), std::begin(verts));
+
+		PxConvexMesh* mesh = CreateConvexMesh(verts, sizeof(verts)/sizeof(Vec3), m_scale);
+		m_geometry.storeAny(PxConvexMeshGeometry(mesh));
+		
+		Create();
 	}
 
-	Wedge::Wedge(const Wedge& param) : ConvexMeshActor(param)
+	Wedge::Wedge(const Wedge& param) : ShapeActor(param)
 	{
-
+		m_scale = param.m_scale;
 	}
 
 	Wedge& Wedge::operator=(const Wedge& param)
@@ -403,7 +360,7 @@ namespace Physics
 			return *this;
 		else
 		{
-			ConvexMeshActor::operator=(param);
+			ShapeActor::operator=(param);
 			return *this;
 		}
 	}
@@ -414,23 +371,6 @@ namespace Physics
 
 	void Wedge::Create()
 	{
-		Vec3 verts[sizeof(wedge_verts) / sizeof(Vec3)];
-		std::copy(std::begin(wedge_verts), std::end(wedge_verts), std::begin(verts));
-
-		PxConvexMeshDesc desc;
-		desc.points.count = sizeof(wedge_verts) / sizeof(Vec3);
-		desc.points.stride = sizeof(Vec3);
-
-		// Scale Vertices
-		for (auto& i : verts)
-			i = Vec3(i.x * m_scale.x, i.y * m_scale.y, i.z * m_scale.z);
-
-		desc.points.data = verts;
-		desc.flags = PxConvexFlag::eCOMPUTE_CONVEX;
-		desc.vertexLimit = VERTEX_LIMIT;
-
-		PxConvexMesh* mesh = Cook(desc);
-
 		void* s = nullptr;
 		PxShape* shape = nullptr;
 
@@ -438,7 +378,7 @@ namespace Physics
 		{
 			PxRigidDynamic* ptr = StaticCast(s, PxRigidDynamic*); // Receive Correctly Cast Pointer
 			ptr = PHYSICS->createRigidDynamic(m_pose);
-			shape = ptr->createShape(PxConvexMeshGeometry(mesh), *m_material);
+			shape = ptr->createShape(m_geometry.convexMesh(), *m_material);
 			PxRigidBodyExt::setMassAndUpdateInertia(*ptr, m_density);
 			m_actor.dynamicActor = ptr;
 			m_actor.dynamicActor->userData = &m_color;
@@ -447,7 +387,7 @@ namespace Physics
 		{
 			PxRigidStatic* ptr = StaticCast(s, PxRigidStatic*); // Receive Correctly Cast Pointer
 			ptr = PHYSICS->createRigidStatic(m_pose);
-			shape = ptr->createShape(PxConvexMeshGeometry(mesh, PxMeshScale(Vec3(1, 1, 1), PxQuat::createIdentity())), *m_material);
+			shape = ptr->createShape(m_geometry.convexMesh(), *m_material);
 			m_actor.staticActor = ptr;
 			m_actor.staticActor->userData = &m_color;
 		}

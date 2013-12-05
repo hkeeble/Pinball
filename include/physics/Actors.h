@@ -100,37 +100,6 @@ namespace Physics
 	};
 
 	/*-------------------------------------------------------------------------\
-	|								CONVEX MESH									|
-	\-------------------------------------------------------------------------*/
-	class ConvexMeshActor : public ShapeActor
-	{
-	protected:
-		Vec3 m_scale;
-
-		PxConvexMesh* Cook(PxConvexMeshDesc desc);
-	public:
-		ConvexMeshActor(Transform pose = IDENTITY_TRANS, Fl32 density = DEFAULT_DENSITY, const Vec3& color = DEFAULT_COLOR,
-			PxMaterial* material = DEFAULT_MATERIAL, Vec3 scale = Vec3(1, 1, 1), ActorType aType = DEFAULT_ACTOR_TYPE);
-		ConvexMeshActor(const ConvexMeshActor& param);
-		virtual ConvexMeshActor& operator=(const ConvexMeshActor& param);
-		virtual ~ConvexMeshActor();
-	};
-
-	/*-------------------------------------------------------------------------\
-	|							COMPOUND CONVEX MESH							|
-	\-------------------------------------------------------------------------*/
-	class CompoundConvexMeshActor : public Actor
-	{
-	private:
-
-	public:
-		CompoundConvexMeshActor();
-		CompoundConvexMeshActor(const CompoundConvexMeshActor& param);
-		virtual CompoundConvexMeshActor& operator=(const CompoundConvexMeshActor& param);
-		virtual ~CompoundConvexMeshActor();
-	};
-
-	/*-------------------------------------------------------------------------\
 	|								BOX											|
 	\-------------------------------------------------------------------------*/
 	class Box : public ShapeActor
@@ -169,8 +138,10 @@ namespace Physics
 	/*-------------------------------------------------------------------------\
 	|								WEDGE										|
 	\-------------------------------------------------------------------------*/
-	class Wedge : public ConvexMeshActor
+	class Wedge : public ShapeActor
 	{
+	private:
+		Vec3 m_scale;
 	public:
 		Wedge(Transform pose = IDENTITY_TRANS, Fl32 density = DEFAULT_DENSITY, const Vec3& color = DEFAULT_COLOR,
 			PxMaterial* material = DEFAULT_MATERIAL, Vec3 scale = Vec3(1, 1, 1), ActorType aType = DEFAULT_ACTOR_TYPE);
@@ -178,10 +149,8 @@ namespace Physics
 		virtual Wedge& operator=(const Wedge& param);
 		virtual ~Wedge();
 
-		virtual void Create();
+		virtual void Create() override;
 	};
-
-
 }
 
 #endif _ACTORS_H_

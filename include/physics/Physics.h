@@ -35,6 +35,10 @@ namespace Physics
 	PxShape* cpyShape(PxShape* src);
 	void AddDistanceJoint(PxRigidActor* actor0, PxTransform& localFrame0, PxRigidActor* actor1, PxTransform& localFrame1,
 		PxDistanceJointFlag::Enum flags = PxDistanceJointFlag::Enum::eSPRING_ENABLED, PxReal stiffness=1.f, PxReal damping=1.f);
+	
+	// -- Convex Mesh Functions
+	PxConvexMesh* CreateConvexMesh(Vec3* const verts, const int& nVerts, const Vec3& scale);
+	PxConvexMesh* Cook(const PxConvexMeshDesc& desc);
 
 	enum ActorType
 	{

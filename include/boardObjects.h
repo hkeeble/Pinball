@@ -108,18 +108,29 @@ public:
 	virtual void Create() override;
 };
 
-/* Wedge to represent a flipper */
-class Flipper : public Wedge
+/* Used to determine the side of a hinge joint in a flipper */
+enum class FlipperType
+{
+	Left,
+	Right
+};
+
+/* Represents a single Flipper */
+class Flipper : public Box
 {
 private:
-	bool m_isFlipped;
+	FlipperType m_type;
 	RevoluteJoint m_joint;
 public:
-	Flipper(const Transform& pose, PxMaterial* material, const Vec3& color, const Fl32& density, const Transform& relativeJointPose);
+	Flipper(const Transform& pose, const FlipperType& flipperType, PxMaterial* material, const Vec3& color, const Fl32& density);
 	Flipper(const Flipper& param);
 	Flipper& operator=(const Flipper& param);
 	~Flipper();
+
+	virtual void Create() override;
+
 	void Flip();
+
 	void SetKinematic(bool isKinematic);
 };
 

@@ -44,8 +44,7 @@ Plunger& Plunger::operator=(const Plunger& param)
 	else
 	{
 		CompoundShapeActor::operator=(param);
-		if(m_shaft)
-			m_shaft->release();
+		PX_RELEASE(m_shaft);
 		m_shaft = PHYSICS->createRigidDynamic(param.m_shaft->getGlobalPose());
 		m_shaft->setRigidDynamicFlags(param.m_shaft->getRigidBodyFlags());
 	}
@@ -53,8 +52,7 @@ Plunger& Plunger::operator=(const Plunger& param)
 
 Plunger::~Plunger()
 {
-	if(m_shaft)
-		m_shaft->release();
+	PX_RELEASE(m_shaft);
 }
 
 void Plunger::Create()

@@ -45,10 +45,8 @@ namespace Physics
 	{
 		Log::Write("Releasing PhysX Resources...\n", ENGINE_LOG);
 
-		if (physics)
-			physics->release();
-		if (foundation)
-			foundation->release();
+		PX_RELEASE(physics);
+		PX_RELEASE(foundation);
 	}
 
 	// Get PhysX Objects
@@ -118,6 +116,33 @@ namespace Physics
 		joint->setDamping(damping);
 	}
 
+	/* Create a Convex Mesh from the given vertices and scale */
+	PxConvexMesh* CreateConvexMesh(Vec3* const verts, const int& nVerts, const Vec3& scale)
+	{
+		PxConvexMeshDesc desc;
+		desc.points.count = nVerts;
+		desc.points.stride = sizeof(Vec3);
+
+		// Scale Vertices
+		for (int i = 0; i < nVerts; i++)
+			verts[i] = Vec3(verts[i].x * scale.x, verts[i].y * scale.y, verts[i].z * scale.z);
+
+		desc.points.data = verts;
+		desc.flags = PxConvexFlag::eCOMPUTE_CONVEX;
+		desc.vertexLimit = VERTEX_LIMIT;
+
+		return Cook(desc);
+	}
+
+	/* Cooks a given convex mesh description */
+	PxConvexMesh* Cook(const PxConvexMeshDesc& desc)
+	{
+		PxDefaultMemoryOutputStream stream;
+		PxGetCooking()->cookConvexMesh(desc, stream);
+		PxDefaultMemoryInputData input(stream.getData(), stream.getSize());
+		return physics->createConvexMesh(input);
+	}
+
 	/*-------------------------------------------------------------------------\
 	|							SCENE DEFINITIONS								|
 	\-------------------------------------------------------------------------*/
@@ -129,8 +154,7 @@ namespace Physics
 
 	Scene::~Scene()
 	{
-		if(m_scene)
-			m_scene->release();
+		PX_RELEASE(m_scene);
 	}
 
 	void Scene::Init()
@@ -148,21 +172,23 @@ namespace Physics
 			sceneDesc.cpuDispatcher = mCpuDispatcher;
 		}
 
+		m_scene = physics->createScene(sceneDesc);
+
+		m_scene->setGravity(Vec3(0.0f, -8.81f, 0.0f));
+
+		m_pause = false;
+
 		// Initialize visual debugger
 #ifdef _DEBUG
 		if (!vd_connection)
 			vd_connection = PxVisualDebuggerExt::createConnection(physics->getPvdConnectionManager(), 
 			"localhost", 5425, 100, PxVisualDebuggerExt::getAllConnectionFlags());
-#endif
 
-		m_scene = physics->createScene(sceneDesc);
-
-		m_scene->setGravity(Vec3(0.0f, -8.81f, 0.0f));
-
+		// Visualization
 		m_scene->setVisualizationParameter(PxVisualizationParameter::eJOINT_LIMITS, 1.0f);
-
-		m_pause = false;
-	}
+		m_scene->setVisualizationParameter(PxVisualizationParameter::eJOINT_LOCAL_FRAMES, 1.0f);
+#endif
+}
 
 	void Scene::UpdatePhys(Fl32 deltaTime)
 	{

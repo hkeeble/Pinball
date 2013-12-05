@@ -63,4 +63,23 @@ struct Color
 // Max Vertices
 #define VERTEX_LIMIT 256
 
+// Release Macro
+#define RELEASE(x) if(x != nullptr) delete x
+
+// Multiple Release Macro
+#define RELEASE_MULTI(x) if(x != nullptr) delete [] x
+
+// Release macro for PX objects
+#define PX_RELEASE(x) if(x != nullptr) x->release()
+
+// Convex Mesh Vertices
+const Vec3 wedge_verts[] = {
+	Vec3(-1, 0, -1),
+	Vec3(-1, 0, 1),
+	Vec3(1, 0, 1),
+	Vec3(1, 1, 1),
+	Vec3(1, 1, -1),
+	Vec3(1, 0, -1)
+};
+
 #endif _GLOBALS_H_
