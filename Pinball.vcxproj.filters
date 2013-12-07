@@ -16,6 +16,12 @@
     <Filter Include="include\gl">
       <UniqueIdentifier>{2d2cae09-ce56-4aa5-a9aa-950cfcec0fdb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\hud">
+      <UniqueIdentifier>{dbcc557b-7152-46fe-a2c4-86d594672f6d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\hud">
+      <UniqueIdentifier>{f37e2cb7-cd64-4b71-a9c9-e97ead8aef28}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\physics\ErrorCallback.h">
@@ -57,6 +63,9 @@
     <ClInclude Include="include\flippers.h">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="include\hud\hud.h">
+      <Filter>include\hud</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\physics\ErrorCallback.cpp">
@@ -97,6 +106,9 @@
     </ClCompile>
     <ClCompile Include="src\flippers.cpp">
       <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\hud\hud.cpp">
+      <Filter>src\hud</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

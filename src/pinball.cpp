@@ -16,9 +16,6 @@ Pinball::Pinball(std::string title, int windowWidth, int windowHeight)
 	: Game(title, windowWidth, windowHeight)
 {
 	m_ball = nullptr;
-	m_glass = nullptr;
-	m_border = nullptr;
-	m_innerWalls = nullptr;
 	m_plunger = nullptr;
 	m_flippers = nullptr;
 	m_actors = std::vector<Actor*>();
@@ -51,22 +48,34 @@ void Pinball::Init()
 	gluPerspective(camera.FOV, r, .1, 100);
 	glMatrixMode(GL_MODELVIEW);
 
+	// Set Clear Color
 	const Vec3 ClearColor = Vec3(.5f, 1.f, 1.f);
 	glClearColor(ClearColor.x, ClearColor.y, ClearColor.z, 1.0);
 
+	// Initialize All Actors
+	Log::Write("Initializing Game Actors...\n", ENGINE_LOG);
 	InitBoard();
 	InitInnerWalls();
 	InitFlippers();
 	InitBall();
 	InitPlunger();
+	InitCornerWedges();
 
+	// Add Actors in game to scene
 	AddActors();
 
+	// Add Joints for Plunger
 	InitJoints();
+
+	// Initialize Gameplay data
+	m_ballsRemaining = m_ballsPerGame;
+	m_currentScore = 0;
 }
 
 void Pinball::InitJoints()
 {
+	Log::Write("Initializing Plunger Spring...\n", ENGINE_LOG);
+
 	// Plunger Spring
 	AddDistanceJoint(m_plunger->Get().dynamicActor, PxTransform::createIdentity(), NULL, m_plunger->Get().dynamicActor->getGlobalPose(),
 		PxDistanceJointFlag::eSPRING_ENABLED, 1000.f, 1.f);
@@ -75,55 +84,65 @@ void Pinball::InitJoints()
 
 void Pinball::InitBall()
 {
+	Log::Write("\tInitializing Ball...\n", ENGINE_LOG);
+
 	const Vec3 BallColor = Vec3(.8f, .8f, .8f);
 	PxMaterial* BallMaterial = PHYSICS->createMaterial(0.f, 0.f, .2f);
 	const Fl32 BallDensity = 1.f;
-	Transform BallPose = board->Pose() * Transform(board->Right().x + (board->WallWidth() * 2) + BALL_RADIUS * 2, board->Dimensions().y * 2 + BALL_RADIUS * 2, 0);
-	m_ball = new Sphere(BallPose, BALL_RADIUS, BallDensity, BallColor, BallMaterial);
+	m_ballInitialPos = board->Pose() * Transform(board->Right().x + (board->WallWidth() * 2) + BALL_RADIUS * 2, board->Dimensions().y * 2 + BALL_RADIUS * 2, 0);
+	m_ball = new Sphere(m_ballInitialPos, BALL_RADIUS, BallDensity, BallColor, BallMaterial);
 	m_actors.push_back(m_ball);
 }
 
 void Pinball::InitBoard()
 {
+	Log::Write("\tInitializing Board...\n", ENGINE_LOG);
+
 	const Vec3 BoardColor = Vec3(.4f, .4f, .4f);
 	const Vec3 BorderColor = Vec3(0.f, 0.f, 0.f);
 
 	PxMaterial* BoardMaterial = PHYSICS->createMaterial(0.f, 0.f, .1f);
 	PxMaterial* BorderMaterial = PHYSICS->createMaterial(0.f, 0.f, .2f);
 
-	// board and border
+	// board
 	board = new Board(BoardMaterial, BoardColor);
-	m_border = new Border(BorderMaterial, BorderColor);
 
-	// Glass
+	// Glass Pose
 	Transform GlassPose = board->Pose() * Transform(Vec3(0, board->WallHeight() * 2 + (board->Dimensions().y * 2), 0));
-	m_glass = new Box(GlassPose, board->Dimensions(), 0, Vec3(0, 0, 0), BoardMaterial, StaticActor);
-	
+
 	m_actors.push_back(board);
-	m_actors.push_back(m_glass);
-	m_actors.push_back(m_border);
+	m_actors.push_back(new Box(GlassPose, board->Dimensions(), 0, Vec3(0, 0, 0), BoardMaterial, StaticActor));
+	m_actors.push_back(new Border(BorderMaterial, BorderColor));
 }
 
 void Pinball::InitInnerWalls()
 {
+	Log::Write("\tInitializing Inner Walls...\n", ENGINE_LOG);
+
 	const Vec3 WallColor = Vec3(0.f, 0.f, 0.f);
 	PxMaterial* WallMaterial = PHYSICS->createMaterial(0.f, 0.f, .2f);
 
-	m_innerWalls = new InnerWalls(WallMaterial, WallColor);
-
-	m_actors.push_back(m_innerWalls);
+	m_actors.push_back(new InnerWalls(WallMaterial, WallColor));
 }
 
 void Pinball::InitFlippers()
 {
+	Log::Write("\tInitializing Flippers...\n", ENGINE_LOG);
+
 	// Flippers Data
+	const Vec3 FlipperDimensions = Vec3(board->WallWidth(), board->WallHeight(), 0.1f);
 	const Vec3 FlipperColor = Vec3(.5f, 0.f, 0.f);
 	const Fl32 FlipperDensity = .5f;
 	PxMaterial* FlipperMaterial = PHYSICS->createMaterial(0.f, 0.f, 0.1f);
+	
+	// Determine Positions
+	const Fl32 zOffset = board->Bottom().z + 0.6f;
+	const Fl32 xOffset = .1f;
+	const Fl32 yOffset = calcYOffset(zOffset);
 
 	// Flipper Positions
-	const Transform lftFPos = Transform(board->Bottom() + Vec3(.2f, 0.f, .2f));
-	const Transform rgtFPos = Transform(board->Bottom() + Vec3(-.2f, 0, .2f));
+	const Transform lftFPos = Transform(Vec3(xOffset, yOffset+FlipperDimensions.y*2, zOffset));
+	const Transform rgtFPos = Transform(Vec3(-xOffset, yOffset+FlipperDimensions.y*2, zOffset));
 
 	// Create Flippers
 	Flipper* m_lftFlipper = new Flipper(lftFPos, FlipperType::Left, FlipperMaterial, FlipperColor, FlipperDensity);
@@ -139,6 +158,8 @@ void Pinball::InitFlippers()
 
 void Pinball::InitPlunger()
 {
+	Log::Write("\tInitializing Plunger...\n", ENGINE_LOG);
+
 	PxMaterial* PlungerMaterial = PHYSICS->createMaterial(0.f, 0.f, .1f);
 	const Vec3 PlungerColor = Vec3(.1f, .1f, 1.f);
 	const Fl32 PlungerDensity = 2.f;
@@ -148,13 +169,71 @@ void Pinball::InitPlunger()
 	m_actors.push_back(m_plunger);
 }
 
+void Pinball::InitCornerWedges()
+{
+	Log::Write("\tInitializing Corner Wedges...\n", ENGINE_LOG);
+
+	Fl32 zOffset, xOffset, yOffset;
+	Transform pose;
+	zOffset = xOffset = yOffset = 0.f;
+	pose = Transform::createIdentity();
+
+	Vec3 scale = Vec3(.3f, .3f, .05f);
+	Vec3 color = Vec3(.5f, .5f, .5f);
+	PxMaterial* mat = PHYSICS->createMaterial(0.f, 0.f, .1f);
+
+	// Top Right Wedge
+	zOffset = board->Top().z - board->WallWidth() - .35f;
+	xOffset = board->Right().x + board->WallWidth() + .25f;
+	yOffset = calcYOffset(zOffset);
+	pose = Transform(Vec3(xOffset, yOffset+(scale.z*2), zOffset), Quat(DEG2RAD(180), Vec3(0, 1, 0)) * Quat(DEG2RAD(25), Vec3(1, 0, 0)));
+	m_actors.push_back(new CornerWedge(pose, mat, scale, color));
+
+	// Top Left Wedge
+	zOffset = board->Top().z - board->WallWidth() - .5f;
+	xOffset = board->Left().x - board->WallWidth() - .08f;
+	yOffset = calcYOffset(zOffset);
+	pose = Transform(Vec3(xOffset, yOffset + (scale.z * 2), zOffset), Quat(DEG2RAD(-90), Vec3(0, 1, 0)) * Quat(DEG2RAD(25), Vec3(0, 0, 1)));
+	m_actors.push_back(new CornerWedge(pose, mat, scale, color));
+
+	// Bottom Left Wedge
+	zOffset = board->Bottom().z - board->WallWidth() + .3f;
+	xOffset = board->Left().x - board->WallWidth() - .4f;
+	yOffset = calcYOffset(zOffset);
+	pose = Transform(Vec3(xOffset, yOffset + (scale.z * 2), zOffset), Quat(DEG2RAD(-25), Vec3(1, 0, 0)));
+	m_actors.push_back(new CornerWedge(pose, mat, scale, color));
+
+	// Bottom Right Wedge
+	scale = Vec3(.2f, .4f, .05f);
+	zOffset = board->Bottom().z + board->WallWidth() + .35f;
+	xOffset = board->Right().x + board->WallWidth() + .35f;
+	yOffset = calcYOffset(zOffset);
+	pose = Transform(Vec3(xOffset, yOffset + (scale.z * 2), zOffset), Quat(DEG2RAD(-25), Vec3(1, 0, 0)) * Quat(DEG2RAD(90), Vec3(0, 1, 0)));
+	m_actors.push_back(new CornerWedge(pose, mat, scale, color));
+
+	// Exit Plunger Lane Wedge
+	scale = Vec3(.4f, .4f, .05f);
+	zOffset = board->Top().z - board->WallWidth() - 1.7f;
+	xOffset = board->Left().x - board->WallWidth() - .45f;
+	yOffset = calcYOffset(zOffset);
+	pose = Transform(Vec3(xOffset, yOffset + (scale.z * 2), zOffset), Quat(DEG2RAD(-25), Vec3(1, 0, 0)));
+	m_actors.push_back(new CornerWedge(pose, mat, scale, color));
+}
+
 void Pinball::AddActors()
 {
+	Log::Write("Adding Actors to scene...\n", ENGINE_LOG);
+
 	for (std::vector<Actor*>::iterator iter = m_actors.begin(); iter != m_actors.end(); iter++)
 	{
 		Actor* act = *iter;
 		m_scene->Add(act);
 	}
+}
+
+Fl32 Pinball::calcYOffset(Fl32 zOffset)
+{
+	return tanf(DEG2RAD(25)) * zOffset;
 }
 
 void Pinball::Render()
@@ -309,13 +388,18 @@ void Pinball::SpecKeyboardUp(int key, int x, int y)
 
 }
 
+void Pinball::Reset()
+{
+	m_currentScore = 0;
+	m_ballsRemaining = m_ballsPerGame;
+	m_ball->Get().dynamicActor->setGlobalPose(m_ballInitialPos);
+	m_plunger->Reset();
+}
+
 void Pinball::Exit()
 {
 	Game::Exit();
 
 	RELEASE(m_ball);
 	RELEASE(board);
-	RELEASE(m_innerWalls);
-	//if(m_plunger)
-		//m_plunger;
 }

@@ -11,6 +11,7 @@ namespace Physics
 {
 	// -- Callbacks --
 	PxDefaultAllocator defaultAllocatorCallBack;
+	PxDefaultErrorCallback defaultErrorCallBack;
 	ErrorCallback errorCallback;
 
 	// -- PhysX Objects --
@@ -29,6 +30,8 @@ namespace Physics
 	void PxInit()
 	{
 		Log::Write("Initializing PhysX...\n", ENGINE_LOG);
+
+		defaultErrorCallBack = PxDefaultErrorCallback();
 
 		if (!foundation)
 			foundation = PxCreateFoundation(PX_PHYSICS_VERSION, defaultAllocatorCallBack, errorCallback);
@@ -222,18 +225,12 @@ namespace Physics
 
 	void Scene::Add(Actor* actor)
 	{
-		Log::Write("Adding Actor to scene...\n", ENGINE_LOG);
+		Log::Write("\tAdding Actor to scene...\n", ENGINE_LOG);
 		if(actor->Get().staticActor == nullptr && actor->Get().dynamicActor == nullptr)
 			actor->Create();
 		if (actor->Get().dynamicActor)
 			m_scene->addActor(*actor->Get().dynamicActor);
 		else
 			m_scene->addActor(*actor->Get().staticActor);
-
-		#ifdef _DEBUG
-		Out("Actor Added at position: ");
-		if(actor)
-			actor->PrintPose();
-		#endif
 	}
 }

@@ -249,3 +249,32 @@ void InnerWalls::Create()
 	m_actor.staticActor->userData = &m_color;
 }
 #pragma endregion
+/*-------------------------------------------------------------------------\
+|						CORNER WEDGE DEFINITIONS							|
+\-------------------------------------------------------------------------*/
+CornerWedge::CornerWedge(const Transform& pose, PxMaterial* material, const Vec3& scale, const Vec3& color)
+: Wedge(pose, 1.f, color, material, scale, StaticActor)
+{
+
+}
+
+CornerWedge::CornerWedge(const CornerWedge& param) : Wedge(param)
+{
+
+}
+
+CornerWedge& CornerWedge::operator=(const CornerWedge& param)
+{
+	if (this == &param)
+		return *this;
+	else
+	{
+		Wedge::operator=(param);
+		return *this;
+	}
+}
+
+CornerWedge::~CornerWedge()
+{
+
+}

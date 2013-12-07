@@ -7,6 +7,7 @@ Flipper::Flipper(const Transform& pose, const FlipperType& flipperType, PxMateri
 : Box(pose, Vec3(P::board->WallWidth(), P::board->WallHeight(), 0.1f), density, color, material, DynamicActor)
 {
 	m_type = flipperType;
+	m_pose = m_pose * Transform(P::board->Pose().q);
 }
 
 Flipper::Flipper(const Flipper& param) : Box(param)
@@ -51,8 +52,7 @@ void Flipper::Create()
 
 	m_joint = RevoluteJoint(actor, PxTransform(PxVec3(0.f, 0.f, hingeOffset), PxQuat(DEG2RAD(90), PxVec3(0.f, 0.f, 1.f))),
 		nullptr, actor->getGlobalPose() * PxTransform(PxVec3(0.f, 0.f, hingeOffset), PxQuat(DEG2RAD(90), PxVec3(0.f, 0.f, 1.f))));
-
-	m_joint.SetLimits(90.f, 90.f);
+	// m_joint.SetLimits(45, 45);
 }
 
 void Flipper::Flip()

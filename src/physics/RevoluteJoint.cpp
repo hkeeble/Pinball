@@ -26,7 +26,7 @@ namespace Physics
 
 	void RevoluteJoint::SetLimits(Fl32 lower, Fl32 upper)
 	{
-		m_joint->setLimit(PxJointAngularLimitPair(lower, upper));
+		m_joint->setLimit(PxJointAngularLimitPair(DEG2RAD(lower), DEG2RAD(upper)));
 		m_joint->setRevoluteJointFlag(PxRevoluteJointFlag::eLIMIT_ENABLED, true);
 	}
 }

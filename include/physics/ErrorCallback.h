@@ -14,7 +14,7 @@ namespace Physics
 		ErrorCallback(void);
 		~ErrorCallback(void);
 
-		virtual void reportError(PxErrorCode::Enum code, const char* message, const char* file, int line) {};
+		virtual void reportError(PxErrorCode::Enum code, const char* message, const char* file, int line) override;
 	};
 }
 

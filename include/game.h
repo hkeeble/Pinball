@@ -44,7 +44,7 @@ namespace GameFramework
 		Physics::Scene* m_scene;
 		Fl32 m_fps;
 
-		Camera camera;
+		static Camera camera;
 
 		// Renders the given geometric object
 		void RenderGeometry(physx::PxGeometryHolder h);
