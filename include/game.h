@@ -36,6 +36,9 @@ namespace GameFramework
 		// GLUT Initialization
 		void InitGLUT(int argc, char *argv[]);
 
+		/* The game's clear color */
+		static Vec3 ClearColor;
+
 	protected:
 		// GL Initialization
 		virtual void InitGL();
@@ -44,16 +47,25 @@ namespace GameFramework
 		Physics::Scene* m_scene;
 		Fl32 m_fps;
 
-		static Camera camera;
-
 		// Renders the given geometric object
 		void RenderGeometry(physx::PxGeometryHolder h);
 
 		void TimerFunc(int id);
+
+		Camera camera;
 	public:
 		// Construction/Destruction
 		Game(std::string title, int windowWidth, int windowHeight);
 		~Game();
+
+		/* Updates the games projection matrix */
+		static void UpdatePerspective(const Fl32& FOV);
+
+		/* Set the game's clear color */
+		void SetClearColor(const Vec3& color);
+
+		/* Get the game's clear color */
+		static Vec3 GetClearColor();
 
 		void Run(int argc, char *argv[]); // Enters the main loop
 

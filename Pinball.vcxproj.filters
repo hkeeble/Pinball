@@ -66,6 +66,9 @@
     <ClInclude Include="include\hud\hud.h">
       <Filter>include\hud</Filter>
     </ClInclude>
+    <ClInclude Include="include\triggers.h">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\physics\ErrorCallback.cpp">
@@ -109,6 +112,9 @@
     </ClCompile>
     <ClCompile Include="src\hud\hud.cpp">
       <Filter>src\hud</Filter>
+    </ClCompile>
+    <ClCompile Include="src\triggers.cpp">
+      <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

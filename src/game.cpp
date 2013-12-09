@@ -13,6 +13,8 @@ namespace GameFramework
 {
 	Game* Game::instance = NULL;
 
+	Vec3 Game::ClearColor = Vec3(.5f, 1.f, 1.f);
+
 	static const int MAX_NUM_CONVEXMESH_TRIANGLES = 1024;
 	static unsigned int gConvexMeshTriIndices[3 * MAX_NUM_CONVEXMESH_TRIANGLES];
 
@@ -57,6 +59,15 @@ namespace GameFramework
 	void Game::Init()
 	{
 
+	}
+
+	void Game::UpdatePerspective(const Fl32& FOV)
+	{
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		Fl32 r = glutGet(GLUT_INIT_WINDOW_WIDTH) / glutGet(GLUT_INIT_WINDOW_HEIGHT);
+		gluPerspective(FOV, r, .1, 100);
+		glMatrixMode(GL_MODELVIEW);
 	}
 
 	void Game::InitGL() // Virtual Initialization - Override to change lighting params
@@ -151,6 +162,17 @@ namespace GameFramework
 		}
 	}
 
+	void Game::SetClearColor(const Vec3& color)
+	{
+		ClearColor = color;
+		glClearColor(color.x, color.y, color.z, 1.f);
+	}
+
+	Vec3 Game::GetClearColor()
+	{
+		return ClearColor;
+	}
+
 	/*-------------------------------------------------------------------------\
 	|				VIRTUAL CALLBACK FUNCTION DEFINITIONS						|
 	\-------------------------------------------------------------------------*/
@@ -168,11 +190,7 @@ namespace GameFramework
 	void Game::Reshape(int width, int height)
 	{
 		glViewport(0, 0, width, height);
-		glMatrixMode(GL_PROJECTION);
-		glLoadIdentity();
-		Fl32 r = glutGet(GLUT_INIT_WINDOW_WIDTH)/glutGet(GLUT_INIT_WINDOW_HEIGHT);
-		gluPerspective(camera.FOV, r, .1, 100);
-		glMatrixMode(GL_MODELVIEW);
+		UpdatePerspective(camera.FOV);
 	}
 
 	void Game::MouseButton(int button, int state, int x, int y)

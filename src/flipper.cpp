@@ -52,12 +52,14 @@ void Flipper::Create()
 
 	m_joint = RevoluteJoint(actor, PxTransform(PxVec3(0.f, 0.f, hingeOffset), PxQuat(DEG2RAD(90), PxVec3(0.f, 0.f, 1.f))),
 		nullptr, actor->getGlobalPose() * PxTransform(PxVec3(0.f, 0.f, hingeOffset), PxQuat(DEG2RAD(90), PxVec3(0.f, 0.f, 1.f))));
-	// m_joint.SetLimits(45, 45);
+
+	m_joint.SetLimits(180, 180);
 }
 
 void Flipper::Flip()
 {
-	m_actor.dynamicActor->addForce(Vec3(0, 0, 70));
+	//m_actor.dynamicActor->addForce(Vec3(0, 0, 70));
+	m_joint.DriveVelocity(2);
 }
 
 void Flipper::SetKinematic(bool isKinematic)

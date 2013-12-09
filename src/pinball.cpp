@@ -32,25 +32,13 @@ void Pinball::Init()
 	m_fps = 1.f / FPS;
 
 	// Set State
-	gameState = Menu;
+	gameState = GameState::Menu;
 
-	// Camera
-	Log::Write("Intializing Camera...\n", ENGINE_LOG);
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-	camera = { UP_VECTOR, Vec3(0, 0, 0), Vec3(0, 1, -5.5), DEFAULT_FOV };
-	camera.Update(); // Used to initialize camera positions (gluLookAt)
-	
-	// Set Perspective
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	Fl32 r = glutGet(GLUT_INIT_WINDOW_WIDTH)/glutGet(GLUT_INIT_WINDOW_HEIGHT);
-	gluPerspective(camera.FOV, r, .1, 100);
-	glMatrixMode(GL_MODELVIEW);
+	// Initialize Camera
+	InitCamera();
 
 	// Set Clear Color
-	const Vec3 ClearColor = Vec3(.5f, 1.f, 1.f);
-	glClearColor(ClearColor.x, ClearColor.y, ClearColor.z, 1.0);
+	SetClearColor(GetClearColor()); 
 
 	// Initialize All Actors
 	Log::Write("Initializing Game Actors...\n", ENGINE_LOG);
@@ -70,6 +58,48 @@ void Pinball::Init()
 	// Initialize Gameplay data
 	m_ballsRemaining = m_ballsPerGame;
 	m_currentScore = 0;
+
+	// Initialize HUD
+	InitHUD();
+}
+
+void Pinball::InitHUD()
+{
+	hud.Clear();
+
+	switch (gameState)
+	{
+	case GameState::Menu:
+		SetClearColor(Vec3(0.f, 0.f, 0.f));
+		hud.SetRenderColor(Vec3(1.f, 1.f, 1.f));
+		hud.AddItem("PINBALL!", Vec2(45, 85), HUDFont::largeFont);
+		hud.AddItem("Press enter to begin.", Vec2(40, 75), HUDFont::smallFont);
+		hud.AddItem("Henri Keeble - Game Engines - Assessment Item 1", Vec2(20, 10), HUDFont::smallFont);
+		break;
+	case GameState::InGame:
+		SetClearColor(Vec3(0.f, 0.8f, 1.f));
+		hud.SetRenderColor(Vec3(1.f, 0.f, 0.f));
+		hud.AddItem("Score", Vec2(5, 95), HUDFont::largeFont, true, 0);
+		hud.AddItem("Balls Left", Vec2(65, 95), HUDFont::largeFont, true, m_ballsRemaining);
+		break;
+	case GameState::GameOver:
+		SetClearColor(Vec3(0.f, 0.f, 0.f));
+		hud.SetRenderColor(Vec3(1.f, 1.f, 1.f));
+		hud.AddItem("GAME OVER!", Vec2(40, 85), HUDFont::largeFont);
+		hud.AddItem("Score", Vec2(45, 75), HUDFont::smallFont, true, m_currentScore);
+		hud.AddItem("Press Enter to continue.", Vec2(35, 65), HUDFont::smallFont);
+		break;
+	}
+}
+
+void Pinball::InitCamera()
+{
+	Log::Write("Intializing Camera...\n", ENGINE_LOG);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	camera = { UP_VECTOR, Vec3(0, 0, 0), Vec3(0, 1, -5.5), DEFAULT_FOV };
+	camera.Update(); // Used to initialize camera positions (gluLookAt)
+	UpdatePerspective(camera.FOV);
 }
 
 void Pinball::InitJoints()
@@ -198,7 +228,7 @@ void Pinball::InitCornerWedges()
 
 	// Bottom Left Wedge
 	zOffset = board->Bottom().z - board->WallWidth() + .3f;
-	xOffset = board->Left().x - board->WallWidth() - .4f;
+	xOffset = board->Left().x - board->WallWidth() - .35f;
 	yOffset = calcYOffset(zOffset);
 	pose = Transform(Vec3(xOffset, yOffset + (scale.z * 2), zOffset), Quat(DEG2RAD(-25), Vec3(1, 0, 0)));
 	m_actors.push_back(new CornerWedge(pose, mat, scale, color));
@@ -242,9 +272,9 @@ void Pinball::Render()
 
 	switch(gameState)
 	{
-	case Menu:
+	case GameState::Menu:
 		break;
-	case InGame:
+	case GameState::InGame:
 		// Update Camera
 		camera.Update();
 
@@ -302,20 +332,31 @@ void Pinball::Render()
 
 		switch (gameState)
 		{
-		case InGame:
+		case GameState::InGame:
 			m_scene->UpdatePhys(m_fps);
 			break;
 		}
-
-		glutSwapBuffers();
-		Game::Render();
 		break;
 	}
+
+	hud.Render(camera.FOV);
+	glutSwapBuffers();
+	Game::Render();
 }
 
 void Pinball::Idle()
 {
-
+	if (m_ball->Get().dynamicActor->getGlobalPose().p.z < -3)
+	{
+		m_ballsRemaining--;
+		m_ball->Get().dynamicActor->setGlobalPose(m_ballInitialPos);
+		hud.UpdateItem("Balls Left", m_ballsRemaining);
+		if (m_ballsRemaining < 0)
+		{
+			gameState = GameState::GameOver;
+			InitHUD();
+		}
+	}
 }
 
 void Pinball::Reshape(int width, int height)
@@ -338,19 +379,30 @@ void Pinball::KeyboardDown(unsigned char key, int x, int y)
 	switch (gameState)
 	{
 	/* Menu Keys */
-	case Menu:
+	case GameState::Menu:
 		if (key == VK_RETURN)
 		{
-			gameState = InGame;
+			gameState = GameState::InGame;
+			Reset();
+			InitHUD();
 			glutPostRedisplay();
 		}
 		break;
 	/* InGame Keys */
-	case InGame:
+	case GameState::InGame:
 		if (key == VK_SPACE)
 			m_plunger->SetKinematicTarget(Transform(Vec3(0, 0, -.02f)));
 		if (key == VK_RETURN)
 			m_plunger->Reset();
+		break;
+	/* Game Over Keys */
+	case GameState::GameOver:
+		if (key == VK_RETURN)
+		{
+			gameState = GameState::Menu;
+			InitHUD();
+		}
+		break;
 	}
 
 	// Keys applicable to all states
@@ -362,7 +414,7 @@ void Pinball::KeyboardUp(unsigned char key, int x, int y)
 {
 	switch(gameState)
 	{
-	case InGame:
+	case GameState::InGame:
 		if(key == VK_SPACE)
 			m_plunger->SetKinematic(false);
 	}
@@ -372,9 +424,9 @@ void Pinball::SpecKeyboardDown(int key, int x, int y)
 {
 	switch (gameState)
 	{
-	case Menu:
+	case GameState::Menu:
 		break;
-	case InGame:
+	case GameState::InGame:
 		if (key == GLUT_KEY_LEFT)
 			m_flippers->FlipLeft();
 		if (key == GLUT_KEY_RIGHT)

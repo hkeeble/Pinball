@@ -8,40 +8,45 @@
 #include <string>
 #include <vector>
 
-enum class HUDFont
+namespace GameFramework
 {
-	largeFont = (int)GLUT_BITMAP_TIMES_ROMAN_24,
-	smallFont = (int)GLUT_BITMAP_HELVETICA_18
-};
+	enum class HUDFont
+	{
+		largeFont = (int)GLUT_BITMAP_TIMES_ROMAN_24,
+		smallFont = (int)GLUT_BITMAP_HELVETICA_18
+	};
 
-class HUDItem
-{
-private:
-	HUDItem();
-	HUDItem(std::string text, int data, Vec2 pos, HUDFont font);
-	std::string m_text;
-	Vec2 m_pos;
-	HUDFont m_font;
-	int m_data;
-public:
-	friend class HUD;
+	class HUDItem
+	{
+	private:
+		HUDItem();
+		HUDItem(std::string text, Vec2 pos, HUDFont font, bool dataItem = false, int data = 0);
+		std::string m_text;
+		Vec2 m_pos;
+		HUDFont m_font;
+		int m_data;
+		bool m_dataItem;
+	public:
+		friend class HUD;
 
-	virtual ~HUDItem();
-};
+		virtual ~HUDItem();
+	};
 
-class HUD : private Uncopyable
-{
-private:
-	const Vec3 textColor = Vec3(0.5f, 0.5f, 0.f);
+	class HUD : private Uncopyable
+	{
+	private:
+		Vec3 textColor;
 
-	std::vector<HUDItem> m_items;
-public:
-	HUD();
-	virtual ~HUD();
+		std::vector<HUDItem> m_items;
+	public:
+		HUD();
+		virtual ~HUD();
 
-	void Render();
-	void AddItem(std::string text, int initialData);
-	bool UpdateItem(std::string text, int newData);
-};
-
+		void SetRenderColor(Vec3 color);
+		void Render(Fl32 FOV);
+		void AddItem(std::string text, Vec2 pos, HUDFont font, bool dataItem = false, int initialData = 0);
+		bool UpdateItem(std::string text, int newData);
+		void Clear();
+	};
+}
 #endif // _HUD_H_

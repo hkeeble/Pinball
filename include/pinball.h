@@ -6,22 +6,27 @@
 #ifndef PINBALL_H
 #define PINBALL_H
 
-#include "game.h"
-#include "boardObjects.h"
-#include "flippers.h"
+// STL Includes
 #include <vector>
 #include <string>
 
+// Internal Includes
+#include "game.h"
+#include "boardObjects.h"
+#include "flippers.h"
+#include "hud.h"
+
+// Using framework and physics namespaces
 using namespace GameFramework;
 using namespace Physics;
 
 class Pinball : public Game
 {
 	private:
-		// Actors
+		/* Actors */
 		std::vector<Actor*> m_actors;
 		
-		// Actor Pointers (only kept for actors that need to be accessed after initialization)
+		/* Actor Pointers (only kept for actors that need to be accessed after initialization) */
 		Sphere*		m_ball;
 		Plunger*	m_plunger;
 		Flippers*	m_flippers;
@@ -39,13 +44,17 @@ class Pinball : public Game
 		Transform m_ballInitialPos;
 
 		/* Represents the current gameState */
-		enum GameState
+		enum class GameState
 		{
 			Menu,
-			InGame
+			InGame,
+			GameOver
 		} gameState;
 
-		// Actor Initialization Functions
+		/* Camera Initialization Functions */
+		void InitCamera();
+
+		/* Actor Initialization Functions */
 		void InitBoard();
 		void InitInnerWalls();
 		void InitFlippers();
@@ -53,6 +62,9 @@ class Pinball : public Game
 		void InitBall();
 		void InitJoints();
 		void InitCornerWedges();
+
+		/* HUD Initialization Function */
+		void InitHUD();
 
 		/* Add actors in actor vector to game scene */
 		void AddActors();
@@ -63,11 +75,15 @@ class Pinball : public Game
 		/* Resets Game */
 		void Reset();
 
+		/* Represents the game's HUD */
+		HUD hud;
+
 	public:
+		/* Construction and Destruction */
 		Pinball(std::string title, int windowWidth, int windowHeight);
 		~Pinball();
 
-		// Board Actor
+		/* Board Actor */
 		static Board* board;
 
 		/* Initialization override */
