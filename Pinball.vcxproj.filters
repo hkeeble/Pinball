@@ -72,6 +72,9 @@
     <ClInclude Include="include\timer.h">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="include\monitor.h">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\physics\ErrorCallback.cpp">
@@ -120,6 +123,9 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\timer.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\monitor.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>

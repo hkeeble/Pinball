@@ -104,6 +104,7 @@
     <ClInclude Include="include\GL\glut.h" />
     <ClInclude Include="include\hud\hud.h" />
     <ClInclude Include="include\log.h" />
+    <ClInclude Include="include\monitor.h" />
     <ClInclude Include="include\physics\Actors.h" />
     <ClInclude Include="include\physics\ErrorCallback.h" />
     <ClInclude Include="include\physics\Physics.h" />
@@ -122,6 +123,7 @@
     <ClCompile Include="src\hud\hud.cpp" />
     <ClCompile Include="src\log.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\monitor.cpp" />
     <ClCompile Include="src\physics\Actors.cpp" />
     <ClCompile Include="src\physics\ErrorCallback.cpp" />
     <ClCompile Include="src\physics\Physics.cpp" />

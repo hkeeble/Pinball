@@ -13,6 +13,8 @@
 #include <fstream>
 #include <Windows.h>
 #include <sstream>
+#include <ctime>
+#include "globals.h"
 
 #define Out printf
 
@@ -20,6 +22,8 @@
 #define ENGINE_LOG "logMain.txt"
 
 char* GetCurrentDir();
+
+extern void InitLog(const char* fileName);
 
 class Log
 {

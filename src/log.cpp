@@ -60,3 +60,22 @@ void Log::Shutdown()
 {
 	Log::Write("\n", ENGINE_LOG);
 }
+
+void InitLog(const char* fileName)
+{
+	Log::SetWorkingDir(GetCurrentDir());
+
+	time_t* t = new time_t();
+	struct tm* now = new tm();
+
+	*t = time(0);
+	localtime_s(now, t);
+
+	std::string s;
+	s += " ----- Instance Run on " + std::to_string(now->tm_mon) + "/" + std::to_string(now->tm_mday) + "/" + std::to_string(now->tm_year + 1900) + " at " +
+		std::to_string(now->tm_hour) + ":" + std::to_string(now->tm_min) + ":" + std::to_string(now->tm_sec) + " ----- \n";
+
+	Log::Write(s.c_str(), fileName);
+	RELEASE(t);
+	RELEASE(now);
+}

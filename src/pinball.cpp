@@ -19,6 +19,7 @@ Pinball::Pinball(std::string title, int windowWidth, int windowHeight)
 	m_plunger = nullptr;
 	m_flippers = nullptr;
 	m_actors = std::vector<Actor*>();
+	m_monitor = Monitor();
 }
 
 Pinball::~Pinball()
@@ -385,14 +386,17 @@ void Pinball::Idle()
 	/* Check if board is on table, if not adjust accordingly */
 	if (m_ball->Get().dynamicActor->getGlobalPose().p.z < -3)
 	{
+		m_monitor.AddBall(m_currentScore, m_gameDuration.Seconds());
 		m_ballsRemaining--;
 		m_ballInPlay = false;
 		m_ball->Get().dynamicActor->setGlobalPose(m_ballInitialPos);
 		hud.UpdateItem("Balls Left", m_ballsRemaining);
+
 		if (m_ballsRemaining < 0)
 		{
 			gameState = GameState::GameOver;
 			InitHUD();
+			m_monitor.OutputData();
 		}
 	}
 }

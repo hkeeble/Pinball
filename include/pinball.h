@@ -16,6 +16,7 @@
 #include "flippers.h"
 #include "hud.h"
 #include "timer.h"
+#include "monitor.h"
 
 // Using framework and physics namespaces
 using namespace GameFramework;
@@ -94,6 +95,9 @@ class Pinball : public Game
 
 		/* Score gained per second if ball is in play */
 		const int m_scorePerSecond = 5;
+
+		/* Used to monitor in game data */
+		Monitor m_monitor;
 
 	public:
 		/* Construction and Destruction */
