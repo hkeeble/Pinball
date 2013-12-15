@@ -39,6 +39,10 @@ namespace GameFramework
 		/* The game's clear color */
 		static Vec3 ClearColor;
 
+		/* Used For timers */
+		int lastElapsedTime;
+		int newElapsedTime;
+
 	protected:
 		// GL Initialization
 		virtual void InitGL();
@@ -53,6 +57,10 @@ namespace GameFramework
 		void TimerFunc(int id);
 
 		Camera camera;
+
+		/* Current Delta Time */
+		int deltaTime;
+
 	public:
 		// Construction/Destruction
 		Game(std::string title, int windowWidth, int windowHeight);

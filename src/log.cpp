@@ -21,8 +21,6 @@ void Log::Write(const char* text, const char* fileName)
 	file << text;
 	file.close();
 
-	Out(fileName);
-	Out("<<");
 	Out(text);
 }
 

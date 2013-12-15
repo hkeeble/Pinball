@@ -7,7 +7,16 @@ Flipper::Flipper(const Transform& pose, const FlipperType& flipperType, PxMateri
 : Box(pose, Vec3(P::board->WallWidth(), P::board->WallHeight(), 0.1f), density, color, material, DynamicActor)
 {
 	m_type = flipperType;
-	m_pose = m_pose * Transform(P::board->Pose().q);
+
+	Quat q = Quat(0); 
+	if (flipperType == FlipperType::Left)
+		q = Quat(DEG2RAD(-35), Vec3(0, 1, 0));
+	else
+		q = Quat(DEG2RAD(35), Vec3(0, 1, 0));
+
+	m_pose = m_pose * Transform(P::board->Pose().q) * Transform(q);
+
+	Create();
 }
 
 Flipper::Flipper(const Flipper& param) : Box(param)
@@ -34,6 +43,8 @@ Flipper::~Flipper()
 
 void Flipper::Create()
 {
+	Log::Write("\t\tCreating Flipper...\n", ENGINE_LOG);
+
 	PxRigidDynamic* actor;
 	actor = PHYSICS->createRigidDynamic(m_pose);
 
@@ -44,22 +55,22 @@ void Flipper::Create()
 
 	m_actor.dynamicActor->setGlobalPose(m_pose * Transform(Quat(DEG2RAD(90), Vec3(0, 1, 0))));
 
-	Fl32 hingeOffset = 0.f;
+	Vec3 hingeOffset = Vec3(Dimensions().x, 0, 0);
 	if (m_type == FlipperType::Left)
-		hingeOffset = Dimensions().z * 2;
+		hingeOffset.z = Dimensions().z;
 	else
-		hingeOffset = -(Dimensions().z * 2);
+		hingeOffset.z = -Dimensions().z;
 
-	m_joint = RevoluteJoint(actor, PxTransform(PxVec3(0.f, 0.f, hingeOffset), PxQuat(DEG2RAD(90), PxVec3(0.f, 0.f, 1.f))),
-		nullptr, actor->getGlobalPose() * PxTransform(PxVec3(0.f, 0.f, hingeOffset), PxQuat(DEG2RAD(90), PxVec3(0.f, 0.f, 1.f))));
-
-	m_joint.SetLimits(180, 180);
+	m_joint = RevoluteJoint(actor,   Transform(hingeOffset,							 Quat(DEG2RAD(90), Vec3(0.f, 0.f, 1.f))),
+							nullptr, actor->getGlobalPose() * Transform(hingeOffset, Quat(DEG2RAD(90), Vec3(0.f, 0.f, 1.f))));
 }
 
 void Flipper::Flip()
 {
-	//m_actor.dynamicActor->addForce(Vec3(0, 0, 70));
-	m_joint.DriveVelocity(2);
+	if (m_type == FlipperType::Left)
+		m_joint.DriveVelocity(-80);
+	else
+		m_joint.DriveVelocity(80);
 }
 
 void Flipper::SetKinematic(bool isKinematic)

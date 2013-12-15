@@ -15,6 +15,7 @@
 #include "boardObjects.h"
 #include "flippers.h"
 #include "hud.h"
+#include "timer.h"
 
 // Using framework and physics namespaces
 using namespace GameFramework;
@@ -62,6 +63,7 @@ class Pinball : public Game
 		void InitBall();
 		void InitJoints();
 		void InitCornerWedges();
+		void InitStartingBlocks();
 
 		/* HUD Initialization Function */
 		void InitHUD();
@@ -77,6 +79,21 @@ class Pinball : public Game
 
 		/* Represents the game's HUD */
 		HUD hud;
+
+		/* Used to Time the plunger */
+		Timer m_plungerTimer;
+
+		/* Used to track time for scoring */
+		Timer m_scoreTimer;
+
+		/* Used to track game duration */
+		Timer m_gameDuration;
+
+		/* Used to determine if ball is in play, and scoring should be happening */
+		bool m_ballInPlay;
+
+		/* Score gained per second if ball is in play */
+		const int m_scorePerSecond = 5;
 
 	public:
 		/* Construction and Destruction */

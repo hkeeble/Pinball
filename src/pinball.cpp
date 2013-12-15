@@ -61,6 +61,11 @@ void Pinball::Init()
 
 	// Initialize HUD
 	InitHUD();
+
+	// Initialize Timers
+	m_plungerTimer = Timer();
+	m_scoreTimer = Timer();
+	m_gameDuration = Timer();
 }
 
 void Pinball::InitHUD()
@@ -87,7 +92,8 @@ void Pinball::InitHUD()
 		hud.SetRenderColor(Vec3(1.f, 1.f, 1.f));
 		hud.AddItem("GAME OVER!", Vec2(40, 85), HUDFont::largeFont);
 		hud.AddItem("Score", Vec2(45, 75), HUDFont::smallFont, true, m_currentScore);
-		hud.AddItem("Press Enter to continue.", Vec2(35, 65), HUDFont::smallFont);
+		hud.AddItem("Game Duration (Seconds)", Vec2(25, 65), HUDFont::smallFont, true, m_gameDuration.Seconds());
+		hud.AddItem("Press Enter to continue.", Vec2(25, 55), HUDFont::smallFont);
 		break;
 	}
 }
@@ -166,13 +172,13 @@ void Pinball::InitFlippers()
 	PxMaterial* FlipperMaterial = PHYSICS->createMaterial(0.f, 0.f, 0.1f);
 	
 	// Determine Positions
-	const Fl32 zOffset = board->Bottom().z + 0.6f;
-	const Fl32 xOffset = .1f;
+	const Fl32 zOffset = board->Bottom().z + 0.5f;
+	const Fl32 xOffset = .2f;
 	const Fl32 yOffset = calcYOffset(zOffset);
 
 	// Flipper Positions
-	const Transform lftFPos = Transform(Vec3(xOffset, yOffset+FlipperDimensions.y*2, zOffset));
-	const Transform rgtFPos = Transform(Vec3(-xOffset, yOffset+FlipperDimensions.y*2, zOffset));
+	const Transform lftFPos = Transform(Vec3(.26f,  yOffset+FlipperDimensions.y*2, zOffset));
+	const Transform rgtFPos = Transform(Vec3(-.12f, yOffset+FlipperDimensions.y*2, zOffset));
 
 	// Create Flippers
 	Flipper* m_lftFlipper = new Flipper(lftFPos, FlipperType::Left, FlipperMaterial, FlipperColor, FlipperDensity);
@@ -346,9 +352,41 @@ void Pinball::Render()
 
 void Pinball::Idle()
 {
+	Game::Idle();
+
+	/* Check if plunger needs reset */
+	if (m_plunger->IsReady() == false)
+	{
+		m_plungerTimer.Update(deltaTime);
+
+		if (m_plungerTimer.Seconds() > 1)
+		{
+			m_plunger->Reset();
+			m_plungerTimer.Reset();
+		}
+	}
+
+	/* Check if score needs adjusting */
+	if (m_ballInPlay)
+	{
+		m_gameDuration.Update(deltaTime);
+		m_scoreTimer.Update(deltaTime);
+
+		if (m_scoreTimer.Seconds() >= 1)
+		{
+			m_currentScore += m_scorePerSecond;
+			m_scoreTimer.Reset();
+			hud.UpdateItem("Score", m_currentScore);
+		}
+	}
+	else if (m_ball->Pose().p.x > 0.4)// Else, check if ball needs to be set to in play
+		m_ballInPlay = true;
+
+	/* Check if board is on table, if not adjust accordingly */
 	if (m_ball->Get().dynamicActor->getGlobalPose().p.z < -3)
 	{
 		m_ballsRemaining--;
+		m_ballInPlay = false;
 		m_ball->Get().dynamicActor->setGlobalPose(m_ballInitialPos);
 		hud.UpdateItem("Balls Left", m_ballsRemaining);
 		if (m_ballsRemaining < 0)
@@ -391,7 +429,10 @@ void Pinball::KeyboardDown(unsigned char key, int x, int y)
 	/* InGame Keys */
 	case GameState::InGame:
 		if (key == VK_SPACE)
-			m_plunger->SetKinematicTarget(Transform(Vec3(0, 0, -.02f)));
+		{
+			if (m_plunger->IsReady())
+				m_plunger->SetKinematicTarget(Transform(Vec3(0, 0, -.02f)));
+		}
 		if (key == VK_RETURN)
 			m_plunger->Reset();
 		break;
@@ -415,8 +456,11 @@ void Pinball::KeyboardUp(unsigned char key, int x, int y)
 	switch(gameState)
 	{
 	case GameState::InGame:
-		if(key == VK_SPACE)
+		if (key == VK_SPACE)
+		{
 			m_plunger->SetKinematic(false);
+			m_plunger->SetReady(false);
+		}
 	}
 }
 
@@ -446,6 +490,8 @@ void Pinball::Reset()
 	m_ballsRemaining = m_ballsPerGame;
 	m_ball->Get().dynamicActor->setGlobalPose(m_ballInitialPos);
 	m_plunger->Reset();
+	m_gameDuration.Reset();
+	m_ballInPlay = false;
 }
 
 void Pinball::Exit()

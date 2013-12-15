@@ -1,17 +1,17 @@
 #include "triggers.h"
 
 
-Trigger::Trigger()
+ScoreCallback::ScoreCallback()
 {
 	m_isTriggered = false;
 }
 
-Trigger::~Trigger()
+ScoreCallback::~ScoreCallback()
 {
 
 }
 
-void Trigger::onTrigger(PxTriggerPair* pairs, PxU32 count)
+void ScoreCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 {
 	for (int i = 0; i < count; i++)
 	{
@@ -20,19 +20,4 @@ void Trigger::onTrigger(PxTriggerPair* pairs, PxU32 count)
 		if (pairs[i].status & PxPairFlag::eNOTIFY_TOUCH_LOST)
 			m_isTriggered = false;
 	}
-}
-
-void BallOutOfPlayCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
-{
-
-}
-
-void BallEntersPlayCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
-{
-
-}
-
-void ScoreCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
-{
-
 }

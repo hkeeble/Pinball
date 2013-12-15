@@ -30,6 +30,10 @@ namespace GameFramework
 		m_title = title;
 		m_windowHeight = windowHeight;
 		m_windowWidth = windowWidth;
+
+		lastElapsedTime = 0;
+		newElapsedTime = 0;
+		deltaTime = 0;
 	}
 
 	Game::~Game()
@@ -184,7 +188,9 @@ namespace GameFramework
 
 	void Game::Idle()
 	{
-
+		newElapsedTime = glutGet(GLUT_ELAPSED_TIME);
+		deltaTime = newElapsedTime - lastElapsedTime;
+		lastElapsedTime = newElapsedTime;
 	}
 
 	void Game::Reshape(int width, int height)

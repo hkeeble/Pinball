@@ -95,6 +95,7 @@ public:
 class Plunger : public CompoundShapeActor
 {
 private:
+	bool m_ready;
 	PxRigidDynamic* m_shaft;
 	Transform m_initialPose;
 public:
@@ -106,6 +107,8 @@ public:
 	void SetKinematicTarget(Transform target);
 	void Reset();
 	virtual void Create() override;
+	void SetReady(bool isReady);
+	bool IsReady();
 };
 
 /* Used to determine the side of a hinge joint in a flipper */

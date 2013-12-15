@@ -87,5 +87,16 @@ void Plunger::SetKinematicTarget(Transform target)
 void Plunger::Reset()
 {
 	m_actor.dynamicActor->setGlobalPose(m_initialPose);
+	m_ready = true;
 	SetKinematic(true);
+}
+
+void Plunger::SetReady(bool isReady)
+{
+	m_ready = isReady;
+}
+
+bool Plunger::IsReady()
+{
+	return m_ready;
 }

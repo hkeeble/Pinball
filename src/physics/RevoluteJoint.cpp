@@ -11,6 +11,7 @@ namespace Physics
 	{
 		m_joint = PxRevoluteJointCreate(*PHYSICS, actor0, localFrame0, actor1, localFrame1);
 		m_joint->setConstraintFlag(PxConstraintFlag::eVISUALIZATION, true);
+		m_joint->setDriveForceLimit(5);
 	}
 
 	void RevoluteJoint::DriveVelocity(Fl32 value)
@@ -26,7 +27,7 @@ namespace Physics
 
 	void RevoluteJoint::SetLimits(Fl32 lower, Fl32 upper)
 	{
-		m_joint->setLimit(PxJointAngularLimitPair(DEG2RAD(lower), DEG2RAD(upper)));
 		m_joint->setRevoluteJointFlag(PxRevoluteJointFlag::eLIMIT_ENABLED, true);
+		m_joint->setLimit(PxJointAngularLimitPair(lower, upper));
 	}
 }

@@ -109,6 +109,7 @@
     <ClInclude Include="include\physics\Physics.h" />
     <ClInclude Include="include\physics\RevoluteJoint.h" />
     <ClInclude Include="include\pinball.h" />
+    <ClInclude Include="include\timer.h" />
     <ClInclude Include="include\triggers.h" />
     <ClInclude Include="include\Uncopyable.h" />
   </ItemGroup>
@@ -127,6 +128,7 @@
     <ClCompile Include="src\physics\RevoluteJoint.cpp" />
     <ClCompile Include="src\pinball.cpp" />
     <ClCompile Include="src\plunger.cpp" />
+    <ClCompile Include="src\timer.cpp" />
     <ClCompile Include="src\triggers.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
