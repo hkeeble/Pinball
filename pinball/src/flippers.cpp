@@ -47,3 +47,10 @@ Flipper* const Flippers::GetRight() const
 {
 	return rgt;
 }
+
+
+void Flippers::UpdateTimers(const int& deltaTime)
+{
+	lft->UpdateTimer(deltaTime);
+	rgt->UpdateTimer(deltaTime);
+}

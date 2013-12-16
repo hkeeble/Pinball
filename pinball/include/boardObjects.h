@@ -10,6 +10,7 @@
 #include "Actors.h"
 #include "globals.h"
 #include "RevoluteJoint.h"
+#include "timer.h"
 
 using namespace Physics;
 
@@ -124,6 +125,14 @@ class Flipper : public Box
 private:
 	FlipperType m_type;
 	RevoluteJoint m_joint;
+
+	const int flipStrength = 10;
+	int flipDir;
+
+	bool flipped, resetting;
+	Timer timeSinceFlipped, timeSinceReset;
+	const int milliSecondsBeforeReset = 100;
+	const int milliSecondsToReset = 100;
 public:
 	Flipper(const Transform& pose, const FlipperType& flipperType, PxMaterial* material, const Vec3& color, const Fl32& density);
 	Flipper(const Flipper& param);
@@ -131,6 +140,8 @@ public:
 	~Flipper();
 
 	virtual void Create() override;
+
+	void UpdateTimer(const int& deltaTime);
 
 	void Flip();
 

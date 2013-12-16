@@ -126,6 +126,7 @@
     <ClCompile Include="src\physics\Physics.cpp" />
     <ClCompile Include="src\physics\RevoluteJoint.cpp" />
     <ClCompile Include="src\pinball.cpp" />
+    <ClCompile Include="src\pinballInit.cpp" />
     <ClCompile Include="src\plunger.cpp" />
     <ClCompile Include="src\timer.cpp" />
     <ClCompile Include="src\triggers.cpp" />

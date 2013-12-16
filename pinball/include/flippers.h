@@ -13,6 +13,8 @@ public:
 	Flippers& operator=(const Flippers& param);
 	~Flippers();
 
+	void UpdateTimers(const int& deltaTime);
+
 	void FlipLeft();
 	void FlipRight();
 
