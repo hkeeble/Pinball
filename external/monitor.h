@@ -4,8 +4,10 @@
 #include "log.h"
 #include <vector>
 #include <string>
+#include <windows.h>
 
-#define MONITOR_LOG "monitorLog.txt"
+#define MONITOR_LOG "data"
+#define MONITOR_LOG_EXT ".dat"
 
 struct BallData
 {

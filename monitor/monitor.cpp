@@ -76,21 +76,33 @@ void Monitor::AddBall(int score, int durationSeconds)
 
 void Monitor::OutputData()
 {
-	char* currentFilePath = new char[strlen(GetCurrentDir()) + strlen(MONITOR_LOG)];
-	strcpy(currentFilePath, GetCurrentDir());
-	strcat(currentFilePath, MONITOR_LOG);
-	remove(currentFilePath);
+	/* Calculate number of files already in directory */
+	WIN32_FIND_DATA fData;
+	char* dir = GetCurrentDir();
+	std::string d = dir;
+	d.append("/analyzer/*.txt");
 
-	InitLog(MONITOR_LOG);
+	HANDLE find = FindFirstFile(d.c_str(), &fData);
+	int fCount = 0;
+	if (find != INVALID_HANDLE_VALUE)
+	{
+		fCount++;
+		while (FindNextFile(find, &fData) == TRUE)
+			fCount++;
+	}
+
+	std::string logPath = "analyzer/" MONITOR_LOG + std::to_string(fCount) + MONITOR_LOG_EXT;
+
+	InitLog(logPath.c_str());
 
 	std::string n = std::to_string(data.m_balls.size()) + "\n";
-	Log::Write(n.c_str(), MONITOR_LOG);
+	Log::Write(n.c_str(), logPath.c_str());
 
 	// Data for each ball
 	for (int i = 0; i < data.m_balls.size(); i++)
 	{
 		std::string s = std::to_string(data.m_balls.at(i).m_duration) + "\n" + std::to_string(data.m_balls.at(i).m_score) + "\n";
-		Log::Write(s.c_str(), MONITOR_LOG);
+		Log::Write(s.c_str(), logPath.c_str());
 	}
 
 	// Overall data
@@ -100,5 +112,5 @@ void Monitor::OutputData()
 						std::to_string(data.avgScoresPerBall()) + "\n" +
 						std::to_string(data.avgDurationPerBall()) + "\n";
 
-	Log::Write(s2.c_str(), MONITOR_LOG);
+	Log::Write(s2.c_str(), logPath.c_str());
 }

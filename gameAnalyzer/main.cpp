@@ -16,8 +16,8 @@ int main()
 	int menuChoice = none;
 	bool pRunning = true;
 
-	string fileName1;
-	string fileName2;
+	string fileID1;
+	string fileID2;
 	GameData diff;
 	GameData data1;
 	GameData data2;
@@ -39,13 +39,13 @@ int main()
 		switch (menuChoice)
 		{
 		case openAndView:
-			fileName1 = "";
+			fileID1 = "";
 			data1 = GameData();
 
-			cout << "Enter name of data file: ";
-			cin >> fileName1;
+			cout << "Enter the ID of the data file: ";
+			cin >> fileID1;
 			cout << endl << "Reading data..." << endl;
-			data1.ReadData(fileName1);
+			data1.ReadData(MONITOR_LOG + fileID1 + MONITOR_LOG_EXT);
 
 			if (data1.balls != nullptr)
 				data1.OutputData();
@@ -53,18 +53,18 @@ int main()
 				cout << "Unable to read data from this file." << endl << endl;
 			break;
 		case openAndCompare:
-			fileName1 = "";
-			fileName2 = "";
+			fileID1 = "";
+			fileID2 = "";
 			data1 = GameData();
 			data2 = GameData();
 
-			cout << "Enter name of data file 1:";
-			cin >> fileName1;
-			cout << "Enter name of data file 2:";
-			cin >> fileName2;
+			cout << "Enter the ID of data file 1: ";
+			cin >> fileID1;
+			cout << "Enter the ID of data file 2: ";
+			cin >> fileID2;
 
 			cout << "Reading data file 1..." << endl;
-			data1.ReadData(fileName1);
+			data1.ReadData(MONITOR_LOG + fileID1 + MONITOR_LOG_EXT);
 			if (data1.balls == nullptr)
 			{
 				cout << "Unable to read data from this file." << endl << endl;
@@ -72,7 +72,7 @@ int main()
 			}
 
 			cout << "Reading data file 2..." << endl;
-			data2.ReadData(fileName2);
+			data2.ReadData(MONITOR_LOG + fileID2 + MONITOR_LOG_EXT);
 			if (data2.balls == nullptr)
 			{
 				cout << "Unable to read data from this file." << endl << endl;
