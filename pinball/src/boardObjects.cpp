@@ -5,6 +5,7 @@
 | Author: Henri Keeble														|
 \-------------------------------------------------------------------------*/
 #include "boardObjects.h"
+#include "util.h"
 #include "pinball.h"
 
 typedef Pinball P;

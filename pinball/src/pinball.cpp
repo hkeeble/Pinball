@@ -6,6 +6,7 @@
 #include "pinball.h"
 #include "boardObjects.h"
 #include "globals.h"
+#include "util.h"
 
 // Assign Constants
 const int MAX_NUM_ACTOR_SHAPES = 128;
@@ -13,7 +14,7 @@ const int MAX_NUM_ACTOR_SHAPES = 128;
 Board* Pinball::board;
 
 Pinball::Pinball(std::string title, int windowWidth, int windowHeight)
-	: Game(title, windowWidth, windowHeight)
+	: GLUTGame(title, windowWidth, windowHeight)
 {
 	m_ball = nullptr;
 	m_plunger = nullptr;
@@ -132,7 +133,7 @@ void Pinball::Render()
 							if(h.getType() == PxGeometryType::ePLANE)
 								glDisable(GL_LIGHTING);
 
-							Game::RenderGeometry(h);
+							GLUTGame::RenderGeometry(h);
 
 							if(h.getType() == PxGeometryType::ePLANE)
 								glEnable(GL_LIGHTING);
@@ -160,12 +161,12 @@ void Pinball::Render()
 
 	hud.Render(camera.FOV);
 	glutSwapBuffers();
-	Game::Render();
+	GLUTGame::Render();
 }
 
 void Pinball::Idle()
 {
-	Game::Idle();
+	GLUTGame::Idle();
 
 	/* Check if plunger needs reset */
 	if (m_plunger->IsReady() == false)
@@ -217,7 +218,7 @@ void Pinball::Idle()
 
 void Pinball::Reshape(int width, int height)
 {
-	Game::Reshape(width, height);
+	GLUTGame::Reshape(width, height);
 }
 
 void Pinball::MouseButton(int button, int state, int x, int y)
@@ -314,7 +315,7 @@ void Pinball::Reset()
 
 void Pinball::Exit()
 {
-	Game::Exit();
+	GLUTGame::Exit();
 
 	RELEASE(m_ball);
 	RELEASE(board);

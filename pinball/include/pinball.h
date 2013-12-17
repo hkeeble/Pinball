@@ -11,10 +11,10 @@
 #include <string>
 
 // Internal Includes
-#include "game.h"
+#include "glutGame\glutGame.h"
 #include "boardObjects.h"
 #include "flippers.h"
-#include "hud.h"
+#include "glutGame\hud.h"
 #include "timer.h"
 #include "monitor.h"
 
@@ -22,7 +22,7 @@
 using namespace GameFramework;
 using namespace Physics;
 
-class Pinball : public Game
+class Pinball : public GLUTGame
 {
 	private:
 		/* Actors */

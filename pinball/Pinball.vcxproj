@@ -58,12 +58,12 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(PHYSX_SDK)\include;$(SolutionDir)\pinball\include\physics;$(SolutionDir)\pinball\include\;$(SolutionDir)\pinball\include\hud;$(SolutionDir)\external;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(PHYSX_SDK)\include;$(SolutionDir)\pinball\include\physics;$(SolutionDir)\pinball\include\;$(SolutionDir)\pinball\include\hud;$(SolutionDir)\external;$(SolutionDir)\external\physics;$(SolutionDir)\external\gl;$(SolutionDir)\external\glutGame;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>PhysX3DEBUG_x86.lib;PhysX3CommonDEBUG_x86.lib;PhysX3ExtensionsDEBUG.lib;PhysXVisualDebuggerSDKDEBUG.lib;PhysX3CookingDEBUG_x86.lib;%(AdditionalDependencies);monitor.lib</AdditionalDependencies>
+      <AdditionalDependencies>monitor.lib;glutGame.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)\lib\$(Platform)\$(Configuration);$(SolutionDir)\lib\$(Platform)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <IgnoreSpecificDefaultLibraries>LIBCMTD;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
     </Link>
@@ -80,7 +80,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(PHYSX_SDK)\include;$(SolutionDir)\pinball\include\physics;$(SolutionDir)\pinball\include\;$(SolutionDir)\pinball\include\hud;$(SolutionDir)\external;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(PHYSX_SDK)\include;$(SolutionDir)\pinball\include\physics;$(SolutionDir)\pinball\include\;$(SolutionDir)\pinball\include\hud;$(SolutionDir)\external;$(SolutionDir)\external\physics;$(SolutionDir)\external\gl;$(SolutionDir)\external\glutGame;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -88,7 +88,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>PhysX3_x86.lib;PhysX3Common_x86.lib;PhysX3Extensions.lib;PhysXVisualDebuggerSDK.lib;PhysX3Cooking_x86.lib;%(AdditionalDependencies);monitor.lib</AdditionalDependencies>
+      <AdditionalDependencies>monitor.lib;glutGame.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)\lib\$(Platform)\$(Configuration);$(SolutionDir)\lib\$(Platform)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
@@ -97,38 +97,20 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="include\boardObjects.h" />
-    <ClInclude Include="include\camera.h" />
     <ClInclude Include="include\flippers.h" />
-    <ClInclude Include="include\game.h" />
-    <ClInclude Include="include\globals.h" />
-    <ClInclude Include="include\GL\glut.h" />
-    <ClInclude Include="include\hud\hud.h" />
+    <ClInclude Include="include\util.h" />
     <ClInclude Include="include\monitor.h" />
-    <ClInclude Include="include\physics\Actors.h" />
-    <ClInclude Include="include\physics\ErrorCallback.h" />
-    <ClInclude Include="include\physics\Physics.h" />
-    <ClInclude Include="include\physics\RevoluteJoint.h" />
     <ClInclude Include="include\pinball.h" />
-    <ClInclude Include="include\timer.h" />
     <ClInclude Include="include\triggers.h" />
-    <ClInclude Include="include\Uncopyable.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\boardObjects.cpp" />
-    <ClCompile Include="src\camera.cpp" />
     <ClCompile Include="src\flipper.cpp" />
     <ClCompile Include="src\flippers.cpp" />
-    <ClCompile Include="src\game.cpp" />
-    <ClCompile Include="src\hud\hud.cpp" />
     <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="src\physics\Actors.cpp" />
-    <ClCompile Include="src\physics\ErrorCallback.cpp" />
-    <ClCompile Include="src\physics\Physics.cpp" />
-    <ClCompile Include="src\physics\RevoluteJoint.cpp" />
     <ClCompile Include="src\pinball.cpp" />
     <ClCompile Include="src\pinballInit.cpp" />
     <ClCompile Include="src\plunger.cpp" />
-    <ClCompile Include="src\timer.cpp" />
     <ClCompile Include="src\triggers.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

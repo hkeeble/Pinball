@@ -5,6 +5,7 @@ VisualStudioVersion = 12.0.21005.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Pinball", "pinball\Pinball.vcxproj", "{DB56BFC7-8D60-4A46-B4C8-8D40F4E9D0FE}"
 	ProjectSection(ProjectDependencies) = postProject
+		{0C79FC12-468C-4D69-A8FF-8B7CB78C3505} = {0C79FC12-468C-4D69-A8FF-8B7CB78C3505}
 		{927B31E4-50A8-45FC-968D-E9D2787D88FF} = {927B31E4-50A8-45FC-968D-E9D2787D88FF}
 	EndProjectSection
 EndProject
@@ -14,6 +15,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "gameAnalyzer", "gameAnalyze
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "monitor", "monitor\monitor.vcxproj", "{927B31E4-50A8-45FC-968D-E9D2787D88FF}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "glutGame", "glutGame\glutGame.vcxproj", "{0C79FC12-468C-4D69-A8FF-8B7CB78C3505}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +36,10 @@ Global
 		{927B31E4-50A8-45FC-968D-E9D2787D88FF}.Debug|Win32.Build.0 = Debug|Win32
 		{927B31E4-50A8-45FC-968D-E9D2787D88FF}.Release|Win32.ActiveCfg = Release|Win32
 		{927B31E4-50A8-45FC-968D-E9D2787D88FF}.Release|Win32.Build.0 = Release|Win32
+		{0C79FC12-468C-4D69-A8FF-8B7CB78C3505}.Debug|Win32.ActiveCfg = Debug|Win32
+		{0C79FC12-468C-4D69-A8FF-8B7CB78C3505}.Debug|Win32.Build.0 = Debug|Win32
+		{0C79FC12-468C-4D69-A8FF-8B7CB78C3505}.Release|Win32.ActiveCfg = Release|Win32
+		{0C79FC12-468C-4D69-A8FF-8B7CB78C3505}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

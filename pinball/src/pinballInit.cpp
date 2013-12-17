@@ -5,6 +5,7 @@
 | Author: Henri Keeble														|
 \-------------------------------------------------------------------------*/
 #include "pinball.h"
+#include "util.h"
 
 void Pinball::InitHUD()
 {

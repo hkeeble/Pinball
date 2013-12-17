@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="include">
+      <UniqueIdentifier>{e753d50c-0bd3-48d5-9692-6caa96bc795a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{2c226c3f-f2fb-471f-835c-a2b8ffe03eb4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\gl">
+      <UniqueIdentifier>{85e6af14-3230-4317-993c-5e4270f86691}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\hud">
+      <UniqueIdentifier>{83a1c560-5461-4b62-83a6-e5bcc16c888d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\physics">
+      <UniqueIdentifier>{469932d8-0ac5-499e-b100-ab98e7450134}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\GL\glut.h">
+      <Filter>include\gl</Filter>
+    </ClInclude>
+    <ClInclude Include="include\camera.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="include\gamestate.h">
+      <Filter>include</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\glutGame.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\hud\hud.cpp">
+      <Filter>src\hud</Filter>
+    </ClCompile>
+    <ClCompile Include="src\physics\Actors.cpp">
+      <Filter>src\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\physics\ErrorCallback.cpp">
+      <Filter>src\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\physics\Physics.cpp">
+      <Filter>src\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\physics\RevoluteJoint.cpp">
+      <Filter>src\physics</Filter>
+    </ClCompile>
+    <ClCompile Include="src\camera.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\timer.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
