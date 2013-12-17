@@ -20,6 +20,7 @@ Flippers& Flippers::operator=(const Flippers& param)
 	{
 		lft = param.lft;
 		rgt = param.rgt;
+		return *this;
 	}
 }
 
@@ -28,14 +29,16 @@ Flippers::~Flippers()
 
 }
 
-void Flippers::FlipLeft()
+void Flippers::Flip()
 {
 	lft->Flip();
+	rgt->Flip();
 }
 
-void Flippers::FlipRight()
+void Flippers::Unflip()
 {
-	rgt->Flip();
+	lft->Unflip();
+	rgt->Unflip();
 }
 
 Flipper* const Flippers::GetLeft() const
@@ -46,11 +49,4 @@ Flipper* const Flippers::GetLeft() const
 Flipper* const Flippers::GetRight() const
 {
 	return rgt;
-}
-
-
-void Flippers::UpdateTimers(const int& deltaTime)
-{
-	lft->UpdateTimer(deltaTime);
-	rgt->UpdateTimer(deltaTime);
 }

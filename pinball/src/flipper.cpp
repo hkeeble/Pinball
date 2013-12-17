@@ -16,16 +16,6 @@ Flipper::Flipper(const Transform& pose, const FlipperType& flipperType, PxMateri
 
 	m_pose = m_pose * Transform(P::board->Pose().q) * Transform(q);
 
-	flipped = false;
-	resetting = false;
-	timeSinceFlipped = Timer();
-	timeSinceReset = Timer();
-
-	if (m_type == FlipperType::Left)
-		flipDir = -1;
-	else
-		flipDir = 1;
-
 	Create();
 }
 
@@ -65,54 +55,31 @@ void Flipper::Create()
 
 	m_actor.dynamicActor->setGlobalPose(m_pose * Transform(Quat(DEG2RAD(90), Vec3(0, 1, 0))));
 
-	Vec3 hingeOffset = Vec3(Dimensions().x, 0, 0);
+	Vec3 hingeOffset = Vec3(0, 0, Dimensions().x/2);
 	if (m_type == FlipperType::Left)
 		hingeOffset.z = Dimensions().z;
 	else
 		hingeOffset.z = -Dimensions().z;
 
-	m_joint = RevoluteJoint(actor,   Transform(hingeOffset,							 Quat(DEG2RAD(90), Vec3(0.f, 0.f, 1.f))),
-							nullptr, actor->getGlobalPose() * Transform(hingeOffset, Quat(DEG2RAD(90), Vec3(0.f, 0.f, 1.f))));
+	Transform jointPosRight = Transform(hingeOffset, PxQuat(DEG2RAD(-90), PxVec3(0.f, 0.f, 1.f)) * PxQuat(DEG2RAD(180), PxVec3(0.f, 1.f, 0.f)));
+	Transform jointPosLeft = Transform(hingeOffset, PxQuat(DEG2RAD(90), PxVec3(0.f, 0.f, 1.f)) * PxQuat(DEG2RAD(180), PxVec3(0.f, 1.f, 0.f)));
 
-	m_actor.dynamicActor->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);
+	if (m_type == FlipperType::Right)
+		m_joint = RevoluteJoint(actor, jointPosRight, nullptr, actor->getGlobalPose() * jointPosRight);
+	else
+		m_joint = RevoluteJoint(actor, jointPosLeft, nullptr, actor->getGlobalPose() * jointPosLeft);
+
+	m_joint.SetLimits(0, PxPi / 2); // 90 Degree Limits
 }
 
 void Flipper::Flip()
 {
-	m_actor.dynamicActor->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, false);
-
-	flipped = true;
-
-	m_joint.DriveVelocity(flipDir*flipStrength);
+	m_actor.dynamicActor->wakeUp();
+	m_joint.DriveVelocity(flipStrength);
 }
 
-void Flipper::SetKinematic(bool isKinematic)
+void Flipper::Unflip()
 {
-
-}
-
-void Flipper::UpdateTimer(const int& deltaTime)
-{
-	if (flipped)
-	{
-		timeSinceFlipped.Update(deltaTime);
-		if (timeSinceFlipped.Milliseconds() >= milliSecondsBeforeReset)
-		{
-			flipped = false;
-			resetting = true;
-			m_joint.DriveVelocity((-flipDir)*flipStrength);
-			timeSinceFlipped = Timer();
-		}
-	}
-	else if (resetting)
-	{
-		timeSinceReset.Update(deltaTime);
-		if (timeSinceReset.Milliseconds() >= milliSecondsToReset)
-		{
-			resetting = false;
-			m_joint.DriveVelocity(0.f);
-			timeSinceReset = Timer();
-			m_actor.dynamicActor->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);
-		}
-	}
+	m_actor.dynamicActor->wakeUp();
+	m_joint.DriveVelocity(-flipStrength);
 }

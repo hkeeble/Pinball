@@ -227,8 +227,6 @@ void Pinball::Idle()
 			m_monitor.OutputData();
 		}
 	}
-
-	m_flippers->UpdateTimers(deltaTime);
 }
 
 void Pinball::Reshape(int width, int height)
@@ -268,7 +266,7 @@ void Pinball::KeyboardDown(unsigned char key, int x, int y)
 				m_plunger->SetKinematicTarget(Transform(Vec3(0, 0, -.02f)));
 		}
 		if (key == VK_RETURN)
-			m_plunger->Reset();
+			m_flippers->Flip();
 		break;
 	/* Game Over Keys */
 	case GameState::GameOver:
@@ -301,22 +299,16 @@ void Pinball::KeyboardUp(unsigned char key, int x, int y)
 			m_plunger->SetKinematic(false);
 			m_plunger->SetReady(false);
 		}
+		if (key == VK_RETURN)
+		{
+			m_flippers->Unflip();
+		}
 	}
 }
 
 void Pinball::SpecKeyboardDown(int key, int x, int y)
 {
-	switch (gameState)
-	{
-	case GameState::Menu:
-		break;
-	case GameState::InGame:
-		if (key == GLUT_KEY_LEFT)
-			m_flippers->FlipLeft();
-		if (key == GLUT_KEY_RIGHT)
-			m_flippers->FlipRight();
-		break;
-	}
+
 }
 
 void Pinball::SpecKeyboardUp(int key, int x, int y)

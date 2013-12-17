@@ -120,8 +120,8 @@ void Pinball::InitFlippers()
 	const Fl32 yOffset = calcYOffset(zOffset);
 
 	// Flipper Positions
-	const Transform lftFPos = Transform(Vec3(.26f, yOffset + FlipperDimensions.y * 2, zOffset));
-	const Transform rgtFPos = Transform(Vec3(-.12f, yOffset + FlipperDimensions.y * 2, zOffset));
+	const Transform lftFPos = Transform(Vec3(.22f, yOffset + FlipperDimensions.y * 2, zOffset));
+	const Transform rgtFPos = Transform(Vec3(-.08f, yOffset + FlipperDimensions.y * 2, zOffset));
 
 	// Create Flippers
 	Flipper* m_lftFlipper = new Flipper(lftFPos, FlipperType::Left, FlipperMaterial, FlipperColor, FlipperDensity);

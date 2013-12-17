@@ -18,6 +18,7 @@ namespace Physics
 		void DriveVelocity(Fl32 value);
 		Fl32 GetDriveVelocity() const;
 		void SetLimits(Fl32 lower, Fl32 upper);
+		Fl32 GetAngle() const;
 	};
 }
 #endif // REVOLUTE_JOINT_H
