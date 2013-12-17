@@ -9,6 +9,7 @@
 
 #include "Physics.h"
 #include "log.h"
+#include "vertexSet.h"
 
 namespace Physics
 {
@@ -43,7 +44,7 @@ namespace Physics
 		virtual void Create() = 0;
 
 		virtual ActorUnion Get();
-
+		
 		// Functions Used for Debugging
 #ifdef _DEBUG
 		void PrintPose() const;
@@ -73,6 +74,9 @@ namespace Physics
 		virtual void Create();
 
 		PxShape* GetShape();
+		
+		virtual void SetShapeFlag(PxShapeFlag::Enum flag, bool value);
+		virtual void IsTrigger(bool value);
 	};
 
 	/*-------------------------------------------------------------------------\
@@ -136,20 +140,29 @@ namespace Physics
 	};
 
 	/*-------------------------------------------------------------------------\
-	|								WEDGE										|
+	|							CONVEX MESH ACTOR								|
 	\-------------------------------------------------------------------------*/
-	class Wedge : public ShapeActor
+	class ConvexMeshActor : public ShapeActor
 	{
 	private:
 		Vec3 m_scale;
 	public:
-		Wedge(Transform pose = IDENTITY_TRANS, Fl32 density = DEFAULT_DENSITY, const Vec3& color = DEFAULT_COLOR,
+		ConvexMeshActor(VertexSet verts, Transform pose = IDENTITY_TRANS, Fl32 density = DEFAULT_DENSITY, const Vec3& color = DEFAULT_COLOR,
 			PxMaterial* material = DEFAULT_MATERIAL, Vec3 scale = Vec3(1, 1, 1), ActorType aType = DEFAULT_ACTOR_TYPE);
-		Wedge(const Wedge& param);
-		virtual Wedge& operator=(const Wedge& param);
-		virtual ~Wedge();
+		ConvexMeshActor(const ConvexMeshActor& param);
+		virtual ConvexMeshActor& operator=(const ConvexMeshActor& param);
+		virtual ~ConvexMeshActor();
 
 		virtual void Create() override;
+		
+		static ConvexMeshActor* CreateWedge(Transform pose = IDENTITY_TRANS, Fl32 density = DEFAULT_DENSITY, const Vec3& color = DEFAULT_COLOR,
+			PxMaterial* material = DEFAULT_MATERIAL, Vec3 scale = Vec3(1, 1, 1), ActorType aType = DEFAULT_ACTOR_TYPE);
+			
+		static ConvexMeshActor* CreateHexagon(Transform pose = IDENTITY_TRANS, Fl32 density = DEFAULT_DENSITY, const Vec3& color = DEFAULT_COLOR,
+			PxMaterial* material = DEFAULT_MATERIAL, Vec3 scale = Vec3(1, 1, 1), ActorType aType = DEFAULT_ACTOR_TYPE);
+
+		static ConvexMeshActor* CreatePyramid(Transform pose = IDENTITY_TRANS, Fl32 density = DEFAULT_DENSITY, const Vec3& color = DEFAULT_COLOR,
+			PxMaterial* material = DEFAULT_MATERIAL, Vec3 scale = Vec3(1, 1, 1), ActorType aType = DEFAULT_ACTOR_TYPE);
 	};
 }
 

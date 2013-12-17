@@ -1,6 +1,5 @@
 #include "triggers.h"
 
-
 ScoreCallback::ScoreCallback()
 {
 	m_isTriggered = false;

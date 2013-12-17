@@ -24,6 +24,7 @@
     <ClCompile Include="src\physics\Physics.cpp" />
     <ClCompile Include="src\physics\RevoluteJoint.cpp" />
     <ClCompile Include="src\timer.cpp" />
+    <ClCompile Include="src\vertexSet.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{0C79FC12-468C-4D69-A8FF-8B7CB78C3505}</ProjectGuid>

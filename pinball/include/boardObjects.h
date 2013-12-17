@@ -148,14 +148,4 @@ public:
 	void SetKinematic(bool isKinematic);
 };
 
-/* Represents a wegde in the corner of the table */
-class CornerWedge : public Wedge
-{
-public:
-	CornerWedge(const Transform& pose, PxMaterial* material, const Vec3& scale, const Vec3& color);
-	CornerWedge(const CornerWedge& param);
-	virtual CornerWedge& operator=(const CornerWedge& param);
-	virtual ~CornerWedge() override;
-};
-
 #endif // _BOARD_OBJECTS_H_

@@ -193,6 +193,37 @@ namespace Physics
 		return *buf;
 	}
 
+	void ShapeActor::SetShapeFlag(PxShapeFlag::Enum flag, bool value)
+	{
+		GetShape()->setFlag(flag, value);
+	}
+
+	void ShapeActor::IsTrigger(bool value)
+	{
+		PxRigidDynamic* dyn = nullptr;
+		PxRigidStatic* st = nullptr;
+
+		if (m_aType == DynamicActor)
+		{
+			dyn = m_actor.dynamicActor;
+			if (value)
+				dyn->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, true);
+			else
+				dyn->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, false);
+		}
+
+		if (value)
+		{
+			GetShape()->setFlag(PxShapeFlag::eSIMULATION_SHAPE, false);
+			GetShape()->setFlag(PxShapeFlag::eTRIGGER_SHAPE, true);
+		}
+		else
+		{
+			GetShape()->setFlag(PxShapeFlag::eSIMULATION_SHAPE, true);
+			GetShape()->setFlag(PxShapeFlag::eTRIGGER_SHAPE, false);
+		}
+	}
+
 	/*------------------------------------------------------------------------\
 	|					COMPOUNDSHAPEACTOR DEFINITIONS							|
 	\-------------------------------------------------------------------------*/
@@ -332,29 +363,26 @@ namespace Physics
 	}
 
 	/*-------------------------------------------------------------------------\
-	|							WEDGE DEFINITIONS								|
+	|						CONVEX MESH ACTOR DEFINITIONS						|
 	\-------------------------------------------------------------------------*/
-	Wedge::Wedge(Transform pose, Fl32 density, const Vec3& color, PxMaterial* material, Vec3 scale, ActorType aType)
+	ConvexMeshActor::ConvexMeshActor(VertexSet verts, Transform pose, Fl32 density, const Vec3& color, PxMaterial* material, Vec3 scale, ActorType aType)
 		: ShapeActor(pose, density, material, color, aType)
 	{
 		m_scale = scale;
 		m_pose = m_pose * Transform(Quat(DEG2RAD(90), Vec3(1, 0, 0))); // Default Pose Rotation
 		
-		Vec3 verts[sizeof(wedge_verts) / sizeof(Vec3)];
-		std::copy(std::begin(wedge_verts), std::end(wedge_verts), std::begin(verts));
-
-		PxConvexMesh* mesh = CreateConvexMesh(verts, sizeof(verts)/sizeof(Vec3), m_scale);
+		PxConvexMesh* mesh = CreateConvexMesh(verts.GetVerts(), verts.NumberOfVerts(), m_scale);
 		m_geometry.storeAny(PxConvexMeshGeometry(mesh));
-		
+
 		Create();
 	}
 
-	Wedge::Wedge(const Wedge& param) : ShapeActor(param)
+	ConvexMeshActor::ConvexMeshActor(const ConvexMeshActor& param) : ShapeActor(param)
 	{
 		m_scale = param.m_scale;
 	}
 
-	Wedge& Wedge::operator=(const Wedge& param)
+	ConvexMeshActor& ConvexMeshActor::operator=(const ConvexMeshActor& param)
 	{
 		if (this == &param)
 			return *this;
@@ -364,12 +392,12 @@ namespace Physics
 			return *this;
 		}
 	}
-	Wedge::~Wedge()
+	ConvexMeshActor::~ConvexMeshActor()
 	{
 
 	}
 
-	void Wedge::Create()
+	void ConvexMeshActor::Create()
 	{
 		void* s = nullptr;
 		PxShape* shape = nullptr;
@@ -391,5 +419,59 @@ namespace Physics
 			m_actor.staticActor = ptr;
 			m_actor.staticActor->userData = &m_color;
 		}
+	}
+
+	ConvexMeshActor* ConvexMeshActor::CreateWedge(Transform pose, Fl32 density, const Vec3& color, PxMaterial* material, Vec3 scale, ActorType aType)
+	{
+		int nVerts = sizeof(wedge_verts) / sizeof(Vec3);
+		Vec3* verts = new Vec3[nVerts];
+		std::copy(std::begin(wedge_verts), std::end(wedge_verts), verts);
+		return new ConvexMeshActor(VertexSet(verts, nVerts), pose, density, color, material, scale, aType);
+	}
+
+	ConvexMeshActor* ConvexMeshActor::CreateHexagon(Transform pose, Fl32 density, const Vec3& color, PxMaterial* material, Vec3 scale, ActorType aType)
+	{
+		int nVerts = 48;
+		Vec3* totalVerts = new Vec3[nVerts];
+		Vec3* vertsBottom = new Vec3[12];
+		Vec3* vertsTop = new Vec3[12];
+
+		int count = 0;
+		for (int i = 0; i < 360; i += 60)
+		{
+			Fl32 heading = DEG2RAD(i);
+			vertsBottom[count] = Vec3(cos(heading) * 1, 0, sin(heading) * 1); // Assumed Radius 1
+			count++;
+			vertsBottom[count] = Vec3(0, 0, 0);
+			count++;
+		}
+
+		for (int i = 0; i < 12; i += 2)
+		{
+			vertsTop[i] = Vec3(vertsBottom[i].x, 1, vertsBottom[i].z);
+			vertsTop[i + 1] = Vec3(0, 0, 0);
+		}
+
+		for (int i = 0; i < nVerts; i++)
+		{
+			int c = i;
+			if (c >= nVerts / 2)
+				c -= nVerts / 2;
+
+			if (i % 2 == 0)
+				totalVerts[i] = vertsTop[c];
+			else
+				totalVerts[i] = vertsBottom[c];
+		}
+	
+		return new ConvexMeshActor(VertexSet(totalVerts, nVerts), pose, density, color, material, scale, aType);
+	}
+
+	ConvexMeshActor* ConvexMeshActor::CreatePyramid(Transform pose, Fl32 density, const Vec3& color, PxMaterial* material, Vec3 scale, ActorType aType)
+	{
+		int nVerts = sizeof(pyramid_verts) / sizeof(Vec3);
+		Vec3* verts = new Vec3[nVerts];
+		std::copy(std::begin(pyramid_verts), std::end(pyramid_verts), verts);
+		return new ConvexMeshActor(VertexSet(verts, nVerts), pose, density, color, material, scale, aType);
 	}
 }

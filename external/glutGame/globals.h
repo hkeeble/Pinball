@@ -54,4 +54,12 @@ const Vec3 wedge_verts[] = {
 	Vec3(1, 0, -1)
 };
 
+const Vec3 pyramid_verts[] = {
+	Vec3(0, 1, 0),
+	Vec3(1, 0, 0),
+	Vec3(-1, 0, 0),
+	Vec3(0, 0, 1),
+	Vec3(0, 0, -1)
+};
+
 #endif // _GLOBALS_H_

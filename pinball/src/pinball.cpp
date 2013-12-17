@@ -13,6 +13,8 @@ const int MAX_NUM_ACTOR_SHAPES = 128;
 
 Board* Pinball::board;
 
+int Pinball::m_currentScore = 0;
+
 Pinball::Pinball(std::string title, int windowWidth, int windowHeight)
 	: GLUTGame(title, windowWidth, windowHeight)
 {
@@ -30,6 +32,9 @@ Pinball::~Pinball()
 
 void Pinball::Init()
 {
+	// Not Paused
+	m_paused = false;
+
 	// Set FPS
 	m_fps = 1.f / FPS;
 
@@ -50,6 +55,7 @@ void Pinball::Init()
 	InitBall();
 	InitPlunger();
 	InitCornerWedges();
+	InitCenterBumpers();
 
 	// Add Actors in game to scene
 	AddActors();
@@ -81,6 +87,19 @@ void Pinball::AddActors()
 	}
 }
 
+void Pinball::TogglePause()
+{
+	m_scene->TogglePause();
+	m_paused = !m_paused;
+
+	if (m_paused)
+		gameState = GameState::Paused;
+	else
+		gameState = GameState::InGame;
+
+	InitHUD();
+}
+
 Fl32 Pinball::calcYOffset(Fl32 zOffset)
 {
 	return tanf(DEG2RAD(25)) * zOffset;
@@ -90,34 +109,31 @@ void Pinball::Render()
 {
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	switch(gameState)
+	if (gameState == GameState::InGame || gameState == GameState::Paused)
 	{
-	case GameState::Menu:
-		break;
-	case GameState::InGame:
 		// Update Camera
 		camera.Update();
 
 		// Render Scene
 		std::vector<physx::PxRigidActor*> actors = m_scene->GetActors(physx::PxActorTypeSelectionFlag::eRIGID_DYNAMIC | physx::PxActorTypeSelectionFlag::eRIGID_STATIC); // get scene actors
-	
+
 		int nbActors = actors.size();
 		PxShape* shapes[MAX_NUM_ACTOR_SHAPES]; // Pointer to current actor shapes
 
-		if(actors.size())
+		if (actors.size())
 		{
-			for(int i = 0; i < nbActors; i++)
+			for (int i = 0; i < nbActors; i++)
 			{
-				if(i != GLASS_ATR_IDX) // Don't Render the glass
+				if (i != GLASS_ATR_IDX) // Don't Render the glass
 				{
 					PxU32 nbShapes = actors[i]->getNbShapes();
-					if(nbShapes <= MAX_NUM_ACTOR_SHAPES)
+					if (nbShapes <= MAX_NUM_ACTOR_SHAPES)
 					{
 						actors[i]->getShapes(shapes, nbShapes);
 
 						bool isSleeping = actors[i]->isRigidDynamic() && actors[i]->isRigidDynamic()->isSleeping(); // Check if actor is sleeping
 
-						for(int j = 0; j < nbShapes; j++)
+						for (int j = 0; j < nbShapes; j++)
 						{
 							Transform p = PxShapeExt::getGlobalPose(*shapes[j], *actors[i]);
 							PxGeometryHolder h = shapes[j]->getGeometry();
@@ -130,12 +146,12 @@ void Pinball::Render()
 							Vec3 aColor = *((Vec3*)actors[i]->userData);
 							glColor3f(aColor.x, aColor.y, aColor.z);
 
-							if(h.getType() == PxGeometryType::ePLANE)
+							if (h.getType() == PxGeometryType::ePLANE)
 								glDisable(GL_LIGHTING);
 
 							GLUTGame::RenderGeometry(h);
 
-							if(h.getType() == PxGeometryType::ePLANE)
+							if (h.getType() == PxGeometryType::ePLANE)
 								glEnable(GL_LIGHTING);
 
 							glPopMatrix();
@@ -156,7 +172,6 @@ void Pinball::Render()
 			m_scene->UpdatePhys(m_fps);
 			break;
 		}
-		break;
 	}
 
 	hud.Render(camera.FOV);
@@ -265,6 +280,12 @@ void Pinball::KeyboardDown(unsigned char key, int x, int y)
 		break;
 	}
 
+	if (gameState == GameState::InGame || gameState == GameState::Paused)
+	{
+		if (key == 'p')
+			TogglePause();
+	}
+
 	// Keys applicable to all states
 	if(key == VK_ESCAPE)
 		exit(0);
@@ -311,6 +332,11 @@ void Pinball::Reset()
 	m_plunger->Reset();
 	m_gameDuration.Reset();
 	m_ballInPlay = false;
+}
+
+void Pinball::AddScore(int score)
+{
+	m_currentScore += score;
 }
 
 void Pinball::Exit()

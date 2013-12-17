@@ -34,7 +34,7 @@ class Pinball : public GLUTGame
 		Flippers*	m_flippers;
 
 		/* player's current score */
-		int m_currentScore;
+		static int m_currentScore;
 
 		/* Balls at the start of each game */
 		const int m_ballsPerGame = 3;
@@ -46,11 +46,12 @@ class Pinball : public GLUTGame
 		Transform m_ballInitialPos;
 
 		/* Represents the current gameState */
-		enum class GameState
+		enum GameState
 		{
 			Menu,
 			InGame,
-			GameOver
+			GameOver,
+			Paused
 		} gameState;
 
 		/* Camera Initialization Functions */
@@ -65,12 +66,19 @@ class Pinball : public GLUTGame
 		void InitJoints();
 		void InitCornerWedges();
 		void InitStartingBlocks();
+		void InitCenterBumpers();
 
 		/* HUD Initialization Function */
 		void InitHUD();
 
 		/* Add actors in actor vector to game scene */
 		void AddActors();
+
+		/* Is Paused */
+		bool m_paused;
+
+		/* Toggles Pause */
+		void TogglePause();
 
 		/* Calculates y offset dependent on board rotation */
 		Fl32 calcYOffset(Fl32 zOffset);
@@ -106,6 +114,9 @@ class Pinball : public GLUTGame
 
 		/* Board Actor */
 		static Board* board;
+
+		/* Adds to Score */
+		static void AddScore(int score);
 
 		/* Initialization override */
 		virtual void Init			  ()									override final;

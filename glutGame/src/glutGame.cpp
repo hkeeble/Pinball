@@ -134,7 +134,7 @@ namespace GameFramework
 			const PxU8* polygons = mesh->getIndexBuffer();
 			const PxVec3* verts = mesh->getVertices();
 			PxU32 numTotalTriangles = 0;
-			
+
 			for (PxU32 i = 0; i < nbPolys; i++)
 			{
 				PxHullPolygon data;

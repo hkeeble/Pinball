@@ -34,6 +34,10 @@ void Pinball::InitHUD()
 		hud.AddItem("Game Duration (Seconds)", Vec2(25, 65), HUDFont::smallFont, true, m_gameDuration.Seconds());
 		hud.AddItem("Press Enter to continue.", Vec2(25, 55), HUDFont::smallFont);
 		break;
+	case GameState::Paused:
+		hud.SetRenderColor(Vec3(1.f, 1.f, 1.f));
+		hud.AddItem("PAUSED", Vec2(40, 40), HUDFont::largeFont);
+		break;
 	}
 }
 
@@ -162,21 +166,21 @@ void Pinball::InitCornerWedges()
 	xOffset = board->Right().x + board->WallWidth() + .25f;
 	yOffset = calcYOffset(zOffset);
 	pose = Transform(Vec3(xOffset, yOffset + (scale.z * 2), zOffset), Quat(DEG2RAD(180), Vec3(0, 1, 0)) * Quat(DEG2RAD(25), Vec3(1, 0, 0)));
-	m_actors.push_back(new CornerWedge(pose, mat, scale, color));
-
+	m_actors.push_back(ConvexMeshActor::CreateWedge(pose, 1.f, color, mat, scale, Physics::ActorType::StaticActor));
+	
 	// Top Left Wedge
 	zOffset = board->Top().z - board->WallWidth() - .5f;
 	xOffset = board->Left().x - board->WallWidth() - .08f;
 	yOffset = calcYOffset(zOffset);
 	pose = Transform(Vec3(xOffset, yOffset + (scale.z * 2), zOffset), Quat(DEG2RAD(-90), Vec3(0, 1, 0)) * Quat(DEG2RAD(25), Vec3(0, 0, 1)));
-	m_actors.push_back(new CornerWedge(pose, mat, scale, color));
+	m_actors.push_back(ConvexMeshActor::CreateWedge(pose, 1.f, color, mat, scale, Physics::ActorType::StaticActor));
 
 	// Bottom Left Wedge
 	zOffset = board->Bottom().z - board->WallWidth() + .3f;
 	xOffset = board->Left().x - board->WallWidth() - .35f;
 	yOffset = calcYOffset(zOffset);
 	pose = Transform(Vec3(xOffset, yOffset + (scale.z * 2), zOffset), Quat(DEG2RAD(-25), Vec3(1, 0, 0)));
-	m_actors.push_back(new CornerWedge(pose, mat, scale, color));
+	m_actors.push_back(ConvexMeshActor::CreateWedge(pose, 1.f, color, mat, scale, Physics::ActorType::StaticActor));
 
 	// Bottom Right Wedge
 	scale = Vec3(.2f, .4f, .05f);
@@ -184,7 +188,7 @@ void Pinball::InitCornerWedges()
 	xOffset = board->Right().x + board->WallWidth() + .35f;
 	yOffset = calcYOffset(zOffset);
 	pose = Transform(Vec3(xOffset, yOffset + (scale.z * 2), zOffset), Quat(DEG2RAD(-25), Vec3(1, 0, 0)) * Quat(DEG2RAD(90), Vec3(0, 1, 0)));
-	m_actors.push_back(new CornerWedge(pose, mat, scale, color));
+	m_actors.push_back(ConvexMeshActor::CreateWedge(pose, 1.f, color, mat, scale, Physics::ActorType::StaticActor));
 
 	// Exit Plunger Lane Wedge
 	scale = Vec3(.2f, .4f, .05f);
@@ -192,5 +196,31 @@ void Pinball::InitCornerWedges()
 	xOffset = board->Left().x - board->WallWidth() - .25f;
 	yOffset = calcYOffset(zOffset);
 	pose = Transform(Vec3(xOffset, yOffset + (scale.z * 2), zOffset), Quat(DEG2RAD(-25), Vec3(1, 0, 0)));
-	m_actors.push_back(new CornerWedge(pose, mat, scale, color));
+	m_actors.push_back(ConvexMeshActor::CreateWedge(pose, 1.f, color, mat, scale, Physics::ActorType::StaticActor));
+}
+
+void Pinball::InitCenterBumpers()
+{
+	ConvexMeshActor* currentActor;
+	Transform pose = Transform(Vec3(0, board->Dimensions().y, 0), Quat(DEG2RAD(-90), Vec3(1, 0, 0))) * board->Pose();
+	Transform p = pose;
+	Vec3 color = Vec3(1, 1, .5f);
+	PxMaterial* material = PHYSICS->createMaterial(0, 0, 0);
+	Fl32 density = 1.f;
+	Vec3 scale = Vec3(0.2f, 0.1f, 0.2f);
+
+	p = pose * Transform(Vec3(board->Left().x - 1.7f, 0, 0.6f));
+	currentActor = ConvexMeshActor::CreatePyramid(p, density, color, material, scale, ActorType::StaticActor);
+	currentActor->IsTrigger(true);
+	m_actors.push_back(currentActor);
+
+	p = pose * Transform(Vec3(board->Left().x - 2.1f, 0, 0.8f));
+	currentActor = ConvexMeshActor::CreatePyramid(p, density, color, material, scale, ActorType::StaticActor);
+	currentActor->IsTrigger(true);
+	m_actors.push_back(currentActor);
+
+	p = pose * Transform(Vec3(board->Left().x - 2.2f, 0, 0.5f));
+	currentActor = ConvexMeshActor::CreatePyramid(p, density, color, material, scale, ActorType::StaticActor);
+	currentActor->IsTrigger(true);
+	m_actors.push_back(currentActor);
 }

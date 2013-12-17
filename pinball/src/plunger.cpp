@@ -47,6 +47,7 @@ Plunger& Plunger::operator=(const Plunger& param)
 		PX_RELEASE(m_shaft);
 		m_shaft = PHYSICS->createRigidDynamic(param.m_shaft->getGlobalPose());
 		m_shaft->setRigidDynamicFlags(param.m_shaft->getRigidBodyFlags());
+		return *this;
 	}
 }
 
