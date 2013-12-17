@@ -266,7 +266,10 @@ void Pinball::KeyboardDown(unsigned char key, int x, int y)
 				m_plunger->SetKinematicTarget(Transform(Vec3(0, 0, -.02f)));
 		}
 		if (key == VK_RETURN)
-			m_flippers->Flip();
+		{
+			if (m_flippers)
+				m_flippers->Flip();
+		}
 		break;
 	/* Game Over Keys */
 	case GameState::GameOver:
@@ -301,7 +304,8 @@ void Pinball::KeyboardUp(unsigned char key, int x, int y)
 		}
 		if (key == VK_RETURN)
 		{
-			m_flippers->Unflip();
+			if (m_flippers)
+				m_flippers->Unflip();
 		}
 	}
 }

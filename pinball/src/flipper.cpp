@@ -4,7 +4,7 @@
 typedef Pinball P;
 
 Flipper::Flipper(const Transform& pose, const FlipperType& flipperType, PxMaterial* material, const Vec3& color, const Fl32& density)
-: Box(pose, Vec3(P::board->WallWidth(), P::board->WallHeight(), 0.1f), density, color, material, DynamicActor)
+: Box(pose, Vec3(P::board->WallWidth(), P::board->WallHeight(), 0.2f), density, color, material, DynamicActor)
 {
 	m_type = flipperType;
 

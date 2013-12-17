@@ -5,7 +5,6 @@
 \-------------------------------------------------------------------------*/
 #include "pinball.h"
 
-
 const int WIN_WIDTH = 700;
 const int WIN_HEIGHT = 700;
 

@@ -120,8 +120,13 @@ void Pinball::InitFlippers()
 	const Fl32 yOffset = calcYOffset(zOffset);
 
 	// Flipper Positions
-	const Transform lftFPos = Transform(Vec3(.22f, yOffset + FlipperDimensions.y * 2, zOffset));
-	const Transform rgtFPos = Transform(Vec3(-.08f, yOffset + FlipperDimensions.y * 2, zOffset));
+	Transform lftFPos = Transform(Vec3(.28f, yOffset + FlipperDimensions.y * 2, zOffset));
+	Transform rgtFPos = Transform(Vec3(-.28f, yOffset + FlipperDimensions.y * 2, zOffset));
+
+	// Transform to center
+	const Transform transPos = Transform(Vec3(0.05f, 0, 0));
+	lftFPos = lftFPos * Transform(Vec3(0.06f, 0, 0));
+	rgtFPos = rgtFPos * Transform(Vec3(0.06f, 0, 0));
 
 	// Create Flippers
 	Flipper* m_lftFlipper = new Flipper(lftFPos, FlipperType::Left, FlipperMaterial, FlipperColor, FlipperDensity);
@@ -196,6 +201,22 @@ void Pinball::InitCornerWedges()
 	xOffset = board->Left().x - board->WallWidth() - .25f;
 	yOffset = calcYOffset(zOffset);
 	pose = Transform(Vec3(xOffset, yOffset + (scale.z * 2), zOffset), Quat(DEG2RAD(-25), Vec3(1, 0, 0)));
+	m_actors.push_back(ConvexMeshActor::CreateWedge(pose, 1.f, color, mat, scale, Physics::ActorType::StaticActor));
+
+	// Flipper Right Wedge
+	scale = Vec3(.5f, .4f, .05f);
+	zOffset = board->Bottom().z + board->WallWidth() + .6f;
+	xOffset = board->Left().x - board->WallWidth() - .55f;
+	yOffset = calcYOffset(zOffset);
+	pose = Transform(Vec3(xOffset, yOffset + (scale.z * 2), zOffset), Quat(DEG2RAD(-25), Vec3(1, 0, 0)));
+	m_actors.push_back(ConvexMeshActor::CreateWedge(pose, 1.f, color, mat, scale, Physics::ActorType::StaticActor));
+
+	// Flipper Right Wedge
+	scale = Vec3(.2f, .8f, .05f);
+	zOffset = board->Bottom().z + board->WallWidth() + .76f;
+	xOffset = board->Right().x - board->WallWidth() + .49f;
+	yOffset = calcYOffset(zOffset);
+	pose = Transform(Vec3(xOffset, yOffset + (scale.z * 2), zOffset), Quat(DEG2RAD(-25), Vec3(1, 0, 0))  * Quat(DEG2RAD(90), Vec3(0, 1, 0)));
 	m_actors.push_back(ConvexMeshActor::CreateWedge(pose, 1.f, color, mat, scale, Physics::ActorType::StaticActor));
 }
 
