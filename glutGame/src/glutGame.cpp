@@ -81,6 +81,7 @@ namespace GameFramework
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_COLOR_MATERIAL);
 		glEnable(GL_LIGHTING);
+		glEnable(GL_TEXTURE_2D);
 		Fl32 ambientColor[]	= { .5f, .5f,  .5f, 1.f };
 		Fl32 diffuseColor[]	= { .4f, .4f,  .4f, 1.f };		
 		Fl32 specularColor[]= { 1.f, 1.f,  1.f, 1.f };		
@@ -117,13 +118,16 @@ namespace GameFramework
 		atexit(ExitWrapper);
 	}
 
-	void GLUTGame::RenderGeometry(PxGeometryHolder h)
+	void GLUTGame::RenderGeometry(PxGeometryHolder h, bool textured)
 	{
 		switch (h.getType())
 		{
 		case PxGeometryType::eBOX:
 			glScalef(h.box().halfExtents.x, h.box().halfExtents.y, h.box().halfExtents.z);
-			glutSolidCube(2.0f);
+			if (textured)
+				RenderTexturedCube(2.0f);
+			else
+				glutSolidCube(2.0f);
 			break;
 		case PxGeometryType::eSPHERE:
 			glutSolidSphere(h.sphere().radius, RENDER_DETAIL, RENDER_DETAIL);
@@ -163,6 +167,62 @@ namespace GameFramework
 				glDrawElements(GL_TRIANGLES, numTotalTriangles * 3, GL_UNSIGNED_INT, gConvexMeshTriIndices);
 				glDisableClientState(GL_VERTEX_ARRAY);
 			}
+		}
+	}
+
+	// Modification of glutSolidCube() with texture coordinates
+	void GLUTGame::RenderTexturedCube(GLint size)
+	{
+		static GLfloat n[6][3] =
+		{
+			{ -1.0, 0.0, 0.0 },
+			{ 0.0, 1.0, 0.0 },
+			{ 1.0, 0.0, 0.0 },
+			{ 0.0, -1.0, 0.0 },
+			{ 0.0, 0.0, 1.0 },
+			{ 0.0, 0.0, -1.0 }
+		};
+		static GLint faces[6][4] =
+		{
+			{ 0, 1, 2, 3 },
+			{ 3, 2, 6, 7 },
+			{ 7, 6, 5, 4 },
+			{ 4, 5, 1, 0 },
+			{ 5, 6, 2, 1 },
+			{ 7, 4, 0, 3 }
+		};
+		GLfloat v[8][3];
+		GLfloat t[8][3][2];
+		GLint i;
+
+		v[0][0] = v[1][0] = v[2][0] = v[3][0] = -size / 2;
+		v[4][0] = v[5][0] = v[6][0] = v[7][0] = size / 2;
+		v[0][1] = v[1][1] = v[4][1] = v[5][1] = -size / 2;
+		v[2][1] = v[3][1] = v[6][1] = v[7][1] = size / 2;
+		v[0][2] = v[3][2] = v[4][2] = v[7][2] = -size / 2;
+		v[1][2] = v[2][2] = v[5][2] = v[6][2] = size / 2;
+
+		t[0][0][0] = t[4][0][0] = t[0][1][0] = t[2][1][0] = t[0][2][0] = t[1][2][0] = 1.f;
+		t[0][0][1] = t[4][0][1] = t[0][1][1] = t[2][1][1] = t[0][2][1] = t[1][2][1] = 1.f;
+		
+		t[1][0][0] = t[5][0][0] = t[1][1][0] = t[3][1][0] = t[3][2][0] = t[2][2][0] = 1.f;
+		t[1][0][1] = t[5][0][1] = t[1][1][1] = t[3][1][1] = t[3][2][1] = t[2][2][1] = 1.f;
+
+		t[2][0][0] = t[6][0][0] = t[4][1][0] = t[6][1][0] = t[4][2][0] = t[5][2][0] = 1.f;
+		t[2][0][1] = t[6][0][1] = t[4][1][1] = t[6][1][1] = t[4][2][1] = t[5][2][1] = 1.f;
+		
+		t[3][0][0] = t[7][0][0] = t[5][1][0] = t[7][1][0] = t[7][2][0] = t[6][2][0] = 1.f;
+		t[3][0][1] = t[7][0][1] = t[5][1][1] = t[7][1][1] = t[7][2][1] = t[6][2][1] = 1.f;
+
+		for (i = 5; i >= 0; i--) {
+			glBegin(GL_QUADS);
+			glNormal3fv(&n[i][0]);
+			glTexCoord2f(t[i][i][0], t[i][i][1]);
+			glVertex3fv(&v[faces[i][0]][0]);
+			glVertex3fv(&v[faces[i][1]][0]);
+			glVertex3fv(&v[faces[i][2]][0]);
+			glVertex3fv(&v[faces[i][3]][0]);
+			glEnd();
 		}
 	}
 

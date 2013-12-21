@@ -29,6 +29,7 @@ Board::Board(PxMaterial* material, Vec3 color) : Box(Transform((Vec3(0, 0, 0), Q
 												 m_plungerWidth(m_plungerLaneWidth)
 {
 	Create();
+	SetTexture("boardTexture.png");
 }
 
 Board::~Board()

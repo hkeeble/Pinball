@@ -149,7 +149,10 @@ void Pinball::Render()
 							if (h.getType() == PxGeometryType::ePLANE)
 								glDisable(GL_LIGHTING);
 
-							GLUTGame::RenderGeometry(h);
+							if (i == 0) // Board is textured
+								GLUTGame::RenderGeometry(h, true);
+							else
+								GLUTGame::RenderGeometry(h);
 
 							if (h.getType() == PxGeometryType::ePLANE)
 								glEnable(GL_LIGHTING);

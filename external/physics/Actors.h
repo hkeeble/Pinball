@@ -10,6 +10,7 @@
 #include "Physics.h"
 #include "log.h"
 #include "vertexSet.h"
+#include "loadImage.h"
 
 namespace Physics
 {
@@ -26,12 +27,17 @@ namespace Physics
 	/* Abstract Actor Class */
 	class Actor
 	{
+	private:
+		bool m_textured;
+		unsigned int m_texID;
+		
 	protected:
 		ActorUnion m_actor;
 		ActorType m_aType;
 		Fl32 m_density;
 		Transform m_pose;
-
+		
+		void SetTexture(std::string dataPath);
 	public:
 		Actor();
 		Actor(Transform pose, Fl32 density, ActorType m_aType);
@@ -44,6 +50,9 @@ namespace Physics
 		virtual void Create() = 0;
 
 		virtual ActorUnion Get();
+		
+		bool IsTextured() const;
+		unsigned int TextureID() const;
 		
 		// Functions Used for Debugging
 #ifdef _DEBUG

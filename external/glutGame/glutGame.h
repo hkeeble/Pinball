@@ -43,6 +43,9 @@ namespace GameFramework
 		int lastElapsedTime;
 		int newElapsedTime;
 
+		/* Renders a textured cube */
+		void RenderTexturedCube(GLint size);
+		
 	protected:
 		// GL Initialization
 		virtual void InitGL();
@@ -52,7 +55,7 @@ namespace GameFramework
 		Fl32 m_fps;
 
 		// Renders the given geometric object
-		void RenderGeometry(physx::PxGeometryHolder h);
+		void RenderGeometry(physx::PxGeometryHolder h, bool textured = false);
 
 		void TimerFunc(int id);
 

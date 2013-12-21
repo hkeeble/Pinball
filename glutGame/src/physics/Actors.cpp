@@ -109,6 +109,23 @@ namespace Physics
 	}
 	#endif
 
+	void Actor::SetTexture(std::string dataPath)
+	{
+		m_texID = GameFramework::LoadTexture(dataPath);
+		if (m_texID != 0)
+			m_textured = true;
+	}
+
+	bool Actor::IsTextured() const
+	{
+		return m_textured;
+	}
+
+	unsigned int Actor::TextureID() const
+	{
+		return m_texID;
+	}
+
 	/*------------------------------------------------------------------------\
 	|							SHAPEACTOR DEFINITIONS							 |
 	\-------------------------------------------------------------------------*/
