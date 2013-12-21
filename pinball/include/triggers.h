@@ -1,6 +1,7 @@
 #ifndef _TRIGGERS_H_
 #define _TRIGGERS_H_
 
+#include "globals.h"
 #include "PxSimulationEventCallback.h"
 
 using namespace physx;
