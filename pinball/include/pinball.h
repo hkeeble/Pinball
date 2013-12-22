@@ -17,6 +17,7 @@
 #include "glutGame\hud.h"
 #include "timer.h"
 #include "monitor.h"
+#include "image.h"
 
 // Using framework and physics namespaces
 using namespace GameFramework;
@@ -28,6 +29,9 @@ class Pinball : public GLUTGame
 		/* Actors */
 		std::vector<Actor*> m_actors;
 		
+		/* Menu Images */
+		Image titleImg, gameOverImg;
+
 		/* Actor Pointers (only kept for actors that need to be accessed after initialization) */
 		Sphere*		m_ball;
 		Plunger*	m_plunger;
@@ -55,7 +59,8 @@ class Pinball : public GLUTGame
 		} gameState;
 
 		/* Camera Initialization Functions */
-		void InitCamera();
+		void Init3DCamera();
+		void Init2DCamera();
 
 		/* Actor Initialization Functions */
 		void InitBoard();

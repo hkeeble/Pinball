@@ -13,13 +13,6 @@ void Pinball::InitHUD()
 
 	switch (gameState)
 	{
-	case GameState::Menu:
-		SetClearColor(Vec3(0.f, 0.f, 0.f));
-		hud.SetRenderColor(Vec3(1.f, 1.f, 1.f));
-		hud.AddItem("PINBALL!", Vec2(45, 85), HUDFont::largeFont);
-		hud.AddItem("Press enter to begin.", Vec2(40, 75), HUDFont::smallFont);
-		hud.AddItem("Henri Keeble - Game Engines - Assessment Item 1", Vec2(20, 10), HUDFont::smallFont);
-		break;
 	case GameState::InGame:
 		SetClearColor(Vec3(0.f, 0.8f, 1.f));
 		hud.SetRenderColor(Vec3(1.f, 0.f, 0.f));
@@ -29,10 +22,8 @@ void Pinball::InitHUD()
 	case GameState::GameOver:
 		SetClearColor(Vec3(0.f, 0.f, 0.f));
 		hud.SetRenderColor(Vec3(1.f, 1.f, 1.f));
-		hud.AddItem("GAME OVER!", Vec2(40, 85), HUDFont::largeFont);
 		hud.AddItem("Score", Vec2(45, 75), HUDFont::smallFont, true, m_currentScore);
 		hud.AddItem("Game Duration (Seconds)", Vec2(25, 65), HUDFont::smallFont, true, m_gameDuration.Seconds());
-		hud.AddItem("Press Enter to continue.", Vec2(25, 55), HUDFont::smallFont);
 		break;
 	case GameState::Paused:
 		hud.SetRenderColor(Vec3(1.f, 1.f, 1.f));
@@ -41,14 +32,24 @@ void Pinball::InitHUD()
 	}
 }
 
-void Pinball::InitCamera()
+void Pinball::Init3DCamera()
 {
-	Log::Write("Intializing Camera...\n", ENGINE_LOG);
+	Log::Write("Intializing 3D Camera...\n", ENGINE_LOG);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	camera = { UP_VECTOR, Vec3(0, 0, 0), Vec3(0, 1, -5.5), DEFAULT_FOV };
 	camera.Update(); // Used to initialize camera positions (gluLookAt)
 	UpdatePerspective(camera.FOV);
+}
+
+void Pinball::Init2DCamera()
+{
+	Log::Write("Intializing 2D Camera...\n", ENGINE_LOG);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	gluOrtho2D(0, 1, 1, 0);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
 }
 
 void Pinball::InitJoints()

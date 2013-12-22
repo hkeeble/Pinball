@@ -294,6 +294,11 @@ namespace GameFramework
 		Log::Shutdown();
 	}
 
+	Vec2 GLUTGame::WindowDimensions() const
+	{
+		return Vec2(m_windowWidth, m_windowHeight);
+	}
+
 	/*-------------------------------------------------------------------------\
 	| WRAPPER FUNCTION DEFINITIONS - USED TO CALL INSTANCE EQUIVALENT FUNCTIONS |
 	\-------------------------------------------------------------------------*/

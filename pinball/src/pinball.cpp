@@ -35,6 +35,10 @@ void Pinball::Init()
 	// Not Paused
 	m_paused = false;
 
+	// Set Images
+	titleImg = Image("titleTexture.png");
+	gameOverImg = Image("gameOverTexture.png");
+
 	// Set FPS
 	m_fps = 1.f / FPS;
 
@@ -42,10 +46,10 @@ void Pinball::Init()
 	gameState = GameState::Menu;
 
 	// Initialize Camera
-	InitCamera();
+	Init2DCamera();
 
 	// Set Clear Color
-	SetClearColor(GetClearColor()); 
+	SetClearColor(GetClearColor());
 
 	// Initialize All Actors
 	Log::Write("Initializing Game Actors...\n", ENGINE_LOG);
@@ -176,8 +180,13 @@ void Pinball::Render()
 			break;
 		}
 	}
-
-	hud.Render(camera.FOV);
+	if (gameState == GameState::Menu)
+		titleImg.Render();
+	else if (gameState == GameState::GameOver)
+		gameOverImg.Render();
+	else
+		hud.Render(camera.FOV);
+	
 	glutSwapBuffers();
 	GLUTGame::Render();
 }
@@ -258,6 +267,7 @@ void Pinball::KeyboardDown(unsigned char key, int x, int y)
 			gameState = GameState::InGame;
 			Reset();
 			InitHUD();
+			Init3DCamera();
 			glutPostRedisplay();
 		}
 		break;

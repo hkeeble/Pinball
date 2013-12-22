@@ -59,5 +59,8 @@
     <ClCompile Include="src\loadImage.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\image.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

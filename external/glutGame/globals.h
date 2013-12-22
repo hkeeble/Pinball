@@ -62,4 +62,49 @@ const Vec3 pyramid_verts[] = {
 	Vec3(0, 0, -1)
 };
 
+struct Vertex3
+{
+	Vertex3()
+	{
+		x = 0;
+		y = 0;
+		z = 0;
+	}
+
+	Vertex3(Fl32 X, Fl32 Y, Fl32 Z)
+	{
+		x = X;
+		y = Y;
+		z = Z;
+	}
+	Fl32 x, y, z;
+};
+
+struct Vertex2
+{
+	Vertex2()
+	{
+		x = 0;
+		y = 0;
+	}
+
+	Vertex2(Fl32 X, Fl32 Y)
+	{
+		x = X;
+		y = Y;
+	}
+	Fl32 x, y;
+};
+
+struct TextureCoord
+{
+	TextureCoord(Fl32 S, Fl32 T)
+	{
+		s = S;
+		t = T;
+	}
+
+	Fl32 s, t;
+};
+
 #endif // _GLOBALS_H_

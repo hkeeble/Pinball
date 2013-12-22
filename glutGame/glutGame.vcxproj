@@ -19,6 +19,7 @@
     <ClCompile Include="src\camera.cpp" />
     <ClCompile Include="src\glutGame.cpp" />
     <ClCompile Include="src\hud\hud.cpp" />
+    <ClCompile Include="src\image.cpp" />
     <ClCompile Include="src\loadImage.cpp" />
     <ClCompile Include="src\physics\Actors.cpp" />
     <ClCompile Include="src\physics\ErrorCallback.cpp" />

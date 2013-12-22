@@ -10,6 +10,7 @@
 #include <string>
 #include "SOIL.h"
 #include "log.h"
+#include "GL/glut.h"
 
 namespace GameFramework
 {

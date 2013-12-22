@@ -24,6 +24,11 @@ namespace GameFramework
 			Log::Write(s.c_str(), ENGINE_LOG);
 		}
 
+		glBindTexture(GL_TEXTURE_2D, tex_2d);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glBindTexture(GL_TEXTURE_2D, 0);
+
 		return tex_2d;
 	}
 }

@@ -64,6 +64,9 @@ namespace GameFramework
 		/* Current Delta Time */
 		int deltaTime;
 
+		/* Get window dimensions */
+		Vec2 WindowDimensions() const;
+		
 	public:
 		// Construction/Destruction
 		GLUTGame(std::string title, int windowWidth, int windowHeight);
