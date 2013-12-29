@@ -78,6 +78,8 @@ void Pinball::Init()
 	// Set Images
 	titleImg = Image("titleTexture.png");
 	gameOverImg = Image("gameOverTexture.png");
+	aboutImg = Image("about.png");
+	instructionImg = Image("instructions.png");
 }
 
 void Pinball::AddActors()
@@ -182,6 +184,10 @@ void Pinball::Render()
 	}
 	if (gameState == GameState::Menu)
 		titleImg.Render();
+	else if (gameState == GameState::Instructions)
+		instructionImg.Render();
+	else if (gameState == GameState::About)
+		aboutImg.Render();
 	else if (gameState == GameState::GameOver)
 		gameOverImg.Render();
 	else
@@ -271,6 +277,16 @@ void Pinball::KeyboardDown(unsigned char key, int x, int y)
 			Init3DCamera();
 			glutPostRedisplay();
 		}
+		if (key == 'i')
+		{
+			gameState = GameState::Instructions;
+			glutPostRedisplay();
+		}
+		if (key == 'a')
+		{
+			gameState = GameState::About;
+			glutPostRedisplay();
+		}
 		break;
 	/* InGame Keys */
 	case GameState::InGame:
@@ -293,6 +309,15 @@ void Pinball::KeyboardDown(unsigned char key, int x, int y)
 			InitHUD();
 		}
 		break;
+	}
+
+	if (gameState == GameState::Instructions || gameState == GameState::About)
+	{
+		if (key == VK_BACK)
+		{
+			gameState = GameState::Menu;
+			glutPostRedisplay();
+		}
 	}
 
 	if (gameState == GameState::InGame || gameState == GameState::Paused)

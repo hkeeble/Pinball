@@ -30,7 +30,7 @@ class Pinball : public GLUTGame
 		std::vector<Actor*> m_actors;
 		
 		/* Menu Images */
-		Image titleImg, gameOverImg;
+		Image titleImg, gameOverImg, aboutImg, instructionImg;
 
 		/* Actor Pointers (only kept for actors that need to be accessed after initialization) */
 		Sphere*		m_ball;
@@ -53,6 +53,8 @@ class Pinball : public GLUTGame
 		enum GameState
 		{
 			Menu,
+			Instructions,
+			About,
 			InGame,
 			GameOver,
 			Paused

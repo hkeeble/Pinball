@@ -68,7 +68,8 @@
       <IgnoreSpecificDefaultLibraries>LIBCMTD;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
     </Link>
     <PostBuildEvent>
-      <Command>copy "$(SolutionDir)\dll\$(Configuration)\*.dll" "$(SolutionDir)\build\$(Configuration)\"</Command>
+      <Command>copy "$(SolutionDir)\dll\$(Configuration)\*.dll" "$(SolutionDir)\build\$(Configuration)\"
+copy "$(SolutionDir)\data\img\*.png" "$(SolutionDir)\build\$(Configuration)\img\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -92,7 +93,8 @@
       <AdditionalLibraryDirectories>$(SolutionDir)\lib\$(Platform)\$(Configuration);$(SolutionDir)\lib\$(Platform)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>copy "$(SolutionDir)\dll\$(Configuration)\*.dll" "$(SolutionDir)\build\$(Configuration)\"</Command>
+      <Command>copy "$(SolutionDir)\dll\$(Configuration)\*.dll" "$(SolutionDir)\build\$(Configuration)\"
+copy "$(SolutionDir)\data\img\*.png" "$(SolutionDir)\build\$(Configuration)\img\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
