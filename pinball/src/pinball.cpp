@@ -35,10 +35,6 @@ void Pinball::Init()
 	// Not Paused
 	m_paused = false;
 
-	// Set Images
-	titleImg = Image("titleTexture.png");
-	gameOverImg = Image("gameOverTexture.png");
-
 	// Set FPS
 	m_fps = 1.f / FPS;
 
@@ -78,6 +74,10 @@ void Pinball::Init()
 	m_plungerTimer = Timer();
 	m_scoreTimer = Timer();
 	m_gameDuration = Timer();
+
+	// Set Images
+	titleImg = Image("titleTexture.png");
+	gameOverImg = Image("gameOverTexture.png");
 }
 
 void Pinball::AddActors()
@@ -188,6 +188,7 @@ void Pinball::Render()
 		hud.Render(camera.FOV);
 	
 	glutSwapBuffers();
+	glFlush();
 	GLUTGame::Render();
 }
 

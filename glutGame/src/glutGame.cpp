@@ -34,6 +34,8 @@ namespace GameFramework
 		lastElapsedTime = 0;
 		newElapsedTime = 0;
 		deltaTime = 0;
+
+		m_is2D = false;
 	}
 
 	GLUTGame::~GLUTGame()
@@ -256,7 +258,10 @@ namespace GameFramework
 	void GLUTGame::Reshape(int width, int height)
 	{
 		glViewport(0, 0, width, height);
-		UpdatePerspective(camera.FOV);
+		if (m_is2D)
+			gluOrtho2D(0, 1, 1, 0);
+		else
+			UpdatePerspective(camera.FOV);
 	}
 
 	void GLUTGame::MouseButton(int button, int state, int x, int y)

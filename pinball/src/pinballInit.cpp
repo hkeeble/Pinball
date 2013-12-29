@@ -40,6 +40,8 @@ void Pinball::Init3DCamera()
 	camera = { UP_VECTOR, Vec3(0, 0, 0), Vec3(0, 1, -5.5), DEFAULT_FOV };
 	camera.Update(); // Used to initialize camera positions (gluLookAt)
 	UpdatePerspective(camera.FOV);
+
+	m_is2D = false;
 }
 
 void Pinball::Init2DCamera()
@@ -50,6 +52,8 @@ void Pinball::Init2DCamera()
 	gluOrtho2D(0, 1, 1, 0);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
+
+	m_is2D = true;
 }
 
 void Pinball::InitJoints()

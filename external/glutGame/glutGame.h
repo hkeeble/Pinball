@@ -45,7 +45,7 @@ namespace GameFramework
 
 		/* Renders a textured cube */
 		void RenderTexturedCube(GLint size);
-		
+
 	protected:
 		// GL Initialization
 		virtual void InitGL();
@@ -67,6 +67,8 @@ namespace GameFramework
 		/* Get window dimensions */
 		Vec2 WindowDimensions() const;
 		
+		/* Is using a 2D camera */
+		bool m_is2D;
 	public:
 		// Construction/Destruction
 		GLUTGame(std::string title, int windowWidth, int windowHeight);

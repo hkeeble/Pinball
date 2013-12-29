@@ -3,24 +3,6 @@
 
 namespace GameFramework
 {
-	static const Vertex2 verts[4] = {
-		Vertex2(0.f, 0.f),
-		Vertex2(1.f, 0.f),
-		Vertex2(1.f, 1.f),
-		Vertex2(0.f, 1.f)
-	};
-
-	static const TextureCoord texCoords[4] = {
-		TextureCoord(0.f, 1.f),
-		TextureCoord(1.f, 1.f),
-		TextureCoord(1.f, 0.f),
-		TextureCoord(0.f, 0.f)
-	};
-
-	static const unsigned int indices[4] = {
-		0, 1, 2, 3
-	};
-
 	Image::Image(const std::string& fileName)
 	{
 		m_fileName = fileName;
@@ -62,20 +44,35 @@ namespace GameFramework
 
 	void Image::Render()
 	{
+		glMatrixMode(GL_PROJECTION);
+		glLoadIdentity();
+		gluOrtho2D(0, 1, 1, 0);
+		glMatrixMode(GL_MODELVIEW);
+		glLoadIdentity();
+
 		glDisable(GL_LIGHTING);
 		glDisable(GL_DEPTH_TEST);
-		glEnable(GL_VERTEX_ARRAY);
-		glEnable(GL_TEXTURE_COORD_ARRAY);
+		glEnable(GL_TEXTURE_2D);
 
-		glGetError();
+		glGetError(); // Clear previous errors
 
 		glBindTexture(GL_TEXTURE_2D, m_texID);
 
 		glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL);
 
-		glTexCoordPointer(2, GL_FLOAT, 0, texCoords);
-		glVertexPointer(3, GL_FLOAT, 0, verts);
-		glDrawElements(GL_QUADS, 4, GL_UNSIGNED_INT, indices);
+		glBegin(GL_QUADS);
+		glTexCoord2i(0, 1);
+		glVertex2i(0, 0);
+
+		glTexCoord2i(1, 1);
+		glVertex2i(1, 0);
+
+		glTexCoord2i(1, 0);
+		glVertex2i(1, 1);
+
+		glTexCoord2i(0, 0);
+		glVertex2i(0, 1);
+		glEnd();
 
 		glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -85,7 +82,6 @@ namespace GameFramework
 
 		glEnable(GL_LIGHTING);
 		glEnable(GL_DEPTH_TEST);
-		glDisable(GL_VERTEX_ARRAY);
-		glDisable(GL_TEXTURE_COORD_ARRAY);
+		glDisable(GL_TEXTURE_2D);
 	}
 }
