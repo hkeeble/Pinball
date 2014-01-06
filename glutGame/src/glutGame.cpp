@@ -36,6 +36,8 @@ namespace GameFramework
 		deltaTime = 0;
 
 		m_is2D = false;
+
+		m_milliSecondsSinceLastFrame = 0;
 	}
 
 	GLUTGame::~GLUTGame()
@@ -55,11 +57,6 @@ namespace GameFramework
 
 		Log::Write("Entering main game loop...\n", ENGINE_LOG);
 		glutMainLoop();
-	}
-
-	void GLUTGame::TimerFunc(int id)
-	{
-		glutPostRedisplay();
 	}
 
 	void GLUTGame::Init()
@@ -117,6 +114,7 @@ namespace GameFramework
 		glutKeyboardUpFunc(KeyboardUpWrapper);
 		glutSpecialFunc(SpecKeyboardDownWrapper);
 		glutSpecialUpFunc(SpecKeyboardUpWrapper);
+		glutTimerFunc(1000 / FPS, TimerFuncWrapper, 0);
 		atexit(ExitWrapper);
 	}
 
@@ -245,7 +243,12 @@ namespace GameFramework
 
 	void GLUTGame::Render()
 	{
-		glutTimerFunc(16.6, TimerFuncWrapper, 0);
+
+	}
+
+	void GLUTGame::TimerFunc(int id)
+	{
+
 	}
 
 	void GLUTGame::Idle()
@@ -253,6 +256,8 @@ namespace GameFramework
 		newElapsedTime = glutGet(GLUT_ELAPSED_TIME);
 		deltaTime = newElapsedTime - lastElapsedTime;
 		lastElapsedTime = newElapsedTime;
+		
+		glutPostRedisplay();
 	}
 
 	void GLUTGame::Reshape(int width, int height)

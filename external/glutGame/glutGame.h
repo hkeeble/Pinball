@@ -16,6 +16,7 @@
 #include "glut.h"
 #include "uncopyable.h"
 #include "log.h"
+#include "timer.h"
 
 #define FPS 60.f
 #define RENDER_DETAIL 15
@@ -40,11 +41,14 @@ namespace GameFramework
 		static Vec3 ClearColor;
 
 		/* Used For timers */
-		int lastElapsedTime;
-		int newElapsedTime;
+		Fl32 lastElapsedTime;
+		Fl32 newElapsedTime;
 
 		/* Renders a textured cube */
 		void RenderTexturedCube(GLint size);
+
+		/* Milliseconds since the last frame */
+		Fl32 m_milliSecondsSinceLastFrame;
 
 	protected:
 		// GL Initialization
@@ -57,18 +61,17 @@ namespace GameFramework
 		// Renders the given geometric object
 		void RenderGeometry(physx::PxGeometryHolder h, bool textured = false);
 
-		void TimerFunc(int id);
-
 		Camera camera;
 
 		/* Current Delta Time */
-		int deltaTime;
-
+		Fl32 deltaTime;
+		
 		/* Get window dimensions */
 		Vec2 WindowDimensions() const;
 		
 		/* Is using a 2D camera */
 		bool m_is2D;
+
 	public:
 		// Construction/Destruction
 		GLUTGame(std::string title, int windowWidth, int windowHeight);
@@ -89,6 +92,7 @@ namespace GameFramework
 
 		// Instance Callback Functions
 		virtual void Render();
+		virtual void TimerFunc(int id);
 		virtual void Idle();
 		virtual void Reshape(int width, int height);
 		virtual void MouseButton(int button, int state, int x, int y) = 0;

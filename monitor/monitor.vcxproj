@@ -22,7 +22,7 @@
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v120</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -44,6 +44,10 @@
     <OutDir>$(ProjectDir)\build\$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)\intermediate\$(Configuration)\</IntDir>
     <TargetExt>.lib</TargetExt>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>$(ProjectDir)\build\$(Configuration)\</OutDir>
+    <IntDir>$(ProjectDir)\intermediate\$(Configuration)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -75,7 +79,7 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <PostBuildEvent>
-      <Command>copy $(ProjectDir)\$(Configuration)\*.lib $(SolutionDir)\lib\$(Platform)\$(Configuration)\</Command>
+      <Command>copy $(ProjectDir)\build\$(Configuration)\*.lib $(SolutionDir)\lib\$(Platform)\$(Configuration)\</Command>
     </PostBuildEvent>
     <PostBuildEvent>
       <Message>Copy Library</Message>

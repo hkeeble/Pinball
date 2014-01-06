@@ -29,15 +29,24 @@ namespace Physics
 	\-------------------------------------------------------------------------*/
 	void PxInit()
 	{
-		Log::Write("Initializing PhysX...\n", ENGINE_LOG);
+		Log::Write("Initializing PhysX version ", ENGINE_LOG);
+		Log::Write((std::to_string(PX_PHYSICS_VERSION_MAJOR) + "." + std::to_string(PX_PHYSICS_VERSION_MINOR) + "." + std::to_string(PX_PHYSICS_VERSION_BUGFIX)).c_str(), ENGINE_LOG);
+		Log::Write("...\n", ENGINE_LOG);
 
 		defaultErrorCallBack = PxDefaultErrorCallback();
+		defaultAllocatorCallBack = PxDefaultAllocator();
+
+		Log::Write("\tCreating foundation...\n", ENGINE_LOG);
 
 		if (!foundation)
 			foundation = PxCreateFoundation(PX_PHYSICS_VERSION, defaultAllocatorCallBack, errorCallback);
 
+		Log::Write("\tCreating physics object...\n", ENGINE_LOG);
+
 		if (!physics)
 			physics = PxCreatePhysics(PX_PHYSICS_VERSION, *foundation, PxTolerancesScale());
+
+		Log::Write("\tCreating cooking object...\n", ENGINE_LOG);
 
 		if (!cooking)
 			cooking = PxCreateCooking(PX_PHYSICS_VERSION, *foundation, PxCookingParams(PxTolerancesScale()));
@@ -197,7 +206,7 @@ namespace Physics
 	{
 		if(!m_pause)
 		{
-			m_scene->simulate(deltaTime);
+			m_scene->simulate (deltaTime);
 			m_scene->fetchResults(true);
 		}
 		else

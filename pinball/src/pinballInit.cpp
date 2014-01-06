@@ -14,8 +14,8 @@ void Pinball::InitHUD()
 	switch (gameState)
 	{
 	case GameState::InGame:
-		SetClearColor(Vec3(0.f, 0.8f, 1.f));
-		hud.SetRenderColor(Vec3(1.f, 0.f, 0.f));
+		SetClearColor(Vec3(0.f, 0.f, 0.f));
+		hud.SetRenderColor(Vec3(1.f, 1.f, 1.f));
 		hud.AddItem("Score", Vec2(5, 95), HUDFont::largeFont, true, 0);
 		hud.AddItem("Balls Left", Vec2(65, 95), HUDFont::largeFont, true, m_ballsRemaining);
 		break;
@@ -34,7 +34,6 @@ void Pinball::InitHUD()
 
 void Pinball::Init3DCamera()
 {
-	Log::Write("Intializing 3D Camera...\n", ENGINE_LOG);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	camera = { UP_VECTOR, Vec3(0, 0, 0), Vec3(0, 1, -5.5), DEFAULT_FOV };
@@ -46,7 +45,6 @@ void Pinball::Init3DCamera()
 
 void Pinball::Init2DCamera()
 {
-	Log::Write("Intializing 2D Camera...\n", ENGINE_LOG);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	gluOrtho2D(0, 1, 1, 0);

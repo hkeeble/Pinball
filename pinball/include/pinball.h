@@ -30,7 +30,7 @@ class Pinball : public GLUTGame
 		std::vector<Actor*> m_actors;
 		
 		/* Menu Images */
-		Image titleImg, gameOverImg, aboutImg, instructionImg;
+		Image titleImg, gameOverImg, aboutImg, instructionImg, backgroundImg;
 
 		/* Actor Pointers (only kept for actors that need to be accessed after initialization) */
 		Sphere*		m_ball;

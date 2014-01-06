@@ -80,6 +80,7 @@ void Pinball::Init()
 	gameOverImg = Image("gameOverTexture.png");
 	aboutImg = Image("about.png");
 	instructionImg = Image("instructions.png");
+	backgroundImg = Image("backgroundTexture.png");
 }
 
 void Pinball::AddActors()
@@ -113,94 +114,95 @@ Fl32 Pinball::calcYOffset(Fl32 zOffset)
 
 void Pinball::Render()
 {
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-	if (gameState == GameState::InGame || gameState == GameState::Paused)
-	{
-		// Update Camera
-		camera.Update();
-
-		// Render Scene
-		std::vector<physx::PxRigidActor*> actors = m_scene->GetActors(physx::PxActorTypeSelectionFlag::eRIGID_DYNAMIC | physx::PxActorTypeSelectionFlag::eRIGID_STATIC); // get scene actors
-
-		int nbActors = actors.size();
-		PxShape* shapes[MAX_NUM_ACTOR_SHAPES]; // Pointer to current actor shapes
-
-		if (actors.size())
+		if (gameState == GameState::InGame || gameState == GameState::Paused)
 		{
-			for (int i = 0; i < nbActors; i++)
+			Init2DCamera();
+			backgroundImg.Render();
+			Init3DCamera();
+
+			// Update Camera
+			camera.Update();
+
+			// Render Scene
+			std::vector<physx::PxRigidActor*> actors = m_scene->GetActors(physx::PxActorTypeSelectionFlag::eRIGID_DYNAMIC | physx::PxActorTypeSelectionFlag::eRIGID_STATIC); // get scene actors
+			
+			int nbActors = actors.size();
+			PxShape* shapes[MAX_NUM_ACTOR_SHAPES]; // Pointer to current actor shapes
+
+			if (actors.size())
 			{
-				if (i != GLASS_ATR_IDX) // Don't Render the glass
+				for (int i = 0; i < nbActors; i++)
 				{
-					PxU32 nbShapes = actors[i]->getNbShapes();
-					if (nbShapes <= MAX_NUM_ACTOR_SHAPES)
+					if (i != GLASS_ATR_IDX) // Don't Render the glass
 					{
-						actors[i]->getShapes(shapes, nbShapes);
-
-						bool isSleeping = actors[i]->isRigidDynamic() && actors[i]->isRigidDynamic()->isSleeping(); // Check if actor is sleeping
-
-						for (int j = 0; j < nbShapes; j++)
+						PxU32 nbShapes = actors[i]->getNbShapes();
+						if (nbShapes <= MAX_NUM_ACTOR_SHAPES)
 						{
-							Transform p = PxShapeExt::getGlobalPose(*shapes[j], *actors[i]);
-							PxGeometryHolder h = shapes[j]->getGeometry();
+							actors[i]->getShapes(shapes, nbShapes);
 
-							Mat44 pose(p); // Create Matrix from vector
+							bool isSleeping = actors[i]->isRigidDynamic() && actors[i]->isRigidDynamic()->isSleeping(); // Check if actor is sleeping
 
-							glPushMatrix();
-							glMultMatrixf((Fl32*)&pose); // Multiply current matrix by pose
+							for (int j = 0; j < nbShapes; j++)
+							{
+								Transform p = PxShapeExt::getGlobalPose(*shapes[j], *actors[i]);
+								PxGeometryHolder h = shapes[j]->getGeometry();
 
-							Vec3 aColor = *((Vec3*)actors[i]->userData);
-							glColor3f(aColor.x, aColor.y, aColor.z);
+								Mat44 pose(p); // Create Matrix from vector
 
-							if (h.getType() == PxGeometryType::ePLANE)
-								glDisable(GL_LIGHTING);
+								glPushMatrix();
+								glMultMatrixf((Fl32*)&pose); // Multiply current matrix by pose
 
-							if (i == 0) // Board is textured
-								GLUTGame::RenderGeometry(h, true);
-							else
-								GLUTGame::RenderGeometry(h);
+								Vec3 aColor = *((Vec3*)actors[i]->userData);
+								glColor3f(aColor.x, aColor.y, aColor.z);
 
-							if (h.getType() == PxGeometryType::ePLANE)
-								glEnable(GL_LIGHTING);
+								if (h.getType() == PxGeometryType::ePLANE)
+									glDisable(GL_LIGHTING);
 
-							glPopMatrix();
+								if (i == 0) // Board is textured
+									GLUTGame::RenderGeometry(h, true);
+								else
+									GLUTGame::RenderGeometry(h);
 
-							Vec3 defCol = DEFAULT_COLOR;
-							glColor3f(defCol.x, defCol.y, defCol.z);
+								if (h.getType() == PxGeometryType::ePLANE)
+									glEnable(GL_LIGHTING);
+
+								glPopMatrix();
+
+								Vec3 defCol = DEFAULT_COLOR;
+								glColor3f(defCol.x, defCol.y, defCol.z);
+							}
 						}
+						else
+							Log::Write("Exc: Too many shapes in actor!\n", ENGINE_LOG);
 					}
-					else
-						Log::Write("Exc: Too many shapes in actor!\n", ENGINE_LOG);
 				}
 			}
 		}
+		if (gameState == GameState::Menu)
+			titleImg.Render();
+		else if (gameState == GameState::Instructions)
+			instructionImg.Render();
+		else if (gameState == GameState::About)
+			aboutImg.Render();
+		else if (gameState == GameState::GameOver)
+			gameOverImg.Render();
+		else
+			hud.Render(camera.FOV);
 
-		switch (gameState)
-		{
-		case GameState::InGame:
-			m_scene->UpdatePhys(m_fps);
-			break;
-		}
-	}
-	if (gameState == GameState::Menu)
-		titleImg.Render();
-	else if (gameState == GameState::Instructions)
-		instructionImg.Render();
-	else if (gameState == GameState::About)
-		aboutImg.Render();
-	else if (gameState == GameState::GameOver)
-		gameOverImg.Render();
-	else
-		hud.Render(camera.FOV);
-	
-	glutSwapBuffers();
-	glFlush();
-	GLUTGame::Render();
+		glutSwapBuffers();
+
+		GLUTGame::Render();
 }
 
 void Pinball::Idle()
 {
 	GLUTGame::Idle();
+
+	/* Update Physics if Ingame */
+	if (gameState == GameState::InGame)
+		m_scene->UpdatePhys(m_fps);
 
 	/* Check if plunger needs reset */
 	if (m_plunger->IsReady() == false)
