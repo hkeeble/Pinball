@@ -179,6 +179,9 @@ void Pinball::Render()
 					}
 				}
 			}
+
+			/* Update Physics */
+			m_scene->UpdatePhys(m_fps);
 		}
 		if (gameState == GameState::Menu)
 			titleImg.Render();
@@ -199,10 +202,6 @@ void Pinball::Render()
 void Pinball::Idle()
 {
 	GLUTGame::Idle();
-
-	/* Update Physics if Ingame */
-	if (gameState == GameState::InGame)
-		m_scene->UpdatePhys(m_fps);
 
 	/* Check if plunger needs reset */
 	if (m_plunger->IsReady() == false)

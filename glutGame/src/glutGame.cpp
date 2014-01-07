@@ -257,7 +257,12 @@ namespace GameFramework
 		deltaTime = newElapsedTime - lastElapsedTime;
 		lastElapsedTime = newElapsedTime;
 		
-		glutPostRedisplay();
+		m_milliSecondsSinceLastFrame += deltaTime;
+		if (m_milliSecondsSinceLastFrame >= m_fps * 1000)
+		{
+			glutPostRedisplay();
+			m_milliSecondsSinceLastFrame = 0;
+		}
 	}
 
 	void GLUTGame::Reshape(int width, int height)
