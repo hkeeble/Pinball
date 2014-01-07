@@ -185,14 +185,8 @@ void Pinball::Render()
 			}
 		}
 
-		GLUTGame::Render();
-		simTimer += deltaTime;
-
-		if (simTimer > m_fps)
-		{
-			m_scene->UpdatePhys(m_fps);
-			simTimer -= m_fps;
-		}
+		/* Update Physics */
+		m_scene->UpdatePhys(m_fps);
 	}
 	if (gameState == GameState::Menu)
 		titleImg.Render();
@@ -206,6 +200,7 @@ void Pinball::Render()
 		hud.Render(camera.FOV);
 
 	glutSwapBuffers();
+	glutTimerFunc(1000 / FPS, TimerFuncWrapper, 0);
 }
 
 void Pinball::Idle()

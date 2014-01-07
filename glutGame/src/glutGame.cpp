@@ -115,7 +115,7 @@ namespace GameFramework
 		glutKeyboardUpFunc(KeyboardUpWrapper);
 		glutSpecialFunc(SpecKeyboardDownWrapper);
 		glutSpecialUpFunc(SpecKeyboardUpWrapper);
-		glutTimerFunc(m_fps, TimerFuncWrapper, 0);
+		glutTimerFunc(1000/FPS, TimerFuncWrapper, 0);
 		atexit(ExitWrapper);
 	}
 
@@ -244,19 +244,19 @@ namespace GameFramework
 
 	void GLUTGame::Render()
 	{
-		newElapsedTime = glutGet(GLUT_ELAPSED_TIME);
-		deltaTime = newElapsedTime - lastElapsedTime;
-		lastElapsedTime = newElapsedTime;
+
 	}
 
 	void GLUTGame::TimerFunc(int id)
 	{
-
+		glutPostRedisplay();
 	}
 
 	void GLUTGame::Idle()
 	{
-		glutPostRedisplay();
+		newElapsedTime = glutGet(GLUT_ELAPSED_TIME);
+		deltaTime = newElapsedTime - lastElapsedTime;
+		lastElapsedTime = newElapsedTime;
 	}
 
 	void GLUTGame::Reshape(int width, int height)
