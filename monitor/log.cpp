@@ -11,13 +11,12 @@ char* Log::m_workingDir = NULL;
 
 void Log::Write(const char* text, const char* fileName)
 {
-	char* temp = (char*)calloc(strlen(m_workingDir), sizeof(char));
-
-	strcpy(temp, m_workingDir);
-	strcat(temp, fileName);
+	std::string temp(m_workingDir);
+	std::string temp2(fileName);
+	temp = temp + temp2;
 
 	std::ofstream file;
-	file.open (temp, std::ios::app);
+	file.open (temp, std::ios::app|std::ios::out);
 	file << text;
 	file.close();
 

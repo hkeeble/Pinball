@@ -23,6 +23,21 @@
 using namespace GameFramework;
 using namespace Physics;
 
+// Simulation callback for scoring
+class ScoreCallback : public Physics::SimulationEventCallback
+{
+public:
+	ScoreCallback();
+	virtual ~ScoreCallback();
+
+	virtual void onTrigger(PxTriggerPair* pairs, PxU32 count);
+
+	virtual void onContact(const PxContactPairHeader &pairHeader, const PxContactPair *pairs, PxU32 nbPairs) {}
+	virtual void onConstraintBreak(PxConstraintInfo *constraints, PxU32 count) {}
+	virtual void onWake(PxActor **actors, PxU32 count) {}
+	virtual void onSleep(PxActor **actors, PxU32 count) {}
+};
+
 class Pinball : public GLUTGame
 {
 	private:
@@ -130,6 +145,9 @@ class Pinball : public GLUTGame
 
 		/* Initialization override */
 		virtual void Init			  ()									override final;
+
+		/* Game Scene Initialization */
+		virtual void InitGame();
 
 		/* Callback Override Functions */
 		virtual void Render			  ()									override final;

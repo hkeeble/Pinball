@@ -7,6 +7,68 @@
 #include "pinball.h"
 #include "util.h"
 
+void Pinball::Init()
+{
+	// Not Paused
+	m_paused = false;
+
+	// Set FPS
+	m_fps = 1.f / FPS;
+
+	// Set State
+	gameState = GameState::Menu;
+
+	// Initialize Camera
+	Init2DCamera();
+
+	// Set Clear Color
+	SetClearColor(GetClearColor());
+
+	// Set Images
+	titleImg = Image("titleTexture.png");
+	gameOverImg = Image("gameOverTexture.png");
+	aboutImg = Image("about.png");
+	instructionImg = Image("instructions.png");
+	backgroundImg = Image("backgroundTexture.png");
+
+	// Initialize Scene
+	InitGame();
+}
+
+void Pinball::InitGame()
+{
+	// Initialize All Actors
+	Log::Write("Initializing Game Actors...\n", ENGINE_LOG);
+	InitBoard();
+	InitInnerWalls();
+	InitFlippers();
+	InitBall();
+	InitPlunger();
+	InitCornerWedges();
+	InitCenterBumpers();
+
+	// Add Actors in game to scene
+	AddActors();
+
+	// Add Joints for Plunger
+	InitJoints();
+
+	// Initialize Gameplay data
+	m_ballsRemaining = m_ballsPerGame;
+	m_currentScore = 0;
+
+	// Initialize HUD
+	InitHUD();
+
+	// Initialize Timers
+	m_plungerTimer = Timer();
+	m_scoreTimer = Timer();
+	m_gameDuration = Timer();
+
+	// Set Simulation Callback
+	m_scene->SetEventCallback(new ScoreCallback());
+}
+
 void Pinball::InitHUD()
 {
 	hud.Clear();
@@ -228,31 +290,43 @@ void Pinball::InitCenterBumpers()
 	// Variables
 	ConvexMeshActor* currentActor; // The current actor
 	Fl32 zCenter, xCenter, zAbs, xAbs; // Center of bumpers, absolute position of current actor
+	Transform rotation = Transform(Quat(DEG2RAD(-115), Vec3(1, 0, 0)));
 
 	// Actor Parameters
 	Vec3 color = Vec3(1, 1, .5f);
-	PxMaterial* material = PHYSICS->createMaterial(0, 0, 0);
+	PxMaterial* material = PHYSICS->createMaterial(0, 0, 2.f);
 	Fl32 density = 1.f;
 	Vec3 scale = Vec3(0.2f, 0.1f, 0.2f);
+	Vec3 scale2 = scale*0.8f;
 
-	zCenter = board->Center().z + 1.f;
+	zCenter = board->Center().z - 1.f;
 	xCenter = board->Center().x;
 
 	zAbs = zCenter;
-	xAbs = xCenter;
-	currentActor = ConvexMeshActor::CreatePyramid(CreatePosition(zAbs, zAbs), density, color, material, scale, ActorType::StaticActor);
+	xAbs = xCenter - .7f;
+	currentActor = ConvexMeshActor::CreatePyramid(CreatePosition(xAbs, zAbs) * Transform(Vec3(0, 0.1f, 0)) * rotation, density, color, material, scale, ActorType::DynamicActor);
 	currentActor->IsTrigger(true);
 	m_actors.push_back(currentActor);
 
-	zAbs = zCenter;
-	xAbs = xCenter;
-	currentActor = ConvexMeshActor::CreatePyramid(CreatePosition(zAbs, zAbs), density, color, material, scale, ActorType::StaticActor);
-	currentActor->IsTrigger(true);
+	// Actor used for bounce...
+	currentActor = ConvexMeshActor::CreatePyramid(CreatePosition(xAbs, zAbs) * Transform(Vec3(0, 0.1f, 0)) * rotation, density, color, material, scale2, ActorType::StaticActor);
 	m_actors.push_back(currentActor);
 
 	zAbs = zCenter;
-	xAbs = xCenter;
-	currentActor = ConvexMeshActor::CreatePyramid(CreatePosition(zAbs, zAbs), density, color, material, scale, ActorType::StaticActor);
+	xAbs = xCenter + .7f;
+	currentActor = ConvexMeshActor::CreatePyramid(CreatePosition(xAbs, zAbs) * Transform(Vec3(0, 0.1f, 0)) * rotation, density, color, material, scale, ActorType::DynamicActor);
 	currentActor->IsTrigger(true);
+	m_actors.push_back(currentActor);
+
+	currentActor = ConvexMeshActor::CreatePyramid(CreatePosition(xAbs, zAbs) * Transform(Vec3(0, 0.1f, 0)) * rotation, density, color, material, scale2, ActorType::StaticActor);
+	m_actors.push_back(currentActor);
+
+	zAbs = zCenter - .4f;
+	xAbs = xCenter;
+	currentActor = ConvexMeshActor::CreatePyramid(CreatePosition(xAbs, zAbs) * Transform(Vec3(0, 0.1f, 0)) * rotation, density, color, material, scale, ActorType::DynamicActor);
+	currentActor->IsTrigger(true);
+	m_actors.push_back(currentActor);
+
+	currentActor = ConvexMeshActor::CreatePyramid(CreatePosition(xAbs, zAbs) * Transform(Vec3(0, 0.1f, 0)) * rotation, density, color, material, scale2, ActorType::StaticActor);
 	m_actors.push_back(currentActor);
 }

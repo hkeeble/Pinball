@@ -30,59 +30,6 @@ Pinball::~Pinball()
 
 }
 
-void Pinball::Init()
-{
-	// Not Paused
-	m_paused = false;
-
-	// Set FPS
-	m_fps = 1.f / FPS;
-
-	// Set State
-	gameState = GameState::Menu;
-
-	// Initialize Camera
-	Init2DCamera();
-
-	// Set Clear Color
-	SetClearColor(GetClearColor());
-
-	// Initialize All Actors
-	Log::Write("Initializing Game Actors...\n", ENGINE_LOG);
-	InitBoard();
-	InitInnerWalls();
-	InitFlippers();
-	InitBall();
-	InitPlunger();
-	InitCornerWedges();
-	InitCenterBumpers();
-
-	// Add Actors in game to scene
-	AddActors();
-
-	// Add Joints for Plunger
-	InitJoints();
-
-	// Initialize Gameplay data
-	m_ballsRemaining = m_ballsPerGame;
-	m_currentScore = 0;
-
-	// Initialize HUD
-	InitHUD();
-
-	// Initialize Timers
-	m_plungerTimer = Timer();
-	m_scoreTimer = Timer();
-	m_gameDuration = Timer();
-
-	// Set Images
-	titleImg = Image("titleTexture.png");
-	gameOverImg = Image("gameOverTexture.png");
-	aboutImg = Image("about.png");
-	instructionImg = Image("instructions.png");
-	backgroundImg = Image("backgroundTexture.png");
-}
-
 void Pinball::AddActors()
 {
 	Log::Write("Adding Actors to scene...\n", ENGINE_LOG);
@@ -186,7 +133,7 @@ void Pinball::Render()
 		}
 
 		/* Update Physics */
-		m_scene->UpdatePhys(m_fps);
+		m_scene->UpdatePhys(1/FPS);
 	}
 	if (gameState == GameState::Menu)
 		titleImg.Render();
@@ -207,49 +154,56 @@ void Pinball::Idle()
 {
 	GLUTGame::Idle();
 
-	/* Check if plunger needs reset */
-	if (m_plunger->IsReady() == false)
+	if (gameState == GameState::InGame)
 	{
-		m_plungerTimer.Update(deltaTime);
-
-		if (m_plungerTimer.Seconds() > 1)
+		/* Check if plunger needs reset */
+		if (m_plunger->IsReady() == false)
 		{
-			m_plunger->Reset();
-			m_plungerTimer.Reset();
+			m_plungerTimer.Update(deltaTime);
+
+			if (m_plungerTimer.Seconds() > 1)
+			{
+				m_plunger->Reset();
+				m_plungerTimer.Reset();
+			}
 		}
-	}
 
-	/* Check if score needs adjusting */
-	if (m_ballInPlay)
-	{
-		m_gameDuration.Update(deltaTime);
-		m_scoreTimer.Update(deltaTime);
-
-		if (m_scoreTimer.Seconds() >= 1)
+		/* Check if score needs adjusting */
+		if (m_ballInPlay)
 		{
-			m_currentScore += m_scorePerSecond;
-			m_scoreTimer.Reset();
-			hud.UpdateItem("Score", m_currentScore);
+			m_gameDuration.Update(deltaTime);
+			m_scoreTimer.Update(deltaTime);
+
+			if (m_scoreTimer.Seconds() >= 1)
+			{
+				m_currentScore += m_scorePerSecond;
+				m_scoreTimer.Reset();
+				hud.UpdateItem("Score", m_currentScore);
+			}
 		}
-	}
-	else if (m_ball->Pose().p.x > 0.4)// Else, check if ball needs to be set to in play
-		m_ballInPlay = true;
+		else if (m_ball->Pose().p.x > 0.4)// Else, check if ball needs to be set to in play
+			m_ballInPlay = true;
 
-	/* Check if board is on table, if not adjust accordingly */
-	if (m_ball->Get().dynamicActor->getGlobalPose().p.z < -3)
-	{
-		m_monitor.AddBall(m_currentScore, m_gameDuration.Seconds());
-		m_ballsRemaining--;
-		m_ballInPlay = false;
-		m_ball->Get().dynamicActor->setGlobalPose(m_ballInitialPos);
-		hud.UpdateItem("Balls Left", m_ballsRemaining);
-
-		if (m_ballsRemaining < 0)
+		/* Check if board is on table, if not adjust accordingly */
+		if (m_ball->Get().dynamicActor->getGlobalPose().p.z < -3)
 		{
-			gameState = GameState::GameOver;
-			InitHUD();
-			m_monitor.OutputData();
+			m_monitor.AddBall(m_currentScore, m_gameDuration.Seconds());
+			m_ballsRemaining--;
+			m_ballInPlay = false;
+			m_ball->Get().dynamicActor->setGlobalPose(m_ballInitialPos);
+			hud.UpdateItem("Balls Left", m_ballsRemaining);
+
+			if (m_ballsRemaining < 0)
+			{
+				gameState = GameState::GameOver;
+				InitHUD();
+				m_monitor.OutputData();
+			}
 		}
+
+		/* Check for bumper scoring */
+		if (m_scene->GetSimulationEventCallback()->IsTriggered())
+			AddScore(100);
 	}
 }
 
@@ -311,6 +265,7 @@ void Pinball::KeyboardDown(unsigned char key, int x, int y)
 		if (key == VK_RETURN)
 		{
 			gameState = GameState::Menu;
+			Reset();
 			InitHUD();
 		}
 		break;

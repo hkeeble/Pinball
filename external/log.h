@@ -15,7 +15,7 @@
 #include <sstream>
 #include <ctime>
 
-#define Out printf
+#define Out(s) std::cout << s; 
 
 // Log Files
 #define ENGINE_LOG "logMain.txt"

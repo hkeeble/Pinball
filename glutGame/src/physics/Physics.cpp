@@ -156,17 +156,57 @@ namespace Physics
 	}
 
 	/*-------------------------------------------------------------------------\
+	|						EVENT CALLBACK DEFINITIONS							|
+	\-------------------------------------------------------------------------*/
+
+	SimulationEventCallback::SimulationEventCallback()
+	{
+		m_isTriggered = false;
+	}
+
+	bool SimulationEventCallback::IsTriggered()
+	{
+		return m_isTriggered;
+	}
+
+	SimulationEventCallback::~SimulationEventCallback()
+	{
+
+	}
+
+	void SimulationEventCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
+	{
+		for (int i = 0; i < count; i++)
+		{
+			if (pairs[i].status & PxPairFlag::eNOTIFY_TOUCH_FOUND)
+				m_isTriggered = true;
+			if (pairs[i].status & PxPairFlag::eNOTIFY_TOUCH_LOST)
+				m_isTriggered = false;
+
+			PxRigidActor* ball = pairs[i].otherActor;
+			if (ball->isRigidDynamic())
+			{
+				PxRigidDynamic* dyn = (PxRigidDynamic*)ball;
+				Vec3 lvel = dyn->getAngularVelocity() * 500;
+				dyn->addForce(-dyn->getLinearVelocity());
+			}
+		}
+	}
+
+	/*-------------------------------------------------------------------------\
 	|							SCENE DEFINITIONS								|
 	\-------------------------------------------------------------------------*/
 	Scene::Scene()
 	{
-		m_scene = NULL;
+		m_scene = nullptr;
 		m_pause = false;
+		m_eventCallback = nullptr;
 	}
 
 	Scene::~Scene()
 	{
 		PX_RELEASE(m_scene);
+		RELEASE(m_eventCallback);
 	}
 
 	void Scene::Init()
@@ -211,6 +251,17 @@ namespace Physics
 		}
 		else
 			return;
+	}
+
+	void Scene::SetEventCallback(SimulationEventCallback* eventCallback)
+	{
+		m_scene->setSimulationEventCallback(eventCallback);
+		m_eventCallback = eventCallback;
+	}
+
+	SimulationEventCallback* Scene::GetSimulationEventCallback()
+	{
+		return m_eventCallback;
 	}
 
 	bool Scene::IsPaused() const
