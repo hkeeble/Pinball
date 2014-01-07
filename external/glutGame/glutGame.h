@@ -66,6 +66,9 @@ namespace GameFramework
 		/* Current Delta Time */
 		Fl32 deltaTime;
 		
+		/* Physics Time Step Timer */
+		Fl32 simTimer;
+
 		/* Get window dimensions */
 		Vec2 WindowDimensions() const;
 		

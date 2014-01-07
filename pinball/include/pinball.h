@@ -87,6 +87,9 @@ class Pinball : public GLUTGame
 		/* Toggles Pause */
 		void TogglePause();
 
+		/* Creates a board position transform */
+		Transform CreatePosition(const Fl32& x, const Fl32& z);
+
 		/* Calculates y offset dependent on board rotation */
 		Fl32 calcYOffset(Fl32 zOffset);
 

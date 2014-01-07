@@ -225,26 +225,34 @@ void Pinball::InitCornerWedges()
 
 void Pinball::InitCenterBumpers()
 {
-	ConvexMeshActor* currentActor;
-	Transform pose = Transform(Vec3(0, board->Dimensions().y, 0), Quat(DEG2RAD(-90), Vec3(1, 0, 0))) * board->Pose();
-	Transform p = pose;
+	// Variables
+	ConvexMeshActor* currentActor; // The current actor
+	Fl32 zCenter, xCenter, zAbs, xAbs; // Center of bumpers, absolute position of current actor
+
+	// Actor Parameters
 	Vec3 color = Vec3(1, 1, .5f);
 	PxMaterial* material = PHYSICS->createMaterial(0, 0, 0);
 	Fl32 density = 1.f;
 	Vec3 scale = Vec3(0.2f, 0.1f, 0.2f);
 
-	p = pose * Transform(Vec3(board->Left().x - 1.7f, 0, 0.6f));
-	currentActor = ConvexMeshActor::CreatePyramid(p, density, color, material, scale, ActorType::StaticActor);
+	zCenter = board->Center().z + 1.f;
+	xCenter = board->Center().x;
+
+	zAbs = zCenter;
+	xAbs = xCenter;
+	currentActor = ConvexMeshActor::CreatePyramid(CreatePosition(zAbs, zAbs), density, color, material, scale, ActorType::StaticActor);
 	currentActor->IsTrigger(true);
 	m_actors.push_back(currentActor);
 
-	p = pose * Transform(Vec3(board->Left().x - 2.1f, 0, 0.8f));
-	currentActor = ConvexMeshActor::CreatePyramid(p, density, color, material, scale, ActorType::StaticActor);
+	zAbs = zCenter;
+	xAbs = xCenter;
+	currentActor = ConvexMeshActor::CreatePyramid(CreatePosition(zAbs, zAbs), density, color, material, scale, ActorType::StaticActor);
 	currentActor->IsTrigger(true);
 	m_actors.push_back(currentActor);
 
-	p = pose * Transform(Vec3(board->Left().x - 2.2f, 0, 0.5f));
-	currentActor = ConvexMeshActor::CreatePyramid(p, density, color, material, scale, ActorType::StaticActor);
+	zAbs = zCenter;
+	xAbs = xCenter;
+	currentActor = ConvexMeshActor::CreatePyramid(CreatePosition(zAbs, zAbs), density, color, material, scale, ActorType::StaticActor);
 	currentActor->IsTrigger(true);
 	m_actors.push_back(currentActor);
 }
