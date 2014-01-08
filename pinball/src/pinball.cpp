@@ -134,6 +134,9 @@ void Pinball::Render()
 
 		/* Update Physics */
 		m_scene->UpdatePhys(1/FPS);
+
+		CalculateFrameRate();
+		hud.UpdateItem("FPS", m_fps);
 	}
 	if (gameState == GameState::Menu)
 		titleImg.Render();

@@ -18,19 +18,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "monitor", "monitor\monitor.
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "glutGame", "glutGame\glutGame.vcxproj", "{0C79FC12-468C-4D69-A8FF-8B7CB78C3505}"
 EndProject
-Project("{911E67C6-3D85-4FCE-B560-20A9C3E3FF48}") = "notepad", "..\..\..\..\..\Windows\System32\notepad.exe", "{1C6213B3-BA0E-4FAF-B8E8-8374A9E24795}"
-	ProjectSection(DebuggerProjectSystem) = preProject
-		PortSupplier = 00000000-0000-0000-0000-000000000000
-		Executable = C:\Windows\System32\notepad.exe
-		RemoteMachine = HENRIPC
-		StartingDirectory = C:\Windows\System32
-		Environment = Default
-		LaunchingEngine = 00000000-0000-0000-0000-000000000000
-		UseLegacyDebugEngines = No
-		LaunchSQLEngine = No
-		AttachLaunchAction = No
-	EndProjectSection
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Mixed Platforms = Debug|Mixed Platforms
@@ -100,14 +87,6 @@ Global
 		{0C79FC12-468C-4D69-A8FF-8B7CB78C3505}.Release|x64.ActiveCfg = Release|Win32
 		{0C79FC12-468C-4D69-A8FF-8B7CB78C3505}.Release|x86.ActiveCfg = Release|Win32
 		{0C79FC12-468C-4D69-A8FF-8B7CB78C3505}.Release|x86.Build.0 = Release|Win32
-		{1C6213B3-BA0E-4FAF-B8E8-8374A9E24795}.Debug|Mixed Platforms.ActiveCfg = Debug|x64
-		{1C6213B3-BA0E-4FAF-B8E8-8374A9E24795}.Debug|Win32.ActiveCfg = Debug|x64
-		{1C6213B3-BA0E-4FAF-B8E8-8374A9E24795}.Debug|x64.ActiveCfg = Debug|x64
-		{1C6213B3-BA0E-4FAF-B8E8-8374A9E24795}.Debug|x86.ActiveCfg = Debug|x64
-		{1C6213B3-BA0E-4FAF-B8E8-8374A9E24795}.Release|Mixed Platforms.ActiveCfg = Debug|x64
-		{1C6213B3-BA0E-4FAF-B8E8-8374A9E24795}.Release|Win32.ActiveCfg = Debug|x64
-		{1C6213B3-BA0E-4FAF-B8E8-8374A9E24795}.Release|x64.ActiveCfg = Debug|x64
-		{1C6213B3-BA0E-4FAF-B8E8-8374A9E24795}.Release|x86.ActiveCfg = Debug|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

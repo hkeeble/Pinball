@@ -18,7 +18,7 @@
 #include "log.h"
 #include "timer.h"
 
-#define FPS 60.f
+#define FPS 120.f
 #define RENDER_DETAIL 15
 
 namespace GameFramework
@@ -56,7 +56,7 @@ namespace GameFramework
 
 		// Physics Simulation Objects
 		Physics::Scene* m_scene;
-		Fl32 m_fps;
+		Fl32 m_pxTimeStep;
 
 		// Renders the given geometric object
 		void RenderGeometry(physx::PxGeometryHolder h, bool textured = false);
@@ -74,6 +74,10 @@ namespace GameFramework
 		
 		/* Is using a 2D camera */
 		bool m_is2D;
+
+		/* Used for frame rate calculations */
+		int m_fps, m_time, m_timebase, m_frame;
+		void CalculateFrameRate();
 
 	public:
 		// Construction/Destruction

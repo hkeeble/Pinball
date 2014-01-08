@@ -12,8 +12,8 @@ void Pinball::Init()
 	// Not Paused
 	m_paused = false;
 
-	// Set FPS
-	m_fps = 1.f / FPS;
+	// Set Time Step
+	m_pxTimeStep = 1.f / FPS;
 
 	// Set State
 	gameState = GameState::Menu;
@@ -80,6 +80,7 @@ void Pinball::InitHUD()
 		hud.SetRenderColor(Vec3(1.f, 1.f, 1.f));
 		hud.AddItem("Score", Vec2(5, 95), HUDFont::largeFont, true, 0);
 		hud.AddItem("Balls Left", Vec2(65, 95), HUDFont::largeFont, true, m_ballsRemaining);
+		hud.AddItem("FPS", Vec2(5, 5), HUDFont::largeFont, true, m_fps);
 		break;
 	case GameState::GameOver:
 		SetClearColor(Vec3(0.f, 0.f, 0.f));

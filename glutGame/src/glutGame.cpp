@@ -39,6 +39,10 @@ namespace GameFramework
 
 		m_milliSecondsSinceLastFrame = 0;
 		simTimer = 0;
+
+		m_frame = 0;
+		m_timebase = 0;
+		m_fps = 0;
 	}
 
 	GLUTGame::~GLUTGame()
@@ -49,10 +53,10 @@ namespace GameFramework
 	void GLUTGame::Run(int argc, char *argv[])
 	{
 		Log::Write("Game Run Function Invoked...\n", ENGINE_LOG);
-		
+
 		InitGLUT(argc, argv);
 		InitGL();
-		
+
 		Log::Write("Initializing Game...\n", ENGINE_LOG);
 		Init();
 
@@ -82,10 +86,10 @@ namespace GameFramework
 		glEnable(GL_COLOR_MATERIAL);
 		glEnable(GL_LIGHTING);
 		glEnable(GL_TEXTURE_2D);
-		Fl32 ambientColor[]	= { .5f, .5f,  .5f, 1.f };
-		Fl32 diffuseColor[]	= { .4f, .4f,  .4f, 1.f };		
-		Fl32 specularColor[]= { 1.f, 1.f,  1.f, 1.f };		
-		Fl32 position[]		= { 1.f, 0.f, 0.f, 0.0f };		
+		Fl32 ambientColor[] = { .5f, .5f, .5f, 1.f };
+		Fl32 diffuseColor[] = { .4f, .4f, .4f, 1.f };
+		Fl32 specularColor[] = { 1.f, 1.f, 1.f, 1.f };
+		Fl32 position[] = { 1.f, 0.f, 0.f, 0.0f };
 		glLightfv(GL_LIGHT0, GL_AMBIENT, ambientColor);
 		glLightfv(GL_LIGHT0, GL_DIFFUSE, diffuseColor);
 		glLightfv(GL_LIGHT0, GL_SPECULAR, specularColor);
@@ -100,8 +104,8 @@ namespace GameFramework
 
 		glutInit(&argc, argv);
 		glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH | GLUT_ALPHA);
-		glutInitWindowPosition((glutGet(GLUT_SCREEN_WIDTH)-m_windowWidth)/2,
-							   (glutGet(GLUT_SCREEN_HEIGHT)-m_windowHeight)/2);
+		glutInitWindowPosition((glutGet(GLUT_SCREEN_WIDTH) - m_windowWidth) / 2,
+			(glutGet(GLUT_SCREEN_HEIGHT) - m_windowHeight) / 2);
 		glutInitWindowSize(m_windowWidth, m_windowHeight);
 		glutCreateWindow(m_title.c_str());
 
@@ -115,7 +119,7 @@ namespace GameFramework
 		glutKeyboardUpFunc(KeyboardUpWrapper);
 		glutSpecialFunc(SpecKeyboardDownWrapper);
 		glutSpecialUpFunc(SpecKeyboardUpWrapper);
-		glutTimerFunc(1000/FPS, TimerFuncWrapper, 0);
+		glutTimerFunc(1000 / FPS, TimerFuncWrapper, 0);
 		atexit(ExitWrapper);
 	}
 
@@ -205,13 +209,13 @@ namespace GameFramework
 
 		t[0][0][0] = t[4][0][0] = t[0][1][0] = t[2][1][0] = t[0][2][0] = t[1][2][0] = 1.f;
 		t[0][0][1] = t[4][0][1] = t[0][1][1] = t[2][1][1] = t[0][2][1] = t[1][2][1] = 1.f;
-		
+
 		t[1][0][0] = t[5][0][0] = t[1][1][0] = t[3][1][0] = t[3][2][0] = t[2][2][0] = 1.f;
 		t[1][0][1] = t[5][0][1] = t[1][1][1] = t[3][1][1] = t[3][2][1] = t[2][2][1] = 1.f;
 
 		t[2][0][0] = t[6][0][0] = t[4][1][0] = t[6][1][0] = t[4][2][0] = t[5][2][0] = 1.f;
 		t[2][0][1] = t[6][0][1] = t[4][1][1] = t[6][1][1] = t[4][2][1] = t[5][2][1] = 1.f;
-		
+
 		t[3][0][0] = t[7][0][0] = t[5][1][0] = t[7][1][0] = t[7][2][0] = t[6][2][0] = 1.f;
 		t[3][0][1] = t[7][0][1] = t[5][1][1] = t[7][1][1] = t[7][2][1] = t[6][2][1] = 1.f;
 
@@ -236,6 +240,19 @@ namespace GameFramework
 	Vec3 GLUTGame::GetClearColor()
 	{
 		return ClearColor;
+	}
+
+	void GLUTGame::CalculateFrameRate()
+	{
+		m_frame++;
+		m_time = glutGet(GLUT_ELAPSED_TIME);
+
+		if (m_time - m_timebase > 1000)
+		{
+			m_fps = m_frame*1000.0 / (m_time - m_timebase);
+			m_timebase = m_time;
+			m_frame = 0;
+		}
 	}
 
 	/*-------------------------------------------------------------------------\
