@@ -47,6 +47,7 @@ void Pinball::InitGame()
 	InitCornerWedges();
 	InitCenterBumpers();
 	InitSpinners();
+	InitSpinnerSwitches();
 
 	// Add Actors in game to scene
 	AddActors();
@@ -137,6 +138,7 @@ void Pinball::InitBall()
 	const Fl32 BallDensity = 1.f;
 	m_ballInitialPos = board->Pose() * Transform(board->Right().x + (board->WallWidth() * 2) + BALL_RADIUS * 2, board->Dimensions().y * 2 + BALL_RADIUS * 2, 0);
 	m_ball = new Sphere(m_ballInitialPos, BALL_RADIUS, BallDensity, BallColor, BallMaterial);
+	m_ball->Get().dynamicActor->setName("Ball");
 	m_actors.push_back(m_ball);
 }
 
@@ -308,6 +310,7 @@ void Pinball::InitCenterBumpers()
 	xAbs = xCenter - .7f;
 	currentActor = ConvexMeshActor::CreatePyramid(CreatePosition(xAbs, zAbs) * Transform(Vec3(0, 0.1f, 0)) * rotation, density, color, material, scale, ActorType::DynamicActor);
 	currentActor->IsTrigger(true);
+	currentActor->Get().dynamicActor->setName("Bumper");
 	m_actors.push_back(currentActor);
 
 	// Actor used for bounce...
@@ -318,6 +321,7 @@ void Pinball::InitCenterBumpers()
 	xAbs = xCenter + .7f;
 	currentActor = ConvexMeshActor::CreatePyramid(CreatePosition(xAbs, zAbs) * Transform(Vec3(0, 0.1f, 0)) * rotation, density, color, material, scale, ActorType::DynamicActor);
 	currentActor->IsTrigger(true);
+	currentActor->Get().dynamicActor->setName("Bumper");
 	m_actors.push_back(currentActor);
 
 	currentActor = ConvexMeshActor::CreatePyramid(CreatePosition(xAbs, zAbs) * Transform(Vec3(0, 0.1f, 0)) * rotation, density, color, material, scale2, ActorType::StaticActor);
@@ -327,10 +331,54 @@ void Pinball::InitCenterBumpers()
 	xAbs = xCenter;
 	currentActor = ConvexMeshActor::CreatePyramid(CreatePosition(xAbs, zAbs) * Transform(Vec3(0, 0.1f, 0)) * rotation, density, color, material, scale, ActorType::DynamicActor);
 	currentActor->IsTrigger(true);
+	currentActor->Get().dynamicActor->setName("Bumper");
 	m_actors.push_back(currentActor);
 
 	currentActor = ConvexMeshActor::CreatePyramid(CreatePosition(xAbs, zAbs) * Transform(Vec3(0, 0.1f, 0)) * rotation, density, color, material, scale2, ActorType::StaticActor);
 	m_actors.push_back(currentActor);
+}
+
+void Pinball::InitSpinnerSwitches()
+{
+	// Actor Parameters
+	Vec3 color = Vec3(1.f, .0f, .0f);
+	PxMaterial* material = PHYSICS->createMaterial(0, 0, 2.f);
+	Vec3 dimensions = Vec3(.1f, board->WallHeight(), .1f);
+	Fl32 density = 1.f;
+
+	Fl32 xOffset, zOffset;
+	Box* lft, *rgt, *lftp, *rgtp;
+
+	// Trigger Object
+	zOffset = board->Center().z - 1.f;
+	xOffset = board->Left().x - .3f;
+	lft = new Box(Transform(Vec3(xOffset, calcYOffset(zOffset) + board->WallHeight()*2, zOffset)), dimensions, density, color, material);
+	lft->IsTrigger(true);
+	lft->Get().dynamicActor->setName("SpinnerSwitch");
+	
+	// Physical Object
+	lftp = new Box(Transform(Vec3(xOffset, calcYOffset(zOffset) + board->WallHeight() * 2, zOffset)), dimensions*0.7f, density, color, material, ActorType::StaticActor);
+
+	// Trigger Object
+	zOffset = board->Center().z - 1.f;
+	xOffset = board->Right().x + .6f;
+	rgt = new Box(Transform(Vec3(xOffset, calcYOffset(zOffset) + board->WallHeight() * 2, zOffset)), dimensions, density, color, material);
+	rgt->IsTrigger(true);
+	rgt->Get().dynamicActor->setName("SpinnerSwitch");
+
+	// Physical Object
+	rgtp = new Box(Transform(Vec3(xOffset, calcYOffset(zOffset) + board->WallHeight() * 2, zOffset)), dimensions*0.7f, density, color, material, ActorType::StaticActor);
+
+	// Rotate for board placement
+	lft->Get().dynamicActor->setGlobalPose(lft->Get().dynamicActor->getGlobalPose() * Transform(Quat(DEG2RAD(-25), Vec3(1, 0, 0))));
+	rgt->Get().dynamicActor->setGlobalPose(rgt->Get().dynamicActor->getGlobalPose() * Transform(Quat(DEG2RAD(-25), Vec3(1, 0, 0))));
+	lftp->Get().dynamicActor->setGlobalPose(lftp->Get().dynamicActor->getGlobalPose() * Transform(Quat(DEG2RAD(-25), Vec3(1, 0, 0))));
+	rgtp->Get().dynamicActor->setGlobalPose(rgtp->Get().dynamicActor->getGlobalPose() * Transform(Quat(DEG2RAD(-25), Vec3(1, 0, 0))));
+
+	m_actors.push_back(lft);
+	m_actors.push_back(rgt);
+	m_actors.push_back(lftp);
+	m_actors.push_back(rgtp);
 }
 
 void Pinball::InitSpinners()

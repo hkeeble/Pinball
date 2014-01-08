@@ -42,6 +42,11 @@ public:
 class Pinball : public GLUTGame
 {
 	private:
+		/* Contants */
+		const int m_ballsPerGame = 3;
+		const int m_scorePerBumper = 100;
+		const int m_bumperBounceMultiplier = 50;
+
 		/* Actors */
 		std::vector<Actor*> m_actors;
 		
@@ -52,13 +57,10 @@ class Pinball : public GLUTGame
 		Sphere*		m_ball;
 		Plunger*	m_plunger;
 		Flippers*	m_flippers;
-		Spinners*   m_spinners;
+		Spinners*	m_spinners;
 
 		/* player's current score */
-		static int m_currentScore;
-
-		/* Balls at the start of each game */
-		const int m_ballsPerGame = 3;
+		int m_currentScore;
 
 		/* Number of balls remaining for this game */
 		int m_ballsRemaining;
@@ -92,6 +94,7 @@ class Pinball : public GLUTGame
 		void InitStartingBlocks();
 		void InitCenterBumpers();
 		void InitSpinners();
+		void InitSpinnerSwitches();
 
 		/* HUD Initialization Function */
 		void InitHUD();
@@ -143,8 +146,14 @@ class Pinball : public GLUTGame
 		/* Board Actor */
 		static Board* board;
 
-		/* Adds to Score */
-		static void AddScore(int score);
+		/* Activates spinners if they are inactive */
+		void ActivateSpinners();
+
+		/* Used by triggers to update the game */
+		static bool AddScore;
+		static bool BounceBall;
+		static bool EnableSpinners;
+		static Vec3 BallBounceDirection;
 
 		/* Initialization override */
 		virtual void Init			  ()									override final;

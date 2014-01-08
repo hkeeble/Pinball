@@ -50,7 +50,7 @@ namespace Physics
 		virtual void Create() = 0;
 
 		virtual ActorUnion Get();
-		
+
 		bool IsTextured() const;
 		unsigned int TextureID() const;
 		

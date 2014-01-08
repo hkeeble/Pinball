@@ -13,7 +13,10 @@ const int MAX_NUM_ACTOR_SHAPES = 128;
 
 Board* Pinball::board;
 
-int Pinball::m_currentScore = 0;
+bool Pinball::AddScore = false;
+bool Pinball::BounceBall = false;
+bool Pinball::EnableSpinners = false;
+Vec3 Pinball::BallBounceDirection = Vec3(0);
 
 Pinball::Pinball(std::string title, int windowWidth, int windowHeight)
 	: GLUTGame(title, windowWidth, windowHeight)
@@ -23,6 +26,7 @@ Pinball::Pinball(std::string title, int windowWidth, int windowHeight)
 	m_flippers = nullptr;
 	m_actors = std::vector<Actor*>();
 	m_monitor = Monitor();
+	m_currentScore = 0;
 }
 
 Pinball::~Pinball()
@@ -204,13 +208,30 @@ void Pinball::Idle()
 		}
 
 		/* Check for bumper scoring */
-		if (m_scene->GetSimulationEventCallback()->IsTriggered())
-			AddScore(100);
+		if (AddScore)
+		{
+			m_currentScore += m_scorePerBumper;
+			AddScore = false;
+		}
+
+		/* Check for bounces */
+		if (BounceBall)
+		{
+			m_ball->Get().dynamicActor->addForce(BallBounceDirection*m_bumperBounceMultiplier);
+			BounceBall = false;
+		}
+
+		/* Check if spinners need activating */
+		if (EnableSpinners)
+		{
+			ActivateSpinners();
+			EnableSpinners = false;
+		}
 
 		/* Update Spinners */
 		m_spinners->Update(deltaTime);
 
-		if (m_ball->Get().dynamicActor->getAngularVelocity() == Vec3(0) && m_ballInPlay)
+		if (m_ball->Get().dynamicActor->getLinearVelocity() == Vec3(0) && m_ballInPlay)
 			m_spinners->Toggle();
 	}
 }
@@ -341,9 +362,10 @@ void Pinball::Reset()
 	m_ballInPlay = false;
 }
 
-void Pinball::AddScore(int score)
+void Pinball::ActivateSpinners()
 {
-	m_currentScore += score;
+	if (m_spinners->Active() == false)
+		m_spinners->Toggle();
 }
 
 void Pinball::Exit()

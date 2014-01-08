@@ -17,4 +17,6 @@ public:
 
 	void Toggle();
 	void Update(Fl32 deltaTime);
+
+	bool Active() const;
 };

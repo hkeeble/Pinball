@@ -312,6 +312,7 @@ namespace Physics
 	{
 		m_dimensions = dimensions;
 		m_geometry.storeAny(PxBoxGeometry(m_dimensions));
+		Create();
 	}
 
 	Box::Box(const Box& param) : ShapeActor(param)
@@ -350,6 +351,7 @@ namespace Physics
 	{
 		m_radius = radius;
 		m_geometry.storeAny(PxSphereGeometry(m_radius));
+		Create();
 	}
 
 	Sphere::Sphere(const Sphere& param) : ShapeActor(param)

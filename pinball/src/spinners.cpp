@@ -57,3 +57,8 @@ void Spinners::Update(Fl32 deltaTime)
 		}
 	}
 }
+
+bool Spinners::Active() const
+{
+	return m_active;
+}
