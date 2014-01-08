@@ -6,21 +6,21 @@ namespace GameFramework
 	class Timer
 	{
 	private:
-		int currentMilliseconds;
+		double currentMilliseconds;
 	public:
 		Timer();
 		Timer(const Timer& param);
-		Timer(const int& hours, const int& minutes, const int& seconds, const int& milliseconds);
+		Timer(const int& hours, const int& minutes, const double& seconds, const double& milliseconds);
 		~Timer();
 		Timer& operator=(const Timer& param);
 
-		void Set(const int& hours, const int& minutes, const int& seconds, const int& milliseconds);
+		void Set(const int& hours, const int& minutes, const double& seconds, const double& milliseconds);
 
 		void Reset();
-		void Update(int deltaTime);
+		void Update(double deltaTime);
 
-		int Milliseconds();
-		int Seconds();
+		double Milliseconds();
+		double Seconds();
 		int Minutes();
 		int Hours();
 	};

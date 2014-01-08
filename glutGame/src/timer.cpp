@@ -12,7 +12,7 @@ namespace GameFramework
 		currentMilliseconds = param.currentMilliseconds;
 	}
 
-	Timer::Timer(const int& hours, const int& minutes, const int& seconds, const int& milliseconds)
+	Timer::Timer(const int& hours, const int& minutes, const double& seconds, const double& milliseconds)
 	{
 		Set(hours, minutes, seconds, milliseconds);
 	}
@@ -33,7 +33,7 @@ namespace GameFramework
 		}
 	}
 
-	void Timer::Set(const int& hours, const int& minutes, const int& seconds, const int& milliseconds)
+	void Timer::Set(const int& hours, const int& minutes, const double& seconds, const double& milliseconds)
 	{
 		currentMilliseconds = ((hours * 60) * 60) + (minutes * 60) + (seconds * 1000) + milliseconds;
 	}
@@ -43,19 +43,19 @@ namespace GameFramework
 		currentMilliseconds = 0;
 	}
 
-	void Timer::Update(int deltaTime)
+	void Timer::Update(double deltaTime)
 	{
 		currentMilliseconds += deltaTime;
 	}
 
-	int Timer::Milliseconds()
+	double Timer::Milliseconds()
 	{
 		return currentMilliseconds;
 	}
 
-	int Timer::Seconds()
+	double Timer::Seconds()
 	{
-		return currentMilliseconds / 1000;
+		return currentMilliseconds * 1000;
 	}
 
 	int Timer::Minutes()

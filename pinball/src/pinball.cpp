@@ -133,7 +133,7 @@ void Pinball::Render()
 		}
 
 		/* Update Physics */
-		m_scene->UpdatePhys(1/FPS);
+		m_scene->UpdatePhys(1 / FPS);
 
 		CalculateFrameRate();
 		hud.UpdateItem("FPS", m_fps);

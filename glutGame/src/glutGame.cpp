@@ -266,14 +266,22 @@ namespace GameFramework
 
 	void GLUTGame::TimerFunc(int id)
 	{
-		glutPostRedisplay();
+		// glutPostRedisplay();
 	}
 
 	void GLUTGame::Idle()
 	{
-		newElapsedTime = glutGet(GLUT_ELAPSED_TIME);
+		newElapsedTime = clock();
 		deltaTime = newElapsedTime - lastElapsedTime;
+		deltaTime = (deltaTime / (double)CLOCKS_PER_SEC) / 1000;
 		lastElapsedTime = newElapsedTime;
+
+		m_milliSecondsSinceLastFrame += deltaTime;
+		if (m_milliSecondsSinceLastFrame * 1000 >= 1.f / 60.f)
+		{
+			glutPostRedisplay();
+			m_milliSecondsSinceLastFrame = 0.f;
+		}
 	}
 
 	void GLUTGame::Reshape(int width, int height)

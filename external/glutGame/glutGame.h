@@ -9,6 +9,7 @@
 #define GAME_H
 
 #include <string>
+#include <time.h>
 #include "camera.h"
 #include "gameState.h"
 #include "Physics.h"
@@ -18,7 +19,7 @@
 #include "log.h"
 #include "timer.h"
 
-#define FPS 120.f
+#define FPS 60.f
 #define RENDER_DETAIL 15
 
 namespace GameFramework
@@ -41,8 +42,8 @@ namespace GameFramework
 		static Vec3 ClearColor;
 
 		/* Used For timers */
-		Fl32 lastElapsedTime;
-		Fl32 newElapsedTime;
+		clock_t lastElapsedTime;
+		clock_t newElapsedTime;
 
 		/* Renders a textured cube */
 		void RenderTexturedCube(GLint size);
