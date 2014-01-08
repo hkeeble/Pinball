@@ -24,6 +24,9 @@
     <ClInclude Include="include\util.h">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="include\spinners.h">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -48,6 +51,9 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\pinballInit.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\spinners.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>

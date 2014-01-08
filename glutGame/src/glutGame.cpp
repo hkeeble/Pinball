@@ -119,7 +119,6 @@ namespace GameFramework
 		glutKeyboardUpFunc(KeyboardUpWrapper);
 		glutSpecialFunc(SpecKeyboardDownWrapper);
 		glutSpecialUpFunc(SpecKeyboardUpWrapper);
-		glutTimerFunc(1000 / FPS, TimerFuncWrapper, 0);
 		atexit(ExitWrapper);
 	}
 
@@ -264,11 +263,6 @@ namespace GameFramework
 
 	}
 
-	void GLUTGame::TimerFunc(int id)
-	{
-		// glutPostRedisplay();
-	}
-
 	void GLUTGame::Idle()
 	{
 		newElapsedTime = clock();
@@ -353,7 +347,4 @@ namespace GameFramework
 
 	// Exit Wrapper
 	void GLUTGame::ExitWrapper() { instance->Exit(); }
-
-	// Timer Wrapper
-	void GLUTGame::TimerFuncWrapper(int id) { instance->TimerFunc(id); }
 }

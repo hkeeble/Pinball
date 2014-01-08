@@ -14,6 +14,7 @@
 #include "glutGame\glutGame.h"
 #include "boardObjects.h"
 #include "flippers.h"
+#include "spinners.h"
 #include "glutGame\hud.h"
 #include "timer.h"
 #include "monitor.h"
@@ -51,6 +52,7 @@ class Pinball : public GLUTGame
 		Sphere*		m_ball;
 		Plunger*	m_plunger;
 		Flippers*	m_flippers;
+		Spinners*   m_spinners;
 
 		/* player's current score */
 		static int m_currentScore;
@@ -89,6 +91,7 @@ class Pinball : public GLUTGame
 		void InitCornerWedges();
 		void InitStartingBlocks();
 		void InitCenterBumpers();
+		void InitSpinners();
 
 		/* HUD Initialization Function */
 		void InitHUD();

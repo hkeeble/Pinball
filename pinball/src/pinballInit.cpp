@@ -46,6 +46,7 @@ void Pinball::InitGame()
 	InitPlunger();
 	InitCornerWedges();
 	InitCenterBumpers();
+	InitSpinners();
 
 	// Add Actors in game to scene
 	AddActors();
@@ -300,7 +301,7 @@ void Pinball::InitCenterBumpers()
 	Vec3 scale = Vec3(0.2f, 0.1f, 0.2f);
 	Vec3 scale2 = scale*0.8f;
 
-	zCenter = board->Center().z - 1.f;
+	zCenter = board->Center().z + 1.f;
 	xCenter = board->Center().x;
 
 	zAbs = zCenter;
@@ -330,4 +331,33 @@ void Pinball::InitCenterBumpers()
 
 	currentActor = ConvexMeshActor::CreatePyramid(CreatePosition(xAbs, zAbs) * Transform(Vec3(0, 0.1f, 0)) * rotation, density, color, material, scale2, ActorType::StaticActor);
 	m_actors.push_back(currentActor);
+}
+
+void Pinball::InitSpinners()
+{
+	// Actor Parameters
+	Spinner *lft, *rgt;
+	Vec3 color = Vec3(1.f, .0f, .0f);
+	PxMaterial* material = PHYSICS->createMaterial(0, 0, 0);
+	Fl32 density = .5f;
+	Transform pose;
+
+	Fl32 xOffset, zOffset;
+
+	// Left Spinner
+	xOffset = board->Center().x - 0.7f;
+	zOffset = board->Center().z;
+	pose = Transform(Vec3(xOffset, calcYOffset(zOffset) + (board->WallHeight()), zOffset));
+	lft = new Spinner(pose, material, color, density);
+	m_actors.push_back(lft);
+
+	// Right Spinner
+	xOffset = board->Center().x + 0.8f;
+	zOffset = board->Center().z;
+	pose = Transform(Vec3(xOffset, calcYOffset(zOffset) + (board->WallHeight()), zOffset));
+	rgt = new Spinner(pose, material, color, density);
+	m_actors.push_back(rgt);
+
+	// Create Spinners Object
+	m_spinners = new Spinners(lft, rgt);
 }

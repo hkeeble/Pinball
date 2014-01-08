@@ -100,7 +100,6 @@ namespace GameFramework
 
 		// Instance Callback Functions
 		virtual void Render();
-		virtual void TimerFunc(int id);
 		virtual void Idle();
 		virtual void Reshape(int width, int height);
 		virtual void MouseButton(int button, int state, int x, int y) = 0;
@@ -121,7 +120,6 @@ namespace GameFramework
 		static void KeyboardUpWrapper(unsigned char key, int x, int y);
 		static void SpecKeyboardDownWrapper(int key, int x, int y);
 		static void SpecKeyboardUpWrapper(int key, int x, int y);
-		static void TimerFuncWrapper(int id);
 		static void ExitWrapper();
 	};
 }

@@ -240,3 +240,97 @@ void InnerWalls::Create()
 	m_actor.staticActor->userData = &m_color;
 }
 #pragma endregion
+/*-------------------------------------------------------------------------\
+|						SPINNER DEFINITIONS								    |
+\-------------------------------------------------------------------------*/
+Spinner::Spinner(const Transform& pose, PxMaterial* material, const Vec3& color, const Fl32& density) : CompoundShapeActor(1, pose, density, material, color)
+{
+	m_geometrys = new PxGeometryHolder[5];
+
+	// Geometrys
+	PxBoxGeometry geos[5];
+	geos[S_CENTER] = PxBoxGeometry(0.05f, P::board->WallHeight(), 0.05f);
+	geos[S_TOP] = PxBoxGeometry(0.05f, P::board->WallHeight(), 0.2f);
+	geos[S_BOTTOM] = PxBoxGeometry(0.05f, P::board->WallHeight(), 0.2f);
+	geos[S_LEFT] = PxBoxGeometry(0.2f, P::board->WallHeight(), 0.05f);
+	geos[S_RIGHT] = PxBoxGeometry(0.2f, P::board->WallHeight(), 0.05f);
+
+	// Assign Geometrys
+	m_geometrys[S_CENTER].box() = geos[S_CENTER];
+	m_geometrys[S_TOP].box() = geos[S_TOP];
+	m_geometrys[S_BOTTOM].box() = geos[S_BOTTOM];
+	m_geometrys[S_LEFT].box() = geos[S_LEFT];
+	m_geometrys[S_RIGHT].box() = geos[S_RIGHT];
+}
+
+Spinner::Spinner(const Spinner& param) : CompoundShapeActor(param)
+{
+	m_joint = param.m_joint;
+}
+
+Spinner& Spinner::operator=(const Spinner& param)
+{
+	if (&param == this)
+		return *this;
+	else
+	{
+		CompoundShapeActor::operator=(param);
+		m_joint = param.m_joint;
+		return *this;
+	}
+}
+
+Spinner::~Spinner()
+{
+
+}
+
+void Spinner::Create()
+{
+	PxRigidDynamic* dyn = PHYSICS->createRigidDynamic(m_pose);
+
+	// Create Shapes
+	dyn->createShape(m_geometrys[S_CENTER].box(), *m_material);
+	PxShape* top = dyn->createShape(m_geometrys[S_TOP].box(), *m_material);
+	PxShape* bottom = dyn->createShape(m_geometrys[S_BOTTOM].box(), *m_material);
+	PxShape* left = dyn->createShape(m_geometrys[S_LEFT].box(), *m_material);
+	PxShape* right = dyn->createShape(m_geometrys[S_RIGHT].box(), *m_material);
+
+	// Set Local Poses
+	top->setLocalPose(Transform(Vec3(.0f, .0f, .25f)));
+	bottom->setLocalPose(Transform(Vec3(.0f, .0f, -.25f)));
+	left->setLocalPose(Transform(Vec3(-.25f, .0f, .0f)));
+	right->setLocalPose(Transform(Vec3(.25f, .0f, .0f)));
+
+	// Set Rotation
+	dyn->setGlobalPose(m_pose * P::board->Pose() * Transform(Quat(DEG2RAD(35), Vec3(0, 1, 0))));
+
+	m_actor.dynamicActor = dyn;
+
+	m_actor.dynamicActor->userData = &m_color;
+
+	Transform jointPos = Transform(Vec3(0), PxQuat(DEG2RAD(-90), PxVec3(0.f, 0.f, 1.f)) * PxQuat(DEG2RAD(180), PxVec3(0.f, 1.f, 0.f)));
+
+	m_joint = RevoluteJoint(dyn, jointPos, nullptr, dyn->getGlobalPose() * jointPos);
+	SetKinematic(true);
+}
+
+void Spinner::SetKinematic(bool isKinematic)
+{
+	m_actor.dynamicActor->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, isKinematic);
+}
+
+void Spinner::Toggle()
+{
+	if (m_actor.dynamicActor->getRigidBodyFlags().isSet(PxRigidBodyFlag::eKINEMATIC) == true)
+	{
+		SetKinematic(false);
+		Get().dynamicActor->wakeUp();
+		m_joint.DriveVelocity(m_drvSpeed);
+	}
+	else
+	{
+		m_joint.DriveVelocity(0);
+		SetKinematic(true);
+	}
+}

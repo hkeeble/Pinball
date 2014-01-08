@@ -101,6 +101,7 @@ copy "$(SolutionDir)\data\img\*.png" "$(SolutionDir)\build\$(Configuration)\img\
   <ItemGroup>
     <ClInclude Include="include\boardObjects.h" />
     <ClInclude Include="include\flippers.h" />
+    <ClInclude Include="include\spinners.h" />
     <ClInclude Include="include\util.h" />
     <ClInclude Include="include\pinball.h" />
     <ClInclude Include="include\triggers.h" />
@@ -113,6 +114,7 @@ copy "$(SolutionDir)\data\img\*.png" "$(SolutionDir)\build\$(Configuration)\img\
     <ClCompile Include="src\pinball.cpp" />
     <ClCompile Include="src\pinballInit.cpp" />
     <ClCompile Include="src\plunger.cpp" />
+    <ClCompile Include="src\spinners.cpp" />
     <ClCompile Include="src\triggers.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

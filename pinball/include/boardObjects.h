@@ -34,6 +34,14 @@ using namespace Physics;
 #define SHAFT	0
 #define TIP		1
 
+// Spinner Defines
+#define S_SHAPES 5
+#define S_CENTER 0
+#define S_TOP	 1
+#define S_BOTTOM 2
+#define S_LEFT	 3
+#define S_RIGHT  4
+
 /* Main Board Class */
 class Board : public Box
 {
@@ -138,6 +146,25 @@ public:
 
 	void Flip();
 	void Unflip();
+};
+
+/* Represents a spinner */
+class Spinner : public CompoundShapeActor
+{
+private:
+	const int m_drvSpeed = 5;
+
+	RevoluteJoint m_joint;
+public:
+	Spinner(const Transform& pose, PxMaterial* material, const Vec3& color, const Fl32& density);
+	Spinner(const Spinner& param);
+	Spinner& operator=(const Spinner& param);
+	~Spinner();
+
+	void SetKinematic(bool isKinematic);
+	void Toggle();
+
+	virtual void Create() override;
 };
 
 #endif // _BOARD_OBJECTS_H_

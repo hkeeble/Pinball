@@ -150,7 +150,6 @@ void Pinball::Render()
 		hud.Render(camera.FOV);
 
 	glutSwapBuffers();
-	glutTimerFunc(1000 / FPS, TimerFuncWrapper, 0);
 }
 
 void Pinball::Idle()
@@ -207,6 +206,12 @@ void Pinball::Idle()
 		/* Check for bumper scoring */
 		if (m_scene->GetSimulationEventCallback()->IsTriggered())
 			AddScore(100);
+
+		/* Update Spinners */
+		m_spinners->Update(deltaTime);
+
+		if (m_ball->Get().dynamicActor->getAngularVelocity() == Vec3(0) && m_ballInPlay)
+			m_spinners->Toggle();
 	}
 }
 
@@ -261,6 +266,10 @@ void Pinball::KeyboardDown(unsigned char key, int x, int y)
 		{
 			if (m_flippers)
 				m_flippers->Flip();
+		}
+		if (key == 's')
+		{
+			m_spinners->Toggle();
 		}
 		break;
 	/* Game Over Keys */
