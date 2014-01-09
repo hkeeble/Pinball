@@ -21,20 +21,23 @@ void ScoreCallback::onTrigger(PxTriggerPair* pairs, PxU32 count)
 
 				PxRigidDynamic* ball = static_cast<PxRigidDynamic*>(pairs[i].otherActor);
 
-				if (pairs[i].triggerActor->getName() == "Bumper")
+				if (pairs[i].triggerActor->getName() == "BumperHigh" || pairs[i].triggerActor->getName() == "BumperLow")
 				{
 					PxRigidDynamic* bumper = static_cast<PxRigidDynamic*>(pairs[i].triggerActor);
 
-						Pinball::AddScore = true;
+					if (pairs[i].triggerActor->getName() == "BumperHigh")
+						Pinball::AddScoreHigh = true;
+					else
+						Pinball::AddScoreLow = true;
 
-						Transform bumperPose = bumper->getGlobalPose();
-						Transform ballPose = ball->getGlobalPose();
-						Vec3 dir = bumperPose.p - ballPose.p;
-						dir.normalize();
+					Transform bumperPose = bumper->getGlobalPose();
+					Transform ballPose = ball->getGlobalPose();
+					Vec3 dir = bumperPose.p - ballPose.p;
+					dir.normalize();
 
-						dir = Vec3(dir.x, dir.y, dir.z);
-						Pinball::BounceBall = true;
-						Pinball::BallBounceDirection = dir;
+					dir = Vec3(dir.x, dir.y, dir.z);
+					Pinball::BounceBall = true;
+					Pinball::BallBounceDirection = dir;
 				}
 				if (pairs[i].triggerActor->getName() == "SpinnerSwitch")
 				{

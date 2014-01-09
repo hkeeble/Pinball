@@ -101,6 +101,7 @@ copy "$(SolutionDir)\data\img\*.png" "$(SolutionDir)\build\$(Configuration)\img\
   <ItemGroup>
     <ClInclude Include="include\boardObjects.h" />
     <ClInclude Include="include\flippers.h" />
+    <ClInclude Include="include\materialCollection.h" />
     <ClInclude Include="include\spinners.h" />
     <ClInclude Include="include\util.h" />
     <ClInclude Include="include\pinball.h" />
@@ -111,6 +112,7 @@ copy "$(SolutionDir)\data\img\*.png" "$(SolutionDir)\build\$(Configuration)\img\
     <ClCompile Include="src\flipper.cpp" />
     <ClCompile Include="src\flippers.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\materialCollection.cpp" />
     <ClCompile Include="src\pinball.cpp" />
     <ClCompile Include="src\pinballInit.cpp" />
     <ClCompile Include="src\plunger.cpp" />

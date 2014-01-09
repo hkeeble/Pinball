@@ -200,11 +200,14 @@ InnerWalls::InnerWalls(PxMaterial* material, const Vec3& color)
 	geos[IW_ID_PLUNGE_LN_WALL] = PxBoxGeometry(Vec3(m_width, m_height, (P::board->Dimensions().z-(m_width*4) - P::board->PlungerLaneWidth())));
 	geos[IW_ID_PLUNGE_LN_WALL_TP] = PxBoxGeometry(Vec3(P::board->Dimensions().x - (P::board->PlungerLaneWidth()*2) - (P::board->WallWidth()*2), m_height, m_width));
 
+	geos[IW_ID_SWITCH_WALL_LFT] = PxBoxGeometry(Vec3(m_width, m_height, (P::board->Dimensions().z / 2) - 0.85f));
+	geos[IW_ID_SWITCH_WALL_RGT] = PxBoxGeometry(Vec3(m_width, m_height, (P::board->Dimensions().z / 2) - 0.85f));
+
 	// Assign Geometrys
 	m_geometrys[IW_ID_PLUNGE_LN_WALL].box()		= geos[IW_ID_PLUNGE_LN_WALL];
 	m_geometrys[IW_ID_PLUNGE_LN_WALL_TP].box()	= geos[IW_ID_PLUNGE_LN_WALL_TP];
-	m_geometrys[IW_ID_FLIPPER_WALL_LFT].box()	= geos[IW_ID_FLIPPER_WALL_LFT];
-	m_geometrys[IW_ID_FLIPPER_WALL_RGT].box()	= geos[IW_ID_FLIPPER_WALL_RGT];
+	m_geometrys[IW_ID_SWITCH_WALL_LFT].box()	= geos[IW_ID_SWITCH_WALL_LFT];
+	m_geometrys[IW_ID_SWITCH_WALL_RGT].box()	= geos[IW_ID_SWITCH_WALL_RGT];
 }
 
 InnerWalls::~InnerWalls()
@@ -219,18 +222,25 @@ void InnerWalls::Create()
 	Board* b = const_cast<Board*>(P::board);
 
 	// Determine Poses
-	Transform p_pLaneWall, p_pLaneWallTp, p_pLaneWallExt, p_fWallLft, p_fWallRgt;
+	Transform p_pLaneWall, p_pLaneWallTp, p_switchWallLft, p_switchWallRgt;
 
 	p_pLaneWall		= Transform(b->Right()	+ Vec3(b->PlungerLaneWidth() + (m_width*4), 0, b->Bottom().z+m_geometrys[IW_ID_PLUNGE_LN_WALL].box().halfExtents.z));
 	p_pLaneWallTp = Transform(b->Top() - Vec3(m_width * 2, 0, (b->PlungerLaneWidth() * 3) + (m_width * 6)));
 
+	p_switchWallRgt = Transform(b->Right() + Vec3(0.7f, 0.f, (b->Dimensions().z / 2) - 2.9f));
+	p_switchWallLft = Transform(b->Left() - Vec3(0.4f, 0.f, (b->Dimensions().z / 2) - 0.1f));
+
 	// Create Shapes
 	PxShape* pL		   = rgd->createShape(m_geometrys[IW_ID_PLUNGE_LN_WALL].box(), *m_material); // Plunger Lane Wall
 	PxShape* PlT	   = rgd->createShape(m_geometrys[IW_ID_PLUNGE_LN_WALL_TP].box(), *m_material); // Plunger Lane Wall Top
+	PxShape* sL		   = rgd->createShape(m_geometrys[IW_ID_SWITCH_WALL_LFT].box(), *m_material); // Plunger Lane Wall
+	PxShape* sR		   = rgd->createShape(m_geometrys[IW_ID_SWITCH_WALL_RGT].box(), *m_material); // Plunger Lane Wall Top
 
 	// Set Local Poses
 	pL->setLocalPose(p_pLaneWall);
 	PlT->setLocalPose(p_pLaneWallTp);
+	sL->setLocalPose(p_switchWallLft);
+	sR->setLocalPose(p_switchWallRgt);
 
 	// Set Global Pose
 	rgd->setGlobalPose(P::board->Pose() * Transform(0, m_height*2, 0));
@@ -243,22 +253,20 @@ void InnerWalls::Create()
 /*-------------------------------------------------------------------------\
 |						SPINNER DEFINITIONS								    |
 \-------------------------------------------------------------------------*/
-Spinner::Spinner(const Transform& pose, PxMaterial* material, const Vec3& color, const Fl32& density) : CompoundShapeActor(1, pose, density, material, color)
+Spinner::Spinner(const Transform& pose, PxMaterial* material, const Vec3& color, const Fl32& density, const SpinnerType& type) : CompoundShapeActor(1, pose, density, material, color)
 {
-	m_geometrys = new PxGeometryHolder[5];
+	m_spinnerType = type;
+
+	m_geometrys = new PxGeometryHolder[3];
 
 	// Geometrys
 	PxBoxGeometry geos[5];
 	geos[S_CENTER] = PxBoxGeometry(0.05f, P::board->WallHeight(), 0.05f);
-	geos[S_TOP] = PxBoxGeometry(0.05f, P::board->WallHeight(), 0.2f);
-	geos[S_BOTTOM] = PxBoxGeometry(0.05f, P::board->WallHeight(), 0.2f);
 	geos[S_LEFT] = PxBoxGeometry(0.2f, P::board->WallHeight(), 0.05f);
 	geos[S_RIGHT] = PxBoxGeometry(0.2f, P::board->WallHeight(), 0.05f);
 
 	// Assign Geometrys
 	m_geometrys[S_CENTER].box() = geos[S_CENTER];
-	m_geometrys[S_TOP].box() = geos[S_TOP];
-	m_geometrys[S_BOTTOM].box() = geos[S_BOTTOM];
 	m_geometrys[S_LEFT].box() = geos[S_LEFT];
 	m_geometrys[S_RIGHT].box() = geos[S_RIGHT];
 }
@@ -291,14 +299,10 @@ void Spinner::Create()
 
 	// Create Shapes
 	dyn->createShape(m_geometrys[S_CENTER].box(), *m_material);
-	PxShape* top = dyn->createShape(m_geometrys[S_TOP].box(), *m_material);
-	PxShape* bottom = dyn->createShape(m_geometrys[S_BOTTOM].box(), *m_material);
 	PxShape* left = dyn->createShape(m_geometrys[S_LEFT].box(), *m_material);
 	PxShape* right = dyn->createShape(m_geometrys[S_RIGHT].box(), *m_material);
 
 	// Set Local Poses
-	top->setLocalPose(Transform(Vec3(.0f, .0f, .25f)));
-	bottom->setLocalPose(Transform(Vec3(.0f, .0f, -.25f)));
 	left->setLocalPose(Transform(Vec3(-.25f, .0f, .0f)));
 	right->setLocalPose(Transform(Vec3(.25f, .0f, .0f)));
 
@@ -326,7 +330,10 @@ void Spinner::Toggle()
 	{
 		SetKinematic(false);
 		Get().dynamicActor->wakeUp();
-		m_joint.DriveVelocity(m_drvSpeed);
+		if (m_spinnerType == SpinnerType::CLOCKWISE)
+			m_joint.DriveVelocity(m_drvSpeed);
+		else
+			m_joint.DriveVelocity(-m_drvSpeed);
 	}
 	else
 	{

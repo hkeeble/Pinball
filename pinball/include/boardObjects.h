@@ -23,11 +23,11 @@ using namespace Physics;
 #define BDR_ID_RGT		4
 
 // Inner Wall Defines
-#define IW_SHAPES				 4
+#define IW_SHAPES				 5
 #define IW_ID_PLUNGE_LN_WALL	 0
 #define IW_ID_PLUNGE_LN_WALL_TP	 1
-#define IW_ID_FLIPPER_WALL_RGT	 2
-#define IW_ID_FLIPPER_WALL_LFT	 3
+#define IW_ID_SWITCH_WALL_LFT	 3
+#define IW_ID_SWITCH_WALL_RGT	 4
 
 // Plunger Defines
 #define PSHAPES 1
@@ -37,10 +37,8 @@ using namespace Physics;
 // Spinner Defines
 #define S_SHAPES 5
 #define S_CENTER 0
-#define S_TOP	 1
-#define S_BOTTOM 2
-#define S_LEFT	 3
-#define S_RIGHT  4
+#define S_LEFT	 1
+#define S_RIGHT  2
 
 /* Main Board Class */
 class Board : public Box
@@ -148,6 +146,13 @@ public:
 	void Unflip();
 };
 
+/* Spinner Type */
+enum class SpinnerType
+{
+	CLOCKWISE,
+	ANTICLOCKWISE
+};
+
 /* Represents a spinner */
 class Spinner : public CompoundShapeActor
 {
@@ -155,8 +160,9 @@ private:
 	const int m_drvSpeed = 5;
 
 	RevoluteJoint m_joint;
+	SpinnerType m_spinnerType;
 public:
-	Spinner(const Transform& pose, PxMaterial* material, const Vec3& color, const Fl32& density);
+	Spinner(const Transform& pose, PxMaterial* material, const Vec3& color, const Fl32& density, const SpinnerType& type);
 	Spinner(const Spinner& param);
 	Spinner& operator=(const Spinner& param);
 	~Spinner();

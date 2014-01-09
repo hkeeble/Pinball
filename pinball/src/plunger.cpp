@@ -76,13 +76,22 @@ void Plunger::Create()
 void Plunger::SetKinematic(bool isKinematic)
 {
 	m_shaft->setRigidBodyFlag(PxRigidBodyFlag::eKINEMATIC, isKinematic);
+	if (!isKinematic)
+		m_shaft->wakeUp();
 }
 
 /* Sets a relative kinematic target */
 void Plunger::SetKinematicTarget(Transform target)
 {
-	Transform t = m_shaft->getGlobalPose();
-	m_shaft->setKinematicTarget(t * target);
+	if (m_shaft->getGlobalPose().p.z > -2.8f)
+	{
+		Transform t = m_shaft->getGlobalPose();
+		m_shaft->setKinematicTarget(t * target);
+	}
+	else
+	{
+		m_shaft->setKinematicTarget(m_shaft->getGlobalPose() * Transform(Vec3(0, 0, .01f)));
+	}
 }
 
 void Plunger::Reset()

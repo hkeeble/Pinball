@@ -13,7 +13,8 @@ const int MAX_NUM_ACTOR_SHAPES = 128;
 
 Board* Pinball::board;
 
-bool Pinball::AddScore = false;
+bool Pinball::AddScoreHigh = false;
+bool Pinball::AddScoreLow = false;
 bool Pinball::BounceBall = false;
 bool Pinball::EnableSpinners = false;
 Vec3 Pinball::BallBounceDirection = Vec3(0);
@@ -194,7 +195,7 @@ void Pinball::Idle()
 			m_ballInPlay = true;
 
 		/* Check if ball is on table, if not adjust accordingly */
-		if (m_ball->Get().dynamicActor->getGlobalPose().p.z < -3)
+		if (m_ball->Get().dynamicActor->getGlobalPose().p.y < -3)
 		{
 			m_monitor.AddBall(m_scoreForThisBall, m_durationThisBallInPlay.Seconds());
 
@@ -203,6 +204,8 @@ void Pinball::Idle()
 
 			m_ballsRemaining--;
 			m_ballInPlay = false;
+			m_ball->Get().dynamicActor->setLinearVelocity(Vec3(0));
+			m_ball->Get().dynamicActor->setAngularVelocity(Vec3(0));
 			m_ball->Get().dynamicActor->setGlobalPose(m_ballInitialPos);
 			hud.UpdateItem("Balls Left", m_ballsRemaining);
 
@@ -215,11 +218,18 @@ void Pinball::Idle()
 		}
 
 		/* Check for bumper scoring */
-		if (AddScore)
+		if (AddScoreHigh)
 		{
-			m_currentScore += m_scorePerBumper;
-			m_scoreForThisBall += m_scorePerBumper;
-			AddScore = false;
+			m_currentScore += m_scorePerHighBumper;
+			m_scoreForThisBall += m_scorePerHighBumper;
+			AddScoreHigh = false;
+		}
+
+		if (AddScoreLow)
+		{
+			m_currentScore += m_scorePerLowBumper;
+			m_scoreForThisBall += m_scorePerLowBumper;
+			AddScoreLow = false;
 		}
 
 		/* Check for bounces */
@@ -239,8 +249,11 @@ void Pinball::Idle()
 		/* Update Spinners */
 		m_spinners->Update(deltaTime);
 
-		if (m_ball->Get().dynamicActor->getLinearVelocity() == Vec3(0) && m_ballInPlay)
-			m_spinners->Toggle();
+		if (m_spinners->Active() == false)
+		{
+			m_spinnerSwitchLft->Get().dynamicActor->userData = &const_cast<Vec3&>(m_switchOffColor);
+			m_spinnerSwitchRgt->Get().dynamicActor->userData = &const_cast<Vec3&>(m_switchOffColor);
+		}
 	}
 }
 
@@ -373,7 +386,11 @@ void Pinball::Reset()
 void Pinball::ActivateSpinners()
 {
 	if (m_spinners->Active() == false)
+	{
 		m_spinners->Toggle();
+		m_spinnerSwitchLft->Get().dynamicActor->userData = &const_cast<Vec3&>(m_switchOnColor);
+		m_spinnerSwitchRgt->Get().dynamicActor->userData = &const_cast<Vec3&>(m_switchOnColor);
+	}
 }
 
 void Pinball::Exit()

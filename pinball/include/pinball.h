@@ -19,6 +19,7 @@
 #include "timer.h"
 #include "monitor.h"
 #include "image.h"
+#include "materialCollection.h"
 
 // Using framework and physics namespaces
 using namespace GameFramework;
@@ -44,8 +45,16 @@ class Pinball : public GLUTGame
 	private:
 		/* Contants */
 		const int m_ballsPerGame = 3;
-		const int m_scorePerBumper = 100;
+		const int m_scorePerHighBumper = 100;
+		const int m_scorePerLowBumper = 50;
 		const int m_bumperBounceMultiplier = 50;
+
+		/* Collection of materials, for central editting file */
+		const MaterialCollection m_materials = MaterialCollection();
+
+		/* Switch colors */
+		const Vec3 m_switchOnColor = Vec3(1.f, .0f, .0f);
+		const Vec3 m_switchOffColor = Vec3(0.f, 1.f, 0.f);
 
 		/* Actors */
 		std::vector<Actor*> m_actors;
@@ -58,6 +67,7 @@ class Pinball : public GLUTGame
 		Plunger*	m_plunger;
 		Flippers*	m_flippers;
 		Spinners*	m_spinners;
+		Box			*m_spinnerSwitchLft, *m_spinnerSwitchRgt;
 
 		/* player's current score */
 		int m_currentScore;
@@ -92,7 +102,8 @@ class Pinball : public GLUTGame
 		void InitJoints();
 		void InitCornerWedges();
 		void InitStartingBlocks();
-		void InitCenterBumpers();
+		void InitHighBumpers();
+		void InitLowBumpers();
 		void InitSpinners();
 		void InitSpinnerSwitches();
 
@@ -154,7 +165,8 @@ class Pinball : public GLUTGame
 		void ActivateSpinners();
 
 		/* Used by triggers to update the game */
-		static bool AddScore;
+		static bool AddScoreHigh;
+		static bool AddScoreLow;
 		static bool BounceBall;
 		static bool EnableSpinners;
 		static Vec3 BallBounceDirection;

@@ -4,8 +4,8 @@
 #include "PxPhysicsAPI.h"
 
 // Typedefs
-typedef physx::PxVec3		Vec3;
 typedef physx::PxVec2		Vec2;
+typedef physx::PxVec3		Vec3;
 typedef physx::PxTransform	Transform;
 typedef physx::PxQuat		Quat;
 typedef physx::PxMat44		Mat44;
