@@ -53,6 +53,11 @@ int MonitorData::avgScorePerSecond() // gameScore/gameDuration
 	return totalScore() / totalDuration();
 }
 
+void MonitorData::Clear()
+{
+	m_balls.clear();
+}
+
 Monitor::Monitor()
 {
 	data = MonitorData();
@@ -66,6 +71,11 @@ Monitor::~Monitor()
 void Monitor::AddBall(int score, int durationSeconds)
 {
 	data.m_balls.push_back(BallData(durationSeconds, score));
+}
+
+void Monitor::Clear()
+{
+	data.Clear();
 }
 
 void Monitor::OutputData()

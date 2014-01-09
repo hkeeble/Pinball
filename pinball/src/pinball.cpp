@@ -148,10 +148,15 @@ void Pinball::Render()
 		titleImg.Render();
 	else if (gameState == GameState::Instructions)
 		instructionImg.Render();
+	else if (gameState == GameState::Instructions2)
+		instruction2Img.Render();
 	else if (gameState == GameState::About)
 		aboutImg.Render();
 	else if (gameState == GameState::GameOver)
+	{
 		gameOverImg.Render();
+		hud.Render(camera.FOV);
+	}
 	else
 		hud.Render(camera.FOV);
 
@@ -276,7 +281,7 @@ void Pinball::KeyboardDown(unsigned char key, int x, int y)
 {
 	switch (gameState)
 	{
-	/* Menu Keys */
+		/* Menu Keys */
 	case GameState::Menu:
 		if (key == VK_RETURN)
 		{
@@ -297,7 +302,7 @@ void Pinball::KeyboardDown(unsigned char key, int x, int y)
 			glutPostRedisplay();
 		}
 		break;
-	/* InGame Keys */
+		/* InGame Keys */
 	case GameState::InGame:
 		if (key == VK_SPACE)
 		{
@@ -314,7 +319,7 @@ void Pinball::KeyboardDown(unsigned char key, int x, int y)
 			m_spinners->Toggle();
 		}
 		break;
-	/* Game Over Keys */
+		/* Game Over Keys */
 	case GameState::GameOver:
 		if (key == VK_RETURN)
 		{
@@ -325,11 +330,20 @@ void Pinball::KeyboardDown(unsigned char key, int x, int y)
 		break;
 	}
 
-	if (gameState == GameState::Instructions || gameState == GameState::About)
+	if (gameState == GameState::About || gameState == GameState::Instructions2)
 	{
-		if (key == VK_BACK)
+		if (key == VK_RETURN)
 		{
 			gameState = GameState::Menu;
+			glutPostRedisplay();
+		}
+	}
+
+	if (gameState == GameState::Instructions)
+	{
+		if (key == VK_RETURN)
+		{
+			gameState = GameState::Instructions2;
 			glutPostRedisplay();
 		}
 	}
@@ -381,6 +395,9 @@ void Pinball::Reset()
 	m_plunger->Reset();
 	m_gameDuration.Reset();
 	m_ballInPlay = false;
+	if (m_spinners->Active())
+		m_spinners->Toggle();
+	m_monitor.Clear();
 }
 
 void Pinball::ActivateSpinners()

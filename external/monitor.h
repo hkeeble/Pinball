@@ -29,6 +29,8 @@ struct MonitorData
 	int avgScoresPerBall(); // sigma(scoresPerBall)/scoresPerBall.length
 	int avgDurationPerBall(); // sigma(secondsPerBall)/secondsPerBall.length
 	int avgScorePerSecond(); // gameScore/gameDuration
+
+	void Clear();
 };
 
 class Monitor
@@ -43,6 +45,8 @@ public:
 	void AddBall(int score, int durationSeconds);
 
 	void OutputData();
+
+	void Clear();
 };
 
 #endif // _MONITOR_H_

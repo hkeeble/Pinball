@@ -29,6 +29,7 @@ void Pinball::Init()
 	gameOverImg = Image("gameOverTexture.png");
 	aboutImg = Image("about.png");
 	instructionImg = Image("instructions.png");
+	instruction2Img = Image("instructions2.png");
 	backgroundImg = Image("backgroundTexture.png");
 
 	// Initialize Scene
@@ -88,8 +89,8 @@ void Pinball::InitHUD()
 	case GameState::GameOver:
 		SetClearColor(Vec3(0.f, 0.f, 0.f));
 		hud.SetRenderColor(Vec3(1.f, 1.f, 1.f));
-		hud.AddItem("Score", Vec2(45, 75), HUDFont::smallFont, true, m_currentScore);
-		hud.AddItem("Game Duration (Seconds)", Vec2(25, 65), HUDFont::smallFont, true, m_gameDuration.Seconds());
+		hud.AddItem("Score", Vec2(43, 45), HUDFont::largeFont, true, m_currentScore);
+		hud.AddItem("Game Duration (Seconds)", Vec2(27, 35), HUDFont::largeFont, true, m_gameDuration.Seconds());
 		break;
 	case GameState::Paused:
 		hud.SetRenderColor(Vec3(1.f, 1.f, 1.f));

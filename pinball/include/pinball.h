@@ -44,7 +44,7 @@ class Pinball : public GLUTGame
 {
 	private:
 		/* Contants */
-		const int m_ballsPerGame = 3;
+		const int m_ballsPerGame = 1;
 		const int m_scorePerHighBumper = 100;
 		const int m_scorePerLowBumper = 50;
 		const int m_bumperBounceMultiplier = 50;
@@ -60,7 +60,7 @@ class Pinball : public GLUTGame
 		std::vector<Actor*> m_actors;
 		
 		/* Menu Images */
-		Image titleImg, gameOverImg, aboutImg, instructionImg, backgroundImg;
+		Image titleImg, gameOverImg, aboutImg, instructionImg, instruction2Img, backgroundImg;
 
 		/* Actor Pointers (only kept for actors that need to be accessed after initialization) */
 		Sphere*		m_ball;
@@ -83,6 +83,7 @@ class Pinball : public GLUTGame
 		{
 			Menu,
 			Instructions,
+			Instructions2,
 			About,
 			InGame,
 			GameOver,
