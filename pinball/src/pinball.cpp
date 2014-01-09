@@ -27,6 +27,7 @@ Pinball::Pinball(std::string title, int windowWidth, int windowHeight)
 	m_actors = std::vector<Actor*>();
 	m_monitor = Monitor();
 	m_currentScore = 0;
+	m_scoreForThisBall = 0;
 }
 
 Pinball::~Pinball()
@@ -178,11 +179,13 @@ void Pinball::Idle()
 		if (m_ballInPlay)
 		{
 			m_gameDuration.Update(deltaTime);
+			m_durationThisBallInPlay.Update(deltaTime);
 			m_scoreTimer.Update(deltaTime);
 
 			if (m_scoreTimer.Seconds() >= 1)
 			{
 				m_currentScore += m_scorePerSecond;
+				m_scoreForThisBall += m_scorePerSecond;
 				m_scoreTimer.Reset();
 				hud.UpdateItem("Score", m_currentScore);
 			}
@@ -190,16 +193,20 @@ void Pinball::Idle()
 		else if (m_ball->Pose().p.x > 0.4)// Else, check if ball needs to be set to in play
 			m_ballInPlay = true;
 
-		/* Check if board is on table, if not adjust accordingly */
+		/* Check if ball is on table, if not adjust accordingly */
 		if (m_ball->Get().dynamicActor->getGlobalPose().p.z < -3)
 		{
-			m_monitor.AddBall(m_currentScore, m_gameDuration.Seconds());
+			m_monitor.AddBall(m_scoreForThisBall, m_durationThisBallInPlay.Seconds());
+
+			m_durationThisBallInPlay.Reset();
+			m_scoreForThisBall = 0;
+
 			m_ballsRemaining--;
 			m_ballInPlay = false;
 			m_ball->Get().dynamicActor->setGlobalPose(m_ballInitialPos);
 			hud.UpdateItem("Balls Left", m_ballsRemaining);
 
-			if (m_ballsRemaining < 0)
+			if (m_ballsRemaining == 0)
 			{
 				gameState = GameState::GameOver;
 				InitHUD();
@@ -211,6 +218,7 @@ void Pinball::Idle()
 		if (AddScore)
 		{
 			m_currentScore += m_scorePerBumper;
+			m_scoreForThisBall += m_scorePerBumper;
 			AddScore = false;
 		}
 

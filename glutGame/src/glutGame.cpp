@@ -254,6 +254,15 @@ namespace GameFramework
 		}
 	}
 
+	void GLUTGame::CalculateDeltaTime()
+	{
+		newElapsedTime = clock();
+		deltaTime = newElapsedTime - lastElapsedTime;
+		deltaTime = deltaTime / (double)CLOCKS_PER_SEC;
+		deltaTime = deltaTime / 1000;
+		lastElapsedTime = newElapsedTime;
+	}
+
 	/*-------------------------------------------------------------------------\
 	|				VIRTUAL CALLBACK FUNCTION DEFINITIONS						|
 	\-------------------------------------------------------------------------*/
@@ -265,10 +274,7 @@ namespace GameFramework
 
 	void GLUTGame::Idle()
 	{
-		newElapsedTime = clock();
-		deltaTime = newElapsedTime - lastElapsedTime;
-		deltaTime = (deltaTime / (double)CLOCKS_PER_SEC) / 1000;
-		lastElapsedTime = newElapsedTime;
+		CalculateDeltaTime();
 
 		m_milliSecondsSinceLastFrame += deltaTime;
 		if (m_milliSecondsSinceLastFrame * 1000 >= 1.f / 60.f)

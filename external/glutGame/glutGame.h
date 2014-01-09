@@ -51,6 +51,9 @@ namespace GameFramework
 		/* Milliseconds since the last frame */
 		Fl32 m_milliSecondsSinceLastFrame;
 
+		/* Calculates Delta Time */
+		void CalculateDeltaTime();
+
 	protected:
 		// GL Initialization
 		virtual void InitGL();

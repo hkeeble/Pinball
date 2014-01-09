@@ -138,6 +138,10 @@ class Pinball : public GLUTGame
 		/* Used to monitor in game data */
 		Monitor m_monitor;
 
+		/* Used for monitoring individual ball data */
+		int m_scoreForThisBall;
+		Timer m_durationThisBallInPlay;
+
 	public:
 		/* Construction and Destruction */
 		Pinball(std::string title, int windowWidth, int windowHeight);

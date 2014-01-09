@@ -94,7 +94,7 @@ void GameData::ReadData(string fileName)
 		balls[i].m_score = stoi(line[((i + 1) * 2) + 1]);
 	}
 
-	int lineOffset = (numberOfBalls * 2) + 1;
+	int lineOffset = (numberOfBalls * 2) + 2;
 
 	totalDuration = stoi(line[lineOffset]);
 	totalScore = stoi(line[lineOffset + 1]);

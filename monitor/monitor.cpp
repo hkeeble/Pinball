@@ -65,12 +65,6 @@ Monitor::~Monitor()
 
 void Monitor::AddBall(int score, int durationSeconds)
 {
-	if (data.m_balls.size() > 0)
-	{
-		score -= data.totalScore();
-		durationSeconds -= data.totalDuration();
-	}
-	
 	data.m_balls.push_back(BallData(durationSeconds, score));
 }
 
@@ -80,7 +74,7 @@ void Monitor::OutputData()
 	WIN32_FIND_DATA fData;
 	char* dir = GetCurrentDir();
 	std::string d = dir;
-	d.append("/analyzer/*.txt");
+	d.append("/analyzer/*.dat");
 
 	HANDLE find = FindFirstFile(d.c_str(), &fData);
 	int fCount = 0;
