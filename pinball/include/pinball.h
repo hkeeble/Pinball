@@ -44,7 +44,7 @@ class Pinball : public GLUTGame
 {
 	private:
 		/* Contants */
-		const int m_ballsPerGame = 1;
+		const int m_ballsPerGame = 3;
 		const int m_scorePerHighBumper = 100;
 		const int m_scorePerLowBumper = 50;
 		const int m_bumperBounceMultiplier = 50;

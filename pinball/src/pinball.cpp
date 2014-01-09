@@ -259,6 +259,10 @@ void Pinball::Idle()
 			m_spinnerSwitchLft->Get().dynamicActor->userData = &const_cast<Vec3&>(m_switchOffColor);
 			m_spinnerSwitchRgt->Get().dynamicActor->userData = &const_cast<Vec3&>(m_switchOffColor);
 		}
+
+		/* Check if ball is stuck on plunger */
+		if (m_ballInPlay == false && m_ball->Get().dynamicActor->getGlobalPose().p.z < m_plunger->Get().dynamicActor->getGlobalPose().p.z)
+			m_ball->Get().dynamicActor->setGlobalPose(m_ballInitialPos);
 	}
 }
 
