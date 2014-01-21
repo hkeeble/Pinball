@@ -16,6 +16,9 @@
     <Filter Include="src\physics">
       <UniqueIdentifier>{469932d8-0ac5-499e-b100-ab98e7450134}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\bass">
+      <UniqueIdentifier>{1a0ce541-43d0-46a1-b1c1-b1ef6d5c3e54}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\GL\glut.h">
@@ -25,6 +28,15 @@
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="include\gamestate.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\external\BASS\bass.h">
+      <Filter>include\bass</Filter>
+    </ClInclude>
+    <ClInclude Include="..\external\glutGame\sample.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\external\glutGame\backgroundmusic.h">
       <Filter>include</Filter>
     </ClInclude>
   </ItemGroup>
@@ -60,6 +72,12 @@
       <Filter>src</Filter>
     </ClCompile>
     <ClCompile Include="src\image.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\sample.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\backgroundmusic.cpp">
       <Filter>src</Filter>
     </ClCompile>
   </ItemGroup>

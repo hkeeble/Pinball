@@ -69,8 +69,14 @@
       <IgnoreSpecificDefaultLibraries>LIBCMTD;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
     </Link>
     <PostBuildEvent>
-      <Command>copy "$(SolutionDir)\dll\$(Configuration)\*.dll" "$(SolutionDir)\build\$(Configuration)\"
-copy "$(SolutionDir)\data\img\*.png" "$(SolutionDir)\build\$(Configuration)\img\"</Command>
+      <Command>mkdir $(SolutionDir)\build\$(Configuration)\sfx\
+mkdir $(SolutionDir)\build\$(Configuration)\img\
+mkdir $(SolutionDir)\build\$(Configuration)\msc\
+copy "$(SolutionDir)\dll\*.dll" "$(SolutionDir)\build\$(Configuration)\"
+copy "$(SolutionDir)\dll\$(Configuration)\*.dll" "$(SolutionDir)\build\$(Configuration)\"
+copy "$(SolutionDir)\data\img\*.png" "$(SolutionDir)\build\$(Configuration)\img\"
+copy "$(SolutionDir)\data\sfx\*.wav" "$(SolutionDir)\build\$(Configuration)\sfx\"
+copy "$(SolutionDir)\data\msc\*.wav" "$(SolutionDir)\build\$(Configuration)\msc\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -94,8 +100,14 @@ copy "$(SolutionDir)\data\img\*.png" "$(SolutionDir)\build\$(Configuration)\img\
       <AdditionalLibraryDirectories>$(SolutionDir)\lib\$(Platform)\$(Configuration);$(SolutionDir)\lib\$(Platform)\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
-      <Command>copy "$(SolutionDir)\dll\$(Configuration)\*.dll" "$(SolutionDir)\build\$(Configuration)\"
-copy "$(SolutionDir)\data\img\*.png" "$(SolutionDir)\build\$(Configuration)\img\"</Command>
+      <Command>mkdir $(SolutionDir)\build\$(Configuration)\sfx\
+mkdir $(SolutionDir)\build\$(Configuration)\img\
+mkdir $(SolutionDir)\build\$(Configuration)\msc\
+copy "$(SolutionDir)\dll\*.dll" "$(SolutionDir)\build\$(Configuration)\"
+copy "$(SolutionDir)\dll\$(Configuration)\*.dll" "$(SolutionDir)\build\$(Configuration)\"
+copy "$(SolutionDir)\data\img\*.png" "$(SolutionDir)\build\$(Configuration)\img\"
+copy "$(SolutionDir)\data\sfx\*.wav" "$(SolutionDir)\build\$(Configuration)\sfx\"
+copy "$(SolutionDir)\data\msc\*.wav" "$(SolutionDir)\build\$(Configuration)\msc\"</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>

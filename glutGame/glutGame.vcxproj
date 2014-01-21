@@ -11,11 +11,15 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\external\BASS\bass.h" />
+    <ClInclude Include="..\external\glutGame\backgroundmusic.h" />
+    <ClInclude Include="..\external\glutGame\sample.h" />
     <ClInclude Include="include\camera.h" />
     <ClInclude Include="include\gamestate.h" />
     <ClInclude Include="include\GL\glut.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\backgroundmusic.cpp" />
     <ClCompile Include="src\camera.cpp" />
     <ClCompile Include="src\glutGame.cpp" />
     <ClCompile Include="src\hud\hud.cpp" />
@@ -25,6 +29,7 @@
     <ClCompile Include="src\physics\ErrorCallback.cpp" />
     <ClCompile Include="src\physics\Physics.cpp" />
     <ClCompile Include="src\physics\RevoluteJoint.cpp" />
+    <ClCompile Include="src\sample.cpp" />
     <ClCompile Include="src\timer.cpp" />
     <ClCompile Include="src\vertexSet.cpp" />
   </ItemGroup>
@@ -83,7 +88,7 @@
       <Command>copy build\$(Configuration)\*.lib $(SolutionDir)\lib\$(Platform)\$(Configuration)</Command>
     </PostBuildEvent>
     <Lib>
-      <AdditionalDependencies>PhysX3DEBUG_x86.lib;PhysX3CommonDEBUG_x86.lib;PhysX3ExtensionsDEBUG.lib;PhysXVisualDebuggerSDKDEBUG.lib;PhysX3CookingDEBUG_x86.lib;%(AdditionalDependencies);SOIL.lib</AdditionalDependencies>
+      <AdditionalDependencies>PhysX3DEBUG_x86.lib;PhysX3CommonDEBUG_x86.lib;PhysX3ExtensionsDEBUG.lib;PhysXVisualDebuggerSDKDEBUG.lib;PhysX3CookingDEBUG_x86.lib;%(AdditionalDependencies);SOIL.lib;bass.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)\lib\$(Platform)\;$(SolutionDir)\lib\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
     <Bscmake>
@@ -110,7 +115,7 @@
       <Command>copy build\$(Configuration)\*.lib $(SolutionDir)\lib\$(Platform)\$(Configuration)</Command>
     </PostBuildEvent>
     <Lib>
-      <AdditionalDependencies>PhysX3_x86.lib;PhysX3Common_x86.lib;PhysX3Extensions.lib;PhysXVisualDebuggerSDK.lib;PhysX3Cooking_x86.lib;%(AdditionalDependencies);SOIL.lib</AdditionalDependencies>
+      <AdditionalDependencies>PhysX3_x86.lib;PhysX3Common_x86.lib;PhysX3Extensions.lib;PhysXVisualDebuggerSDK.lib;PhysX3Cooking_x86.lib;%(AdditionalDependencies);SOIL.lib;bass.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SolutionDir)\lib\$(Platform)\;$(SolutionDir)\lib\$(Platform)\$(Configuration);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>

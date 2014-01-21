@@ -34,6 +34,9 @@ void Pinball::Init()
 
 	// Initialize Scene
 	InitGame();
+
+	// Initialize sounds
+	InitSound();
 }
 
 void Pinball::InitGame()
@@ -422,4 +425,16 @@ void Pinball::InitSpinners()
 
 	// Create Spinners Object
 	m_spinners = new Spinners(lft, rgt);
+}
+
+void Pinball::InitSound()
+{
+	// Sound Effects
+	bumperSound = Sample("sfx/BumperSound.wav");
+	enterSound = Sample("sfx/EnterSound.wav");
+	loseSound = Sample("sfx/LoseSound.wav");
+	switchSound = Sample("sfx/SwitchSound.wav");
+
+	// Background Music
+	bgMusic = BackgroundMusic("msc/BackgroundMusic.wav");
 }

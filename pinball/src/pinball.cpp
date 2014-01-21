@@ -169,6 +169,9 @@ void Pinball::Idle()
 
 	if (gameState == GameState::InGame)
 	{
+		/* Update music */
+		bgMusic.Update();
+
 		/* Check if plunger needs reset */
 		if (m_plunger->IsReady() == false)
 		{
@@ -202,6 +205,8 @@ void Pinball::Idle()
 		/* Check if ball is on table, if not adjust accordingly */
 		if (m_ball->Get().dynamicActor->getGlobalPose().p.y < -3)
 		{
+			loseSound.Play();
+
 			m_monitor.AddBall(m_scoreForThisBall, m_durationThisBallInPlay.Seconds());
 
 			m_durationThisBallInPlay.Reset();
@@ -217,6 +222,7 @@ void Pinball::Idle()
 			if (m_ballsRemaining == 0)
 			{
 				gameState = GameState::GameOver;
+				bgMusic.Stop();
 				InitHUD();
 				m_monitor.OutputData();
 			}
@@ -225,6 +231,7 @@ void Pinball::Idle()
 		/* Check for bumper scoring */
 		if (AddScoreHigh)
 		{
+			bumperSound.Play();
 			m_currentScore += m_scorePerHighBumper;
 			m_scoreForThisBall += m_scorePerHighBumper;
 			AddScoreHigh = false;
@@ -232,6 +239,7 @@ void Pinball::Idle()
 
 		if (AddScoreLow)
 		{
+			bumperSound.Play();
 			m_currentScore += m_scorePerLowBumper;
 			m_scoreForThisBall += m_scorePerLowBumper;
 			AddScoreLow = false;
@@ -247,6 +255,9 @@ void Pinball::Idle()
 		/* Check if spinners need activating */
 		if (EnableSpinners)
 		{
+			if (m_spinners->Active() == false)
+				switchSound.Play();
+
 			ActivateSpinners();
 			EnableSpinners = false;
 		}
@@ -289,6 +300,8 @@ void Pinball::KeyboardDown(unsigned char key, int x, int y)
 	case GameState::Menu:
 		if (key == VK_RETURN)
 		{
+			enterSound.Play();
+			bgMusic.Play();
 			gameState = GameState::InGame;
 			Reset();
 			InitHUD();
@@ -297,11 +310,13 @@ void Pinball::KeyboardDown(unsigned char key, int x, int y)
 		}
 		if (key == 'i')
 		{
+			enterSound.Play();
 			gameState = GameState::Instructions;
 			glutPostRedisplay();
 		}
 		if (key == 'a')
 		{
+			enterSound.Play();
 			gameState = GameState::About;
 			glutPostRedisplay();
 		}
@@ -328,6 +343,7 @@ void Pinball::KeyboardDown(unsigned char key, int x, int y)
 		if (key == VK_RETURN)
 		{
 			gameState = GameState::Menu;
+			
 			Reset();
 			InitHUD();
 		}
@@ -336,7 +352,7 @@ void Pinball::KeyboardDown(unsigned char key, int x, int y)
 
 	if (gameState == GameState::About || gameState == GameState::Instructions2)
 	{
-		if (key == VK_RETURN)
+		if (key == VK_BACK)
 		{
 			gameState = GameState::Menu;
 			glutPostRedisplay();

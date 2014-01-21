@@ -56,6 +56,7 @@ namespace GameFramework
 
 		InitGLUT(argc, argv);
 		InitGL();
+		InitBASS();
 
 		Log::Write("Initializing Game...\n", ENGINE_LOG);
 		Init();
@@ -80,7 +81,9 @@ namespace GameFramework
 
 	void GLUTGame::InitGL() // Virtual Initialization - Override to change lighting params
 	{
-		Log::Write("Intializing OpenGL...\n", ENGINE_LOG);
+		Log::Write("Intializing OpenGL (context version ", ENGINE_LOG);
+		Log::Write((char*)glGetString(GL_VERSION), ENGINE_LOG);
+		Log::Write(")...\n", ENGINE_LOG);
 
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_COLOR_MATERIAL);
@@ -95,12 +98,18 @@ namespace GameFramework
 		glLightfv(GL_LIGHT0, GL_SPECULAR, specularColor);
 		glLightfv(GL_LIGHT0, GL_POSITION, position);
 		glEnable(GL_LIGHT0);
+	}
 
+	void GLUTGame::InitBASS()
+	{
+		Log::Write("Initializing BASS...\n", ENGINE_LOG);
+		if (!BASS_Init(-1, 44100, 0, 0, 0))
+			Log::Write("Error initializing BASS!\n", ENGINE_LOG);
 	}
 
 	void GLUTGame::InitGLUT(int argc, char *argv[])
 	{
-		Log::Write("Intializing GLUT...\n", ENGINE_LOG);
+		Log::Write("Intializing GLUT ", ENGINE_LOG);
 
 		glutInit(&argc, argv);
 		glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH | GLUT_ALPHA);
@@ -326,6 +335,7 @@ namespace GameFramework
 	void GLUTGame::Exit()
 	{
 		Log::Shutdown();
+		BASS_Free();
 	}
 
 	Vec2 GLUTGame::WindowDimensions() const

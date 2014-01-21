@@ -20,6 +20,8 @@
 #include "monitor.h"
 #include "image.h"
 #include "materialCollection.h"
+#include "sample.h"
+#include "backgroundmusic.h"
 
 // Using framework and physics namespaces
 using namespace GameFramework;
@@ -43,11 +45,11 @@ public:
 class Pinball : public GLUTGame
 {
 	private:
-		/* Contants */
+		/* Constants */
 		const int m_ballsPerGame = 3;
 		const int m_scorePerHighBumper = 100;
 		const int m_scorePerLowBumper = 50;
-		const int m_bumperBounceMultiplier = 50;
+		const int m_bumperBounceMultiplier = 100;
 
 		/* Collection of materials, for central editting file */
 		const MaterialCollection m_materials = MaterialCollection();
@@ -108,6 +110,9 @@ class Pinball : public GLUTGame
 		void InitSpinners();
 		void InitSpinnerSwitches();
 
+		/* Sound Initilization */
+		void InitSound();
+
 		/* HUD Initialization Function */
 		void InitHUD();
 
@@ -153,6 +158,10 @@ class Pinball : public GLUTGame
 		/* Used for monitoring individual ball data */
 		int m_scoreForThisBall;
 		Timer m_durationThisBallInPlay;
+
+		/* Sounds */
+		Sample bumperSound, enterSound, loseSound, switchSound;
+		BackgroundMusic bgMusic;
 
 	public:
 		/* Construction and Destruction */

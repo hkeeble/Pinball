@@ -18,6 +18,7 @@
 #include "uncopyable.h"
 #include "log.h"
 #include "timer.h"
+#include "BASS\bass.h"
 
 #define FPS 60.f
 #define RENDER_DETAIL 15
@@ -37,6 +38,9 @@ namespace GameFramework
 
 		// GLUT Initialization
 		void InitGLUT(int argc, char *argv[]);
+
+		/* BASS Initialization */
+		void InitBASS();
 
 		/* The game's clear color */
 		static Vec3 ClearColor;
